@@ -28,6 +28,15 @@ function luxnova_enqueue_assets(): void {
 		file_exists( $js_path ) ? (string) filemtime( $js_path ) : LUXNOVA_VERSION,
 		true
 	);
+
+	wp_localize_script(
+		'luxnova-main',
+		'LuxNovaConsultation',
+		array(
+			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+			'nonce'   => wp_create_nonce( 'luxnova_consultation_form' ),
+		)
+	);
 }
 
 add_filter( 'script_loader_tag', 'luxnova_defer_scripts', 10, 3 );

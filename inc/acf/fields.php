@@ -51,6 +51,10 @@ function luxnova_register_acf_fields(): void {
 				luxnova_acf_text( 'field_luxnova_project_budget', 'Budget', 'budget' ),
 				luxnova_acf_text( 'field_luxnova_project_timeline', 'Timeline', 'timeline' ),
 				luxnova_acf_text( 'field_luxnova_project_location', 'Location', 'location' ),
+				luxnova_acf_text( 'field_luxnova_project_completion_year', 'Completion Year', 'completion_year' ),
+				luxnova_acf_text( 'field_luxnova_project_scope', 'Scope', 'scope', 'Thiết kế & Thi công nội thất' ),
+				luxnova_acf_text( 'field_luxnova_project_architect', 'Architect', 'architect', 'LuxNova Design Team' ),
+				array( 'key' => 'field_luxnova_project_brochure', 'label' => 'Brochure', 'name' => 'brochure', 'type' => 'file', 'return_format' => 'array' ),
 				array( 'key' => 'field_luxnova_project_gallery', 'label' => 'Gallery', 'name' => 'gallery', 'type' => 'gallery', 'return_format' => 'id' ),
 			),
 			'location' => array(

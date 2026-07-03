@@ -17,5 +17,6 @@ require_once LUXNOVA_DIR . 'inc/helpers.php';
 require_once LUXNOVA_DIR . 'inc/setup.php';
 require_once LUXNOVA_DIR . 'inc/enqueue.php';
 require_once LUXNOVA_DIR . 'inc/custom-post-types.php';
+require_once LUXNOVA_DIR . 'inc/telegram.php';
 require_once LUXNOVA_DIR . 'inc/theme-options.php';
 require_once LUXNOVA_DIR . 'inc/acf/fields.php';

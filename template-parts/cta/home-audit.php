@@ -26,7 +26,7 @@ $section = $args['section'] ?? array();
 			<?php endforeach; ?>
 		</ul>
 		<div class="audit-cta__action reveal-on-scroll">
-			<?php echo luxnova_link( $section['button'] ?? array(), 'button button--gold', 'Đăng ký ngay' ); ?>
+			<?php echo luxnova_link( $section['button'] ?? array(), 'button button--gold js-consultation-modal', 'Đăng ký ngay' ); ?>
 		</div>
 	</div>
 </section>

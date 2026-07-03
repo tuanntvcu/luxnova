@@ -28,6 +28,158 @@
 		});
 	}
 
+	const modal = document.querySelector('#consultation-modal');
+	const modalTriggers = document.querySelectorAll('.js-consultation-modal');
+	let previousFocus = null;
+
+	const getFocusableItems = () => {
+		if (!modal) {
+			return [];
+		}
+		return Array.from(modal.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'));
+	};
+
+	const openConsultationModal = () => {
+		if (!modal) {
+			return;
+		}
+
+		previousFocus = document.activeElement;
+		modal.hidden = false;
+		modal.setAttribute('aria-hidden', 'false');
+		document.body.classList.add('is-modal-open');
+
+		window.requestAnimationFrame(() => {
+			const dialog = modal.querySelector('.consultation-modal__dialog');
+			if (dialog) {
+				dialog.focus();
+			}
+		});
+	};
+
+	const closeConsultationModal = () => {
+		if (!modal || modal.hidden) {
+			return;
+		}
+
+		modal.hidden = true;
+		modal.setAttribute('aria-hidden', 'true');
+		document.body.classList.remove('is-modal-open');
+
+		if (previousFocus && typeof previousFocus.focus === 'function') {
+			previousFocus.focus();
+		}
+	};
+
+	modalTriggers.forEach((trigger) => {
+		trigger.addEventListener('click', (event) => {
+			event.preventDefault();
+			openConsultationModal();
+		});
+	});
+
+	if (modal) {
+		modal.addEventListener('click', (event) => {
+			if (event.target.closest('[data-consultation-close]')) {
+				closeConsultationModal();
+			}
+		});
+
+		modal.addEventListener('keydown', (event) => {
+			if (event.key === 'Escape') {
+				closeConsultationModal();
+				return;
+			}
+
+			if (event.key !== 'Tab') {
+				return;
+			}
+
+			const focusableItems = getFocusableItems();
+			if (!focusableItems.length) {
+				return;
+			}
+
+			const firstItem = focusableItems[0];
+			const lastItem = focusableItems[focusableItems.length - 1];
+
+			if (event.shiftKey && document.activeElement === firstItem) {
+				event.preventDefault();
+				lastItem.focus();
+			} else if (!event.shiftKey && document.activeElement === lastItem) {
+				event.preventDefault();
+				firstItem.focus();
+			}
+		});
+
+		const consultationForm = modal.querySelector('[data-consultation-form]');
+		if (consultationForm) {
+			consultationForm.addEventListener('submit', async (event) => {
+				event.preventDefault();
+				const successMessage = modal.querySelector('[data-consultation-success]');
+				const errorMessage = modal.querySelector('[data-consultation-error]');
+				const submitButton = modal.querySelector('[data-consultation-submit]');
+				const defaultSubmitText = submitButton ? submitButton.innerHTML : '';
+
+				if (successMessage) {
+					successMessage.hidden = true;
+				}
+				if (errorMessage) {
+					errorMessage.hidden = true;
+				}
+
+				if (!window.LuxNovaConsultation || !window.LuxNovaConsultation.ajaxUrl || !window.LuxNovaConsultation.nonce) {
+					if (errorMessage) {
+						errorMessage.textContent = 'Không thể gửi yêu cầu lúc này. Vui lòng thử lại sau.';
+						errorMessage.hidden = false;
+					}
+					return;
+				}
+
+				if (submitButton) {
+					submitButton.disabled = true;
+					submitButton.textContent = 'Đang gửi...';
+				}
+
+				const formData = new FormData(consultationForm);
+				formData.append('action', 'luxnova_submit_consultation');
+				formData.append('nonce', window.LuxNovaConsultation.nonce);
+				formData.append('page_url', window.location.href);
+
+				try {
+					const response = await fetch(window.LuxNovaConsultation.ajaxUrl, {
+						method: 'POST',
+						body: formData,
+						credentials: 'same-origin',
+					});
+					const result = await response.json();
+					const message = result && result.message ? result.message : 'Không thể gửi yêu cầu lúc này. Vui lòng thử lại sau.';
+
+					if (response.ok && result && result.success) {
+						if (successMessage) {
+							successMessage.textContent = message;
+							successMessage.hidden = false;
+						}
+						consultationForm.reset();
+					} else if (errorMessage) {
+						errorMessage.textContent = message;
+						errorMessage.hidden = false;
+					}
+				} catch (error) {
+					if (errorMessage) {
+						errorMessage.textContent = 'Không thể gửi yêu cầu lúc này. Vui lòng thử lại sau.';
+						errorMessage.hidden = false;
+					}
+				} finally {
+					if (submitButton) {
+						submitButton.disabled = false;
+						submitButton.innerHTML = defaultSubmitText;
+					}
+				}
+			});
+		}
+	}
+
 	const revealItems = document.querySelectorAll('.reveal-on-scroll');
 	if ('IntersectionObserver' in window) {
 		const revealObserver = new IntersectionObserver((entries, observer) => {

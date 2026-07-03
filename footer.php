@@ -69,6 +69,8 @@ $socials     = luxnova_get_option(
 	</div>
 </footer>
 
+<?php get_template_part( 'template-parts/modal/consultation' ); ?>
+
 <?php wp_footer(); ?>
 </body>
 </html>

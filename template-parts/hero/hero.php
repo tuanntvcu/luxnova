@@ -22,7 +22,7 @@ $title   = $section['title'] ?? '';
 			<p class="hero-section__description"><?php echo esc_html( $section['description'] ); ?></p>
 		<?php endif; ?>
 		<div class="hero-section__actions">
-			<?php echo luxnova_link( $section['primary_button'] ?? array(), 'button button--gold', 'Đặt lịch tư vấn' ); ?>
+			<?php echo luxnova_link( $section['primary_button'] ?? array(), 'button button--gold js-consultation-modal', 'Đặt lịch tư vấn' ); ?>
 			<?php echo luxnova_link( $section['secondary_button'] ?? array(), 'button button--outline', 'Xem dự án' ); ?>
 		</div>
 	</div>

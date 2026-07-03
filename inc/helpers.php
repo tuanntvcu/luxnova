@@ -115,6 +115,7 @@ function luxnova_icon( string $name ): string {
 		'quote' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17h4V9H6v5h2c0 1.7-.7 2.7-2 3m10 0h4V9h-5v5h2c0 1.7-.7 2.7-2 3"/></svg>',
 		'tools' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 7 3-3 3 3-3 3M4 20l8-8M7 4l13 13-3 3L4 7V4h3Z"/></svg>',
 		'key' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 10a5 5 0 1 1-2.2-4.1L21 15v3h-3v3h-3l-5.1-5.1A5 5 0 0 1 14 10ZM7 10h.01"/></svg>',
+		'clock' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v5l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>',
 		'phone' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h4l1 5-2.5 1.5a12 12 0 0 0 5 5L15 13l5 1v4c0 1.1-.9 2-2 2A14 14 0 0 1 4 6c0-1.1.9-2 2-2Z"/></svg>',
 		'mail' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4V6Zm0 0 8 7 8-7"/></svg>',
 		'pin' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.2 7-11a7 7 0 1 0-14 0c0 5.8 7 11 7 11Zm0-8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/></svg>',
@@ -225,6 +226,81 @@ function luxnova_default_project_cards(): array {
 		array( 'title' => 'Nhà phố 3 tầng - Hà Đông', 'image' => luxnova_asset( 'assets/images/placeholder-project-3.svg' ), 'area' => '180m²', 'style' => 'Modern', 'budget' => '1.8 tỷ', 'timeline' => '90 ngày' ),
 		array( 'title' => 'Spa 200m² - Cầu Giấy, Hà Nội', 'image' => luxnova_asset( 'assets/images/placeholder-project-4.svg' ), 'area' => '200m²', 'style' => 'Luxury', 'budget' => '2.2 tỷ', 'timeline' => '60 ngày' ),
 	);
+}
+
+function luxnova_default_archive_project_cards(): array {
+	return array(
+		array( 'title' => 'Villa The Manor Central Park', 'type' => 'Biệt thự', 'type_slug' => 'biet-thu', 'location' => 'Hà Nội', 'area' => '320m²', 'style' => 'Hiện đại', 'year' => '2024', 'image' => luxnova_asset( 'assets/images/placeholder-project-1.svg' ) ),
+		array( 'title' => 'Penthouse Vinhomes Landmark 81', 'type' => 'Penthouse', 'type_slug' => 'penthouse', 'location' => 'TP. Hồ Chí Minh', 'area' => '450m²', 'style' => 'Luxury', 'year' => '2024', 'image' => luxnova_asset( 'assets/images/placeholder-project-2.svg' ) ),
+		array( 'title' => 'Masteri West Heights', 'type' => 'Căn hộ', 'type_slug' => 'can-ho', 'location' => 'Hà Nội', 'area' => '89m²', 'style' => 'Hiện đại', 'year' => '2024', 'image' => luxnova_asset( 'assets/images/placeholder-project-1.svg' ) ),
+		array( 'title' => 'Nhà phố Hà Đông', 'type' => 'Nhà phố', 'type_slug' => 'nha-pho', 'location' => 'Hà Nội', 'area' => '180m²', 'style' => 'Tân cổ điển', 'year' => '2024', 'image' => luxnova_asset( 'assets/images/placeholder-project-3.svg' ) ),
+		array( 'title' => 'Villa Ecopark Grand', 'type' => 'Biệt thự', 'type_slug' => 'biet-thu', 'location' => 'Hưng Yên', 'area' => '350m²', 'style' => 'Hiện đại', 'year' => '2023', 'image' => luxnova_asset( 'assets/images/placeholder-project-2.svg' ) ),
+		array( 'title' => 'Vinhomes Ocean Park', 'type' => 'Căn hộ', 'type_slug' => 'can-ho', 'location' => 'Hà Nội', 'area' => '72m²', 'style' => 'Hiện đại', 'year' => '2023', 'image' => luxnova_asset( 'assets/images/placeholder-project-1.svg' ) ),
+		array( 'title' => 'Sunshine City Penthouse', 'type' => 'Penthouse', 'type_slug' => 'penthouse', 'location' => 'Hà Nội', 'area' => '380m²', 'style' => 'Luxury', 'year' => '2023', 'image' => luxnova_asset( 'assets/images/placeholder-project-2.svg' ) ),
+		array( 'title' => 'Văn phòng Techcombank', 'type' => 'Văn phòng', 'type_slug' => 'van-phong', 'location' => 'Hà Nội', 'area' => '1200m²', 'style' => 'Hiện đại', 'year' => '2023', 'image' => luxnova_asset( 'assets/images/placeholder-interior.svg' ) ),
+		array( 'title' => 'Nhà phố Bắc Từ Liêm', 'type' => 'Nhà phố', 'type_slug' => 'nha-pho', 'location' => 'Hà Nội', 'area' => '150m²', 'style' => 'Tối giản', 'year' => '2023', 'image' => luxnova_asset( 'assets/images/placeholder-project-3.svg' ) ),
+		array( 'title' => 'Villa FLC Sầm Sơn', 'type' => 'Biệt thự', 'type_slug' => 'biet-thu', 'location' => 'Thanh Hóa', 'area' => '420m²', 'style' => 'Hiện đại', 'year' => '2023', 'image' => luxnova_asset( 'assets/images/placeholder-project-3.svg' ) ),
+		array( 'title' => "Vinhomes D'Capitale", 'type' => 'Căn hộ', 'type_slug' => 'can-ho', 'location' => 'Hà Nội', 'area' => '98m²', 'style' => 'Hiện đại', 'year' => '2023', 'image' => luxnova_asset( 'assets/images/placeholder-project-4.svg' ) ),
+		array( 'title' => 'Khách sạn Boutique Đà Nẵng', 'type' => 'Khách sạn', 'type_slug' => 'khach-san', 'location' => 'Đà Nẵng', 'area' => '2500m²', 'style' => 'Indochine', 'year' => '2022', 'image' => luxnova_asset( 'assets/images/placeholder-service-3.svg' ) ),
+	);
+}
+
+function luxnova_project_archive_tabs(): array {
+	$archive_url = get_post_type_archive_link( 'luxnova_project' ) ?: home_url( '/du-an/' );
+	$tabs        = array( array( 'label' => 'Tất cả dự án', 'url' => $archive_url, 'slug' => '' ) );
+	$terms       = get_terms( array( 'taxonomy' => 'luxnova_project_type', 'hide_empty' => true ) );
+
+	if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
+		foreach ( $terms as $term ) {
+			$tabs[] = array( 'label' => $term->name, 'url' => add_query_arg( 'project_type', $term->slug, $archive_url ), 'slug' => $term->slug );
+		}
+
+		return $tabs;
+	}
+
+	foreach ( array( 'nha-pho' => 'Nhà phố', 'can-ho' => 'Căn hộ', 'biet-thu' => 'Biệt thự', 'penthouse' => 'Penthouse', 'van-phong' => 'Văn phòng', 'khach-san' => 'Khách sạn' ) as $slug => $label ) {
+		$tabs[] = array( 'label' => $label, 'url' => add_query_arg( 'project_type', $slug, $archive_url ), 'slug' => $slug );
+	}
+
+	return $tabs;
+}
+
+function luxnova_project_brochure_url( mixed $file ): string {
+	if ( is_array( $file ) && ! empty( $file['url'] ) ) {
+		return esc_url_raw( $file['url'] );
+	}
+
+	if ( is_numeric( $file ) ) {
+		$url = wp_get_attachment_url( (int) $file );
+		return $url ? $url : '#project-info';
+	}
+
+	if ( is_string( $file ) && '' !== $file ) {
+		return esc_url_raw( $file );
+	}
+
+	return '#project-info';
+}
+
+function luxnova_render_project_listing_card( array $card ): void {
+	?>
+	<article class="project-listing-card reveal-on-scroll">
+		<a class="project-listing-card__image-wrap" href="<?php echo esc_url( $card['url'] ?? '#' ); ?>" aria-label="<?php echo esc_attr( $card['title'] ?? '' ); ?>">
+			<?php echo luxnova_image( $card['image'] ?? '', 'luxnova-project', array( 'class' => 'project-listing-card__image', 'alt' => esc_attr( $card['title'] ?? '' ) ), 'assets/images/placeholder-project-1.svg' ); ?>
+			<span class="project-listing-card__tag"><?php echo esc_html( $card['type'] ?? 'Dự án' ); ?></span>
+			<span class="project-listing-card__arrow" aria-hidden="true">↗</span>
+		</a>
+		<div class="project-listing-card__body">
+			<h2><a href="<?php echo esc_url( $card['url'] ?? '#' ); ?>"><?php echo esc_html( $card['title'] ?? '' ); ?></a></h2>
+			<p><?php echo luxnova_icon( 'pin' ); ?><?php echo esc_html( $card['location'] ?? '' ); ?></p>
+			<ul>
+				<li><?php echo luxnova_icon( 'measure' ); ?><?php echo esc_html( $card['area'] ?? '' ); ?></li>
+				<li><?php echo luxnova_icon( 'clock' ); ?><?php echo esc_html( $card['style'] ?? '' ); ?></li>
+				<li><?php echo luxnova_icon( 'document' ); ?><?php echo esc_html( $card['year'] ?? '' ); ?></li>
+			</ul>
+		</div>
+	</article>
+	<?php
 }
 
 function luxnova_default_testimonials(): array {

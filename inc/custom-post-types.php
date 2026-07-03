@@ -58,4 +58,54 @@ function luxnova_register_post_types(): void {
 			'show_in_rest' => true,
 		)
 	);
+
+	register_taxonomy(
+		'luxnova_project_type',
+		array( 'luxnova_project' ),
+		array(
+			'labels' => array(
+				'name' => esc_html__( 'Project Types', 'luxnova' ),
+				'singular_name' => esc_html__( 'Project Type', 'luxnova' ),
+			),
+			'public' => true,
+			'hierarchical' => true,
+			'rewrite' => array( 'slug' => 'du-an/loai' ),
+			'show_admin_column' => true,
+			'show_in_rest' => true,
+		)
+	);
+}
+
+add_action( 'pre_get_posts', 'luxnova_project_archive_query' );
+function luxnova_project_archive_query( WP_Query $query ): void {
+	if ( is_admin() || ! $query->is_main_query() || ! $query->is_post_type_archive( 'luxnova_project' ) ) {
+		return;
+	}
+
+	$query->set( 'posts_per_page', 12 );
+
+	$sort = sanitize_key( wp_unslash( $_GET['project_sort'] ?? 'newest' ) );
+	if ( 'oldest' === $sort ) {
+		$query->set( 'order', 'ASC' );
+	} elseif ( 'title' === $sort ) {
+		$query->set( 'orderby', 'title' );
+		$query->set( 'order', 'ASC' );
+	} else {
+		$query->set( 'orderby', 'date' );
+		$query->set( 'order', 'DESC' );
+	}
+
+	$type = sanitize_title( wp_unslash( $_GET['project_type'] ?? '' ) );
+	if ( '' !== $type ) {
+		$query->set(
+			'tax_query',
+			array(
+				array(
+					'taxonomy' => 'luxnova_project_type',
+					'field' => 'slug',
+					'terms' => $type,
+				),
+			)
+		);
+	}
 }
