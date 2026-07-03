@@ -303,6 +303,101 @@ function luxnova_render_project_listing_card( array $card ): void {
 	<?php
 }
 
+function luxnova_default_service_cards(): array {
+	return array(
+		array(
+			'title' => 'Thiết kế nội thất',
+			'description' => 'Tư duy sáng tạo, giải pháp thiết kế cá nhân hóa, tối ưu công năng và thẩm mỹ cho từng không gian.',
+			'image' => luxnova_asset( 'assets/images/placeholder-service-1.svg' ),
+			'icon' => 'design',
+			'url' => '#service-process',
+		),
+		array(
+			'title' => 'Thi công nội thất',
+			'description' => 'Thi công chuẩn xác, kiểm soát chất lượng chặt chẽ, đảm bảo tiến độ và độ hoàn thiện cao nhất.',
+			'image' => luxnova_asset( 'assets/images/placeholder-service-2.svg' ),
+			'icon' => 'tools',
+			'url' => '#service-process',
+		),
+		array(
+			'title' => 'Nội thất trọn gói',
+			'description' => 'Giải pháp trọn gói từ A-Z, đồng hành cùng bạn kiến tạo không gian sống hoàn hảo và bền vững.',
+			'image' => luxnova_asset( 'assets/images/placeholder-service-3.svg' ),
+			'icon' => 'home',
+			'url' => '#service-process',
+		),
+	);
+}
+
+function luxnova_service_process_steps(): array {
+	return array(
+		array( 'number' => '01', 'title' => 'Tiếp nhận yêu cầu', 'description' => 'Lắng nghe nhu cầu, khảo sát hiện trạng', 'icon' => 'phone' ),
+		array( 'number' => '02', 'title' => 'Tư vấn định hướng', 'description' => 'Đề xuất giải pháp phù hợp với ngân sách', 'icon' => 'quote' ),
+		array( 'number' => '03', 'title' => 'Thiết kế', 'description' => 'Triển khai ý tưởng, lên bản vẽ 2D, 3D', 'icon' => 'design' ),
+		array( 'number' => '04', 'title' => 'Báo giá & ký hợp đồng', 'description' => 'Báo giá chi tiết, thống nhất hạng mục', 'icon' => 'document' ),
+		array( 'number' => '05', 'title' => 'Thi công', 'description' => 'Sản xuất & thi công theo thiết kế', 'icon' => 'tools' ),
+		array( 'number' => '06', 'title' => 'Bàn giao & bảo hành', 'description' => 'Nghiệm thu, bàn giao và bảo hành dài hạn', 'icon' => 'key' ),
+	);
+}
+
+function luxnova_why_choose_items(): array {
+	return array(
+		array( 'title' => 'Kinh nghiệm', 'description' => '8+ năm trong lĩnh vực thiết kế & thi công nội thất', 'icon' => 'document' ),
+		array( 'title' => 'Đội ngũ chuyên nghiệp', 'description' => 'Kiến trúc sư và kỹ sư giàu kinh nghiệm, sáng tạo', 'icon' => 'users' ),
+		array( 'title' => 'Chất lượng vượt trội', 'description' => 'Vật liệu cao cấp, thi công chuẩn mực đến từng chi tiết', 'icon' => 'shield' ),
+		array( 'title' => 'Minh bạch & uy tín', 'description' => 'Báo giá rõ ràng, cam kết tiến độ và chất lượng', 'icon' => 'quote' ),
+		array( 'title' => 'Bảo hành dài hạn', 'description' => 'Bảo hành lên đến 5 năm, hỗ trợ nhanh chóng', 'icon' => 'key' ),
+	);
+}
+
+function luxnova_pricing_plans(): array {
+	return array(
+		array(
+			'label' => 'Gói Basic',
+			'title' => 'Thiết kế nội thất',
+			'price' => '250.000',
+			'unit' => 'VND/m²',
+			'features' => array( 'Khảo sát hiện trạng', 'Mặt bằng bố trí công năng 2D', 'Phối cảnh 3D cơ bản', 'Hồ sơ kỹ thuật thi công', 'Tư vấn vật liệu & màu sắc' ),
+			'featured' => false,
+		),
+		array(
+			'label' => 'Gói Standard',
+			'title' => 'Thiết kế & thi công',
+			'price' => '4.500.000',
+			'unit' => 'VND/m²',
+			'features' => array( 'Tất cả hạng mục gói Basic', 'Phối cảnh 3D chi tiết', 'Hồ sơ kỹ thuật thi công đầy đủ', 'Thi công hoàn thiện', 'Bảo hành 2 năm' ),
+			'featured' => true,
+		),
+		array(
+			'label' => 'Gói Premium',
+			'title' => 'Nội thất trọn gói',
+			'price' => '6.800.000',
+			'unit' => 'VND/m²',
+			'features' => array( 'Tất cả hạng mục gói Standard', 'Vật liệu cao cấp', 'Sản xuất nội thất tại xưởng', 'Giám sát tác quyền', 'Bảo hành 5 năm' ),
+			'featured' => false,
+		),
+	);
+}
+
+function luxnova_cost_factors(): array {
+	return array(
+		array( 'title' => 'Diện tích & quy mô dự án', 'icon' => 'measure' ),
+		array( 'title' => 'Phong cách thiết kế', 'icon' => 'design' ),
+		array( 'title' => 'Vật liệu & thiết bị', 'icon' => 'tools' ),
+		array( 'title' => 'Độ phức tạp trong thi công', 'icon' => 'home' ),
+		array( 'title' => 'Yêu cầu cá nhân hóa', 'icon' => 'quote' ),
+	);
+}
+
+function luxnova_pricing_faqs(): array {
+	return array(
+		array( 'question' => 'Giá trên đã bao gồm VAT chưa?', 'answer' => 'Bảng giá mang tính tham khảo và chưa bao gồm VAT. LuxNova sẽ báo giá chi tiết theo hồ sơ thực tế của từng dự án.' ),
+		array( 'question' => 'Chi phí thiết kế có được hoàn lại khi thi công không?', 'answer' => 'Tùy gói dịch vụ và phạm vi thi công, chi phí thiết kế có thể được khấu trừ một phần khi ký hợp đồng thi công trọn gói.' ),
+		array( 'question' => 'Thời gian thiết kế và thi công mất bao lâu?', 'answer' => 'Thông thường thiết kế mất 10-25 ngày làm việc, thi công từ 30-90 ngày tùy diện tích, mức độ phức tạp và tiến độ sản xuất.' ),
+		array( 'question' => 'LuxNova có thanh toán theo tiến độ không?', 'answer' => 'Có. Tiến độ thanh toán được chia theo các mốc rõ ràng như ký hợp đồng, duyệt thiết kế, sản xuất, thi công và bàn giao.' ),
+	);
+}
+
 function luxnova_default_testimonials(): array {
 	return array(
 		array( 'name' => 'Anh Minh', 'context' => 'Căn hộ 2PN - Vinhomes Ocean Park', 'quote' => 'LuxNova làm việc rất chuyên nghiệp, đúng tiến độ và không phát sinh thêm chi phí. Căn hộ đẹp hơn mong đợi!', 'rating' => 5, 'avatar' => luxnova_asset( 'assets/images/placeholder-avatar-1.svg' ) ),

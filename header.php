@@ -45,7 +45,7 @@ $schema_image = luxnova_image_url( luxnova_get_option( 'default_og_image', '' ),
 					'theme_location' => 'primary',
 					'container' => false,
 					'menu_class' => 'primary-nav__list',
-					'fallback_cb' => 'luxnova_primary_menu_fallback_v2',
+					'fallback_cb' => 'luxnova_primary_menu_fallback_v3',
 				)
 			);
 			?>
@@ -86,6 +86,27 @@ function luxnova_primary_menu_fallback_v2(): void {
 		array( 'label' => 'Dự án', 'url' => get_post_type_archive_link( 'luxnova_project' ) ?: home_url( '/du-an/' ), 'active' => luxnova_is_project_context() ),
 		array( 'label' => 'Dịch vụ', 'url' => get_post_type_archive_link( 'luxnova_service' ) ?: '#', 'active' => is_post_type_archive( 'luxnova_service' ) || is_singular( 'luxnova_service' ) ),
 		array( 'label' => 'Bảng giá', 'url' => '#', 'active' => false ),
+		array( 'label' => 'Kiến thức', 'url' => get_permalink( get_option( 'page_for_posts' ) ) ?: '#', 'active' => is_home() || is_singular( 'post' ) ),
+		array( 'label' => 'Liên hệ', 'url' => '#lien-he', 'active' => false ),
+	);
+	foreach ( $items as $item ) {
+		printf(
+			'<li class="%s"><a href="%s">%s</a></li>',
+			! empty( $item['active'] ) ? 'current-menu-item' : '',
+			esc_url( $item['url'] ),
+			esc_html( $item['label'] )
+		);
+	}
+	echo '</ul>';
+}
+
+function luxnova_primary_menu_fallback_v3(): void {
+	echo '<ul class="primary-nav__list">';
+	$items = array(
+		array( 'label' => 'Trang chủ', 'url' => home_url( '/' ), 'active' => is_front_page() ),
+		array( 'label' => 'Dự án', 'url' => get_post_type_archive_link( 'luxnova_project' ) ?: home_url( '/du-an/' ), 'active' => luxnova_is_project_context() ),
+		array( 'label' => 'Dịch vụ', 'url' => get_post_type_archive_link( 'luxnova_service' ) ?: home_url( '/dich-vu/' ), 'active' => luxnova_is_service_context() ),
+		array( 'label' => 'Bảng giá', 'url' => home_url( '/bang-gia/' ), 'active' => luxnova_is_pricing_context() ),
 		array( 'label' => 'Kiến thức', 'url' => get_permalink( get_option( 'page_for_posts' ) ) ?: '#', 'active' => is_home() || is_singular( 'post' ) ),
 		array( 'label' => 'Liên hệ', 'url' => '#lien-he', 'active' => false ),
 	);
