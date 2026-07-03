@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 430" role="img" aria-label="Spa project">
+  <rect width="620" height="430" fill="#d6a84f"/>
+  <rect y="285" width="620" height="145" fill="#06111d"/>
+  <path d="M198 290V150a112 112 0 0 1 224 0v140" fill="#ffffff"/>
+  <path d="M240 290V154a70 70 0 0 1 140 0v136" fill="#d6a84f"/>
+  <circle cx="135" cy="160" r="34" fill="#f2cf7a"/>
+  <circle cx="488" cy="160" r="34" fill="#f2cf7a"/>
+</svg>

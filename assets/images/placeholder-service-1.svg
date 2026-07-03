@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 520" role="img" aria-label="Essential interior">
+  <rect width="760" height="520" fill="#0e1d2b"/>
+  <rect x="0" y="0" width="760" height="260" fill="#ffffff"/>
+  <rect y="360" width="760" height="160" fill="#06111d"/>
+  <rect x="58" y="118" width="210" height="245" fill="#ffffff" opacity=".65"/>
+  <rect x="306" y="144" width="360" height="170" fill="#0a1826"/>
+  <rect x="285" y="315" width="380" height="92" rx="16" fill="#f2cf7a"/>
+  <rect x="360" y="285" width="126" height="72" rx="10" fill="#ffffff"/>
+  <rect x="515" y="286" width="125" height="70" rx="10" fill="#d6a84f"/>
+</svg>

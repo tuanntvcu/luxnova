@@ -1,0 +1,62 @@
+@font-face {
+	font-family: "Cormorant Garamond";
+	src: url("../fonts/CormorantGaramond-VariableFont_wght.ttf") format("truetype");
+	font-style: normal;
+	font-weight: 600 700;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Cormorant Garamond";
+	src: url("../fonts/CormorantGaramond-Italic-VariableFont_wght.ttf") format("truetype");
+	font-style: italic;
+	font-weight: 600 700;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Manrope";
+	src: url("../fonts/Manrope-VariableFont_wght.ttf") format("truetype");
+	font-style: normal;
+	font-weight: 400 700;
+	font-display: swap;
+}
+
+:root {
+	--fs-h1: clamp(2.5rem, 5vw, 3.25rem);
+	--fs-h2: clamp(2rem, 4vw, 2.75rem);
+	--fs-h3: clamp(1.5rem, 3vw, 2.125rem);
+	--fs-body: clamp(1rem, 1.1vw, 1.125rem);
+	--lh-body: 1.8;
+	--lh-heading: 1.15;
+}
+
+body {
+	font-family: "Manrope", sans-serif;
+	font-size: var(--fs-body);
+	font-weight: 400;
+	line-height: var(--lh-body);
+	color: #06111d;
+	background: #ffffff;
+}
+
+h1,
+h2,
+h3 {
+	font-family: "Cormorant Garamond", serif;
+	font-weight: 700;
+	line-height: var(--lh-heading);
+	letter-spacing: 0;
+}
+
+h1 {
+	font-size: var(--fs-h1);
+}
+
+h2 {
+	font-size: var(--fs-h2);
+}
+
+h3 {
+	font-size: var(--fs-h3);
+}

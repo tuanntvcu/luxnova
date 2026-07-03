@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 300" role="img" aria-label="LuxNova audit booklet">
+  <rect x="74" y="32" width="170" height="220" rx="8" fill="#ffffff" transform="rotate(-11 159 142)"/>
+  <rect x="132" y="28" width="180" height="230" rx="8" fill="#f2cf7a" transform="rotate(8 222 143)"/>
+  <rect x="160" y="52" width="150" height="205" rx="8" fill="#ffffff"/>
+  <rect x="180" y="82" width="108" height="76" fill="#0a1826"/>
+  <rect x="180" y="178" width="108" height="10" fill="#d6a84f"/>
+  <rect x="180" y="198" width="86" height="8" fill="#5d6b78"/>
+  <text x="180" y="74" fill="#06111d" font-family="Cormorant Garamond,serif" font-size="20">LUXNOVA</text>
+</svg>

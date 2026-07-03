@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 520" role="img" aria-label="Signature interior">
+  <rect width="760" height="520" fill="#06111d"/>
+  <rect y="0" width="760" height="330" fill="#d6a84f"/>
+  <rect x="60" y="80" width="180" height="280" fill="#0a1826"/>
+  <rect x="285" y="82" width="160" height="180" fill="#ffffff"/>
+  <rect x="505" y="86" width="145" height="250" fill="#0a1826"/>
+  <rect y="350" width="760" height="170" fill="#06111d"/>
+  <rect x="220" y="305" width="360" height="90" rx="18" fill="#f2cf7a"/>
+  <circle cx="380" cy="156" r="48" fill="#0e1d2b"/>
+  <rect x="310" y="395" width="260" height="50" rx="8" fill="#06111d"/>
+</svg>

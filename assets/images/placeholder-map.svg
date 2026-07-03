@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 180" role="img" aria-label="Map placeholder">
+  <rect width="480" height="180" fill="#ffffff"/>
+  <path d="M0 135c84-44 124-22 203-55 91-38 157-25 277-66" fill="none" stroke="#ffffff" stroke-width="18"/>
+  <path d="M40 0c44 73 86 102 150 180M310 0c-12 58 5 112 52 180" fill="none" stroke="#d6a84f" stroke-width="8"/>
+  <circle cx="300" cy="78" r="22" fill="#d6a84f"/>
+  <circle cx="300" cy="78" r="8" fill="#ffffff"/>
+</svg>
