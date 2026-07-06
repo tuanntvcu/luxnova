@@ -11,8 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 add_action( 'wp_enqueue_scripts', 'luxnova_enqueue_assets' );
 function luxnova_enqueue_assets(): void {
-	$css_path = LUXNOVA_DIR . 'assets/css/main.css';
-	$js_path  = LUXNOVA_DIR . 'assets/js/main.js';
+	$css_path        = LUXNOVA_DIR . 'assets/css/main.css';
+	$cursor_css_path = LUXNOVA_DIR . 'assets/css/cursor.css';
+	$js_path         = LUXNOVA_DIR . 'assets/js/main.js';
+	$cursor_js_path  = LUXNOVA_DIR . 'assets/js/cursor.js';
 
 	wp_enqueue_style(
 		'luxnova-main',
@@ -21,11 +23,34 @@ function luxnova_enqueue_assets(): void {
 		file_exists( $css_path ) ? (string) filemtime( $css_path ) : LUXNOVA_VERSION
 	);
 
+	wp_enqueue_style(
+		'luxnova-cursor',
+		LUXNOVA_URI . 'assets/css/cursor.css',
+		array( 'luxnova-main' ),
+		file_exists( $cursor_css_path ) ? (string) filemtime( $cursor_css_path ) : LUXNOVA_VERSION
+	);
+
 	wp_enqueue_script(
 		'luxnova-main',
 		LUXNOVA_URI . 'assets/js/main.js',
 		array(),
 		file_exists( $js_path ) ? (string) filemtime( $js_path ) : LUXNOVA_VERSION,
+		true
+	);
+
+	wp_enqueue_script(
+		'luxnova-gsap',
+		'https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js',
+		array(),
+		'3.12.5',
+		true
+	);
+
+	wp_enqueue_script(
+		'luxnova-cursor',
+		LUXNOVA_URI . 'assets/js/cursor.js',
+		array( 'luxnova-gsap' ),
+		file_exists( $cursor_js_path ) ? (string) filemtime( $cursor_js_path ) : LUXNOVA_VERSION,
 		true
 	);
 
@@ -41,7 +66,7 @@ function luxnova_enqueue_assets(): void {
 
 add_filter( 'script_loader_tag', 'luxnova_defer_scripts', 10, 3 );
 function luxnova_defer_scripts( string $tag, string $handle, string $src ): string {
-	if ( 'luxnova-main' !== $handle ) {
+	if ( ! in_array( $handle, array( 'luxnova-main', 'luxnova-cursor' ), true ) ) {
 		return $tag;
 	}
 

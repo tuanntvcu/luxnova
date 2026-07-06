@@ -1,0 +1,94 @@
+:root {
+	--cursor-size: 34px;
+	--cursor-dot-size: 6px;
+	--cursor-color: #c8a46a;
+	--cursor-label-color: #ffffff;
+	--cursor-button-dot: #111111;
+}
+
+html.luxnova-cursor-enabled,
+html.luxnova-cursor-enabled body,
+html.luxnova-cursor-enabled a,
+html.luxnova-cursor-enabled button,
+html.luxnova-cursor-enabled .button,
+html.luxnova-cursor-enabled .btn,
+html.luxnova-cursor-enabled .wp-element-button,
+html.luxnova-cursor-enabled input[type="submit"] {
+	cursor: none;
+}
+
+html.luxnova-cursor-enabled input:not([type="submit"]),
+html.luxnova-cursor-enabled textarea,
+html.luxnova-cursor-enabled select,
+html.luxnova-cursor-enabled iframe,
+html.luxnova-cursor-enabled .gm-style,
+html.luxnova-cursor-enabled .gm-style * {
+	cursor: auto;
+}
+
+.luxnova-cursor {
+	position: fixed;
+	z-index: 2147483647;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+	pointer-events: none;
+	contain: layout style;
+}
+
+.luxnova-cursor__dot,
+.luxnova-cursor__ring {
+	position: fixed;
+	z-index: 2147483647;
+	top: 0;
+	left: 0;
+	pointer-events: none;
+	opacity: 0;
+	will-change: transform, opacity;
+}
+
+.luxnova-cursor__dot {
+	width: var(--cursor-dot-size);
+	height: var(--cursor-dot-size);
+	border-radius: 999px;
+	background: var(--cursor-color);
+}
+
+.luxnova-cursor__ring {
+	display: grid;
+	place-items: center;
+	width: var(--cursor-size);
+	height: var(--cursor-size);
+	border: 1px solid var(--cursor-color);
+	border-radius: 999px;
+	background: transparent;
+	color: var(--cursor-label-color);
+	opacity: 0;
+}
+
+.luxnova-cursor__label {
+	display: block;
+	opacity: 0;
+	color: currentColor;
+	font-family: "Manrope", sans-serif;
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	line-height: 1;
+	text-transform: uppercase;
+	transform: translate3d(0, 1px, 0);
+	will-change: opacity;
+}
+
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+	html.luxnova-cursor-enabled,
+	html.luxnova-cursor-enabled body,
+	html.luxnova-cursor-enabled a {
+		cursor: auto;
+	}
+
+	.luxnova-cursor {
+		display: none;
+	}
+}
