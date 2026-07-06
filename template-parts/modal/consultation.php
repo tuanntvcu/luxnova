@@ -8,14 +8,21 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+$modal_data = luxnova_consultation_modal_data();
+$benefits   = $modal_data['benefits'] ?? array();
 ?>
 <div class="consultation-modal" id="consultation-modal" aria-hidden="true" hidden>
 	<div class="consultation-modal__backdrop" data-consultation-close></div>
 	<div class="consultation-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="consultation-modal-title" tabindex="-1">
 		<div class="consultation-modal__form-panel">
-			<p class="consultation-modal__eyebrow">Đặt lịch tư vấn</p>
-			<h2 id="consultation-modal-title">Nhận tư vấn thiết kế nội thất miễn phí</h2>
-			<p class="consultation-modal__intro">Đội ngũ chuyên gia của LuxNova sẽ liên hệ để lắng nghe nhu cầu và tư vấn giải pháp phù hợp nhất.</p>
+			<?php if ( ! empty( $modal_data['eyebrow'] ) ) : ?>
+				<p class="consultation-modal__eyebrow"><?php echo esc_html( $modal_data['eyebrow'] ); ?></p>
+			<?php endif; ?>
+			<h2 id="consultation-modal-title"><?php echo esc_html( $modal_data['title'] ?? '' ); ?></h2>
+			<?php if ( ! empty( $modal_data['intro'] ) ) : ?>
+				<p class="consultation-modal__intro"><?php echo esc_html( $modal_data['intro'] ); ?></p>
+			<?php endif; ?>
 
 			<form class="consultation-form" data-consultation-form>
 				<div class="consultation-form__grid consultation-form__grid--two">
@@ -83,24 +90,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<button class="consultation-modal__close" type="button" aria-label="Đóng modal" data-consultation-close>
 				<span aria-hidden="true">×</span>
 			</button>
-			<?php echo luxnova_image( '', 'luxnova-card', array( 'class' => 'consultation-modal__image', 'alt' => '' ), 'assets/images/placeholder-service-2.svg' ); ?>
-			<div class="consultation-modal__benefits">
-				<div>
-					<span><?php echo luxnova_icon( 'clock' ); ?></span>
-					<strong>Phản hồi trong 15 phút</strong>
-					<p>Cam kết phản hồi nhanh chóng</p>
+			<?php echo luxnova_image( $modal_data['image'] ?? '', 'luxnova-card', array( 'class' => 'consultation-modal__image', 'alt' => '' ), $modal_data['image_fallback'] ?? 'assets/images/placeholder-service-2.svg' ); ?>
+			<?php if ( ! empty( $benefits ) ) : ?>
+				<div class="consultation-modal__benefits">
+					<?php foreach ( $benefits as $benefit ) : ?>
+						<div>
+							<span><?php echo luxnova_icon_media( $benefit, 'shield' ); ?></span>
+							<strong><?php echo esc_html( $benefit['title'] ?? '' ); ?></strong>
+							<?php if ( ! empty( $benefit['description'] ) ) : ?>
+								<p><?php echo esc_html( $benefit['description'] ); ?></p>
+							<?php endif; ?>
+						</div>
+					<?php endforeach; ?>
 				</div>
-				<div>
-					<span><?php echo luxnova_icon( 'users' ); ?></span>
-					<strong>Tư vấn miễn phí 1:1</strong>
-					<p>Lắng nghe và đề xuất giải pháp phù hợp</p>
-				</div>
-				<div>
-					<span><?php echo luxnova_icon( 'shield' ); ?></span>
-					<strong>Bảo mật thông tin</strong>
-					<p>Thông tin của bạn được bảo mật tuyệt đối</p>
-				</div>
-			</div>
+			<?php endif; ?>
 		</div>
 	</div>
 </div>

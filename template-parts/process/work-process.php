@@ -16,7 +16,7 @@ $steps   = $section['steps'] ?? array();
 		<div class="process-line">
 			<?php foreach ( $steps as $step ) : ?>
 				<article class="process-step reveal-on-scroll">
-					<span class="process-step__icon"><?php echo luxnova_icon( $step['icon'] ?? 'home' ); ?></span>
+					<span class="process-step__icon"><?php echo luxnova_icon_media( $step, 'home' ); ?></span>
 					<span class="process-step__number"><?php echo esc_html( $step['number'] ?? '' ); ?></span>
 					<h3><?php echo esc_html( $step['title'] ?? '' ); ?></h3>
 					<p><?php echo esc_html( $step['description'] ?? '' ); ?></p>

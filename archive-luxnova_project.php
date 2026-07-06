@@ -7,9 +7,12 @@
 
 get_header();
 
-$selected_type = sanitize_title( wp_unslash( $_GET['project_type'] ?? '' ) );
-$selected_sort = sanitize_key( wp_unslash( $_GET['project_sort'] ?? 'newest' ) );
-$stats_section = luxnova_default_homepage_sections()[1] ?? array( 'items' => array() );
+$page_data      = luxnova_project_archive_data();
+$hero           = $page_data['hero'] ?? array();
+$closing_cta    = $page_data['closing_cta'] ?? array();
+$selected_type  = sanitize_title( wp_unslash( $_GET['project_type'] ?? '' ) );
+$selected_sort  = sanitize_key( wp_unslash( $_GET['project_sort'] ?? 'newest' ) );
+$stats_section  = luxnova_default_homepage_sections()[1] ?? array( 'items' => array() );
 $fallback_cards = luxnova_default_archive_project_cards();
 $has_real_posts = have_posts();
 
@@ -33,13 +36,17 @@ if ( 'oldest' === $selected_sort ) {
 ?>
 <section class="project-archive-hero">
 	<div class="project-archive-hero__media" aria-hidden="true">
-		<?php echo luxnova_image( '', 'luxnova-hero', array( 'class' => 'project-archive-hero__image', 'alt' => '', 'loading' => 'eager', 'fetchpriority' => 'high' ), 'assets/images/placeholder-hero.svg' ); ?>
+		<?php echo luxnova_image( $hero['image'] ?? '', 'luxnova-hero', array( 'class' => 'project-archive-hero__image', 'alt' => '', 'loading' => 'eager', 'fetchpriority' => 'high' ), $hero['image_fallback'] ?? 'assets/images/placeholder-hero.svg' ); ?>
 	</div>
 	<div class="project-archive-hero__overlay"></div>
 	<div class="container project-archive-hero__content reveal-on-scroll">
-		<p class="project-archive-hero__eyebrow">Dự án</p>
-		<h1>Không gian sống được kiến tạo từ cảm hứng</h1>
-		<p>Mỗi dự án là một hành trình sáng tạo, nơi LuxNova kết hợp giữa thẩm mỹ, công năng và dấu ấn cá nhân để tạo nên những không gian sống bền vững.</p>
+		<?php if ( ! empty( $hero['eyebrow'] ) ) : ?>
+			<p class="project-archive-hero__eyebrow"><?php echo esc_html( $hero['eyebrow'] ); ?></p>
+		<?php endif; ?>
+		<h1><?php echo esc_html( $hero['title'] ?? '' ); ?></h1>
+		<?php if ( ! empty( $hero['description'] ) ) : ?>
+			<p><?php echo esc_html( $hero['description'] ); ?></p>
+		<?php endif; ?>
 	</div>
 	<div class="project-archive-hero__stats">
 		<?php get_template_part( 'template-parts/statistics/statistics', null, array( 'section' => $stats_section, 'embedded' => true ) ); ?>
@@ -114,14 +121,16 @@ if ( 'oldest' === $selected_sort ) {
 
 <section class="project-consultation-cta">
 	<div class="project-consultation-cta__image" aria-hidden="true">
-		<?php echo luxnova_image( '', 'luxnova-card', array( 'alt' => '' ), 'assets/images/placeholder-interior.svg' ); ?>
+		<?php echo luxnova_image( $closing_cta['image'] ?? '', 'luxnova-card', array( 'alt' => '' ), $closing_cta['image_fallback'] ?? 'assets/images/placeholder-interior.svg' ); ?>
 	</div>
 	<div class="container project-consultation-cta__inner">
 		<div>
-			<h2>Bạn có dự án cần tư vấn?</h2>
-			<p>Đội ngũ LuxNova luôn sẵn sàng lắng nghe và đưa ra giải pháp thiết kế tối ưu nhất cho không gian của bạn.</p>
+			<h2><?php echo esc_html( $closing_cta['title'] ?? '' ); ?></h2>
+			<?php if ( ! empty( $closing_cta['description'] ) ) : ?>
+				<p><?php echo esc_html( $closing_cta['description'] ); ?></p>
+			<?php endif; ?>
 		</div>
-		<a href="#consultation-modal" class="button button--gold js-consultation-modal">Đặt lịch tư vấn <span aria-hidden="true">→</span></a>
+		<a href="#consultation-modal" class="button button--gold js-consultation-modal"><?php echo esc_html( $closing_cta['button_label'] ?? '' ); ?> <span aria-hidden="true">→</span></a>
 	</div>
 </section>
 <?php

@@ -20,7 +20,7 @@ $section = $args['section'] ?? array();
 		<ul class="audit-cta__benefits">
 			<?php foreach ( (array) ( $section['benefits'] ?? array() ) as $benefit ) : ?>
 				<li class="reveal-on-scroll">
-					<span><?php echo luxnova_icon( $benefit['icon'] ?? 'document' ); ?></span>
+					<span><?php echo luxnova_icon_media( $benefit, 'document' ); ?></span>
 					<?php echo esc_html( $benefit['label'] ?? '' ); ?>
 				</li>
 			<?php endforeach; ?>

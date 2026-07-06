@@ -9,74 +9,50 @@
 
 get_header();
 
-$phone     = luxnova_get_option( 'phone', '0968 888 168' );
-$email     = luxnova_get_option( 'email', 'hello@luxnova.vn' );
-$address   = luxnova_get_option( 'address', 'Tầng 5, Tòa nhà Harmony, 47-49-51 Phùng Khắc Khoan, P. Đa Kao, Quận 1, TP. Hồ Chí Minh' );
-$map_image = luxnova_get_option( 'map_image', '' );
-$facebook  = '#';
-$socials   = luxnova_get_option( 'social_links', array() );
+$page_data     = luxnova_contact_page_data();
+$hero          = $page_data['hero'] ?? array();
+$trust_items   = $page_data['trust_items'] ?? array();
+$contact_items = $page_data['contact_items'] ?? array();
+$map           = $page_data['map'] ?? array();
+$closing_cta   = $page_data['closing_cta'] ?? array();
+$map_query     = luxnova_get_option( 'address', '' );
 
-foreach ( (array) $socials as $social ) {
-	if ( false !== stripos( (string) ( $social['platform'] ?? '' ), 'facebook' ) && ! empty( $social['url'] ) ) {
-		$facebook = $social['url'];
+foreach ( $contact_items as $item ) {
+	if ( 'pin' === ( $item['icon'] ?? '' ) && ! empty( $item['content'] ) ) {
+		$map_query = (string) $item['content'];
 		break;
 	}
 }
-
-$contact_items = array(
-	array(
-		'icon' => 'pin',
-		'title' => 'Địa chỉ',
-		'content' => $address,
-	),
-	array(
-		'icon' => 'phone',
-		'title' => 'Số điện thoại',
-		'content' => $phone,
-		'url' => 'tel:' . preg_replace( '/\D+/', '', (string) $phone ),
-	),
-	array(
-		'icon' => 'mail',
-		'title' => 'Email',
-		'content' => $email,
-		'url' => 'mailto:' . $email,
-	),
-	array(
-		'icon' => 'clock',
-		'title' => 'Giờ làm việc',
-		'content' => "Thứ 2 - Thứ 7: 8:30 - 17:30\nChủ nhật: 9:00 - 16:00",
-	),
-	array(
-		'icon' => 'facebook',
-		'title' => 'Fanpage',
-		'content' => 'facebook.com/luxnova.vn',
-		'url' => $facebook,
-	),
-);
 ?>
 <section class="contact-hero">
 	<div class="contact-hero__media" aria-hidden="true">
-		<?php echo luxnova_image( '', 'luxnova-hero', array( 'class' => 'contact-hero__image', 'alt' => '', 'loading' => 'eager', 'fetchpriority' => 'high' ), 'assets/images/placeholder-service-2.svg' ); ?>
+		<?php echo luxnova_image( $hero['image'] ?? '', 'luxnova-hero', array( 'class' => 'contact-hero__image', 'alt' => '', 'loading' => 'eager', 'fetchpriority' => 'high' ), $hero['image_fallback'] ?? 'assets/images/placeholder-service-2.svg' ); ?>
 	</div>
 	<div class="contact-hero__overlay"></div>
 	<div class="container contact-hero__content reveal-on-scroll">
-		<p class="contact-hero__eyebrow">Liên hệ</p>
-		<h1>Chúng tôi luôn sẵn sàng <span>lắng nghe và đồng hành</span> cùng bạn</h1>
-		<p>Hãy chia sẻ ý tưởng của bạn, LuxNova sẽ phản hồi trong thời gian sớm nhất để cùng bạn kiến tạo không gian sống lý tưởng.</p>
-		<div class="contact-hero__trust">
-			<div>
-				<?php echo luxnova_icon( 'clock' ); ?>
-				<span>Phản hồi nhanh chóng<br>trong 24h</span>
+		<?php if ( ! empty( $hero['eyebrow'] ) ) : ?>
+			<p class="contact-hero__eyebrow"><?php echo esc_html( $hero['eyebrow'] ); ?></p>
+		<?php endif; ?>
+		<h1>
+			<?php echo esc_html( $hero['title'] ?? '' ); ?>
+			<?php if ( ! empty( $hero['highlight'] ) ) : ?>
+				<span><?php echo esc_html( $hero['highlight'] ); ?></span>
+			<?php endif; ?>
+			<?php echo esc_html( $hero['title_suffix'] ?? '' ); ?>
+		</h1>
+		<?php if ( ! empty( $hero['description'] ) ) : ?>
+			<p><?php echo esc_html( $hero['description'] ); ?></p>
+		<?php endif; ?>
+		<?php if ( ! empty( $trust_items ) ) : ?>
+			<div class="contact-hero__trust">
+				<?php foreach ( $trust_items as $item ) : ?>
+					<div>
+						<?php echo luxnova_icon_media( $item, 'shield' ); ?>
+						<span><?php echo nl2br( esc_html( $item['label'] ?? '' ) ); ?></span>
+					</div>
+				<?php endforeach; ?>
 			</div>
-			<div>
-				<?php echo luxnova_icon( 'shield' ); ?>
-				<span>Bảo mật thông tin<br>tuyệt đối</span>
-			</div>
-			<div>
-				<?php echo luxnova_icon( 'phone' ); ?>
-				<span>Tư vấn tận tâm<br>hoàn toàn miễn phí</span>
-			</div>
-		</div>
+		<?php endif; ?>
 	</div>
 </section>
 
@@ -84,7 +60,7 @@ $contact_items = array(
 	<div class="container contact-main__grid">
 		<div class="contact-form-panel reveal-on-scroll">
 			<header class="service-section-heading">
-				<h2>Gửi yêu cầu tư vấn</h2>
+				<h2><?php echo esc_html( $page_data['form_heading'] ?? '' ); ?></h2>
 			</header>
 
 			<form class="consultation-form contact-form" data-consultation-form>
@@ -134,18 +110,18 @@ $contact_items = array(
 
 		<aside class="contact-info-panel reveal-on-scroll">
 			<header class="service-section-heading">
-				<h2>Thông tin liên hệ</h2>
+				<h2><?php echo esc_html( $page_data['info_heading'] ?? '' ); ?></h2>
 			</header>
 			<div class="contact-info-list">
 				<?php foreach ( $contact_items as $item ) : ?>
 					<div class="contact-info-item">
-						<span class="contact-info-item__icon"><?php echo luxnova_icon( $item['icon'] ); ?></span>
+						<span class="contact-info-item__icon"><?php echo luxnova_icon_media( $item, 'pin' ); ?></span>
 						<div>
-							<strong><?php echo esc_html( $item['title'] ); ?></strong>
+							<strong><?php echo esc_html( $item['title'] ?? '' ); ?></strong>
 							<?php if ( ! empty( $item['url'] ) ) : ?>
-								<a href="<?php echo esc_url( $item['url'] ); ?>"><?php echo nl2br( esc_html( $item['content'] ) ); ?></a>
+								<a href="<?php echo esc_url( $item['url'] ); ?>"><?php echo nl2br( esc_html( $item['content'] ?? '' ) ); ?></a>
 							<?php else : ?>
-								<p><?php echo nl2br( esc_html( $item['content'] ) ); ?></p>
+								<p><?php echo nl2br( esc_html( $item['content'] ?? '' ) ); ?></p>
 							<?php endif; ?>
 						</div>
 					</div>
@@ -158,11 +134,13 @@ $contact_items = array(
 <section class="contact-map-section">
 	<div class="container">
 		<div class="contact-map reveal-on-scroll">
-			<?php echo luxnova_image( $map_image, 'large', array( 'class' => 'contact-map__image', 'alt' => esc_attr__( 'LuxNova office map', 'luxnova' ) ), 'assets/images/placeholder-map.svg' ); ?>
+			<?php echo luxnova_image( $map['image'] ?? '', 'large', array( 'class' => 'contact-map__image', 'alt' => esc_attr__( 'LuxNova office map', 'luxnova' ) ), 'assets/images/placeholder-map.svg' ); ?>
 			<div class="contact-map__card">
-				<p class="contact-map__label">Ghé thăm văn phòng</p>
-				<p>Chúng tôi rất hân hạnh được đón tiếp bạn tại văn phòng để trao đổi chi tiết hơn về dự án của bạn.</p>
-				<a class="button button--outline" href="https://www.google.com/maps/search/?api=1&query=<?php echo rawurlencode( (string) $address ); ?>" target="_blank" rel="noopener noreferrer">Chỉ đường <span aria-hidden="true">→</span></a>
+				<p class="contact-map__label"><?php echo esc_html( $map['label'] ?? '' ); ?></p>
+				<?php if ( ! empty( $map['description'] ) ) : ?>
+					<p><?php echo esc_html( $map['description'] ); ?></p>
+				<?php endif; ?>
+				<a class="button button--outline" href="https://www.google.com/maps/search/?api=1&query=<?php echo rawurlencode( $map_query ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $map['button_label'] ?? '' ); ?> <span aria-hidden="true">→</span></a>
 			</div>
 		</div>
 	</div>
@@ -170,15 +148,19 @@ $contact_items = array(
 
 <section class="contact-closing-cta">
 	<div class="contact-closing-cta__image" aria-hidden="true">
-		<?php echo luxnova_image( '', 'luxnova-card', array( 'alt' => '' ), 'assets/images/placeholder-interior.svg' ); ?>
+		<?php echo luxnova_image( $closing_cta['image'] ?? '', 'luxnova-card', array( 'alt' => '' ), $closing_cta['image_fallback'] ?? 'assets/images/placeholder-interior.svg' ); ?>
 	</div>
 	<div class="container contact-closing-cta__inner">
 		<div>
-			<p>Bắt đầu hành trình kiến tạo không gian sống</p>
-			<h2>Đặt lịch tư vấn miễn phí cùng LuxNova</h2>
-			<span>Đội ngũ kiến trúc sư giàu kinh nghiệm của chúng tôi sẽ đồng hành cùng bạn từ ý tưởng đến hiện thực.</span>
+			<?php if ( ! empty( $closing_cta['eyebrow'] ) ) : ?>
+				<p><?php echo esc_html( $closing_cta['eyebrow'] ); ?></p>
+			<?php endif; ?>
+			<h2><?php echo esc_html( $closing_cta['title'] ?? '' ); ?></h2>
+			<?php if ( ! empty( $closing_cta['description'] ) ) : ?>
+				<span><?php echo esc_html( $closing_cta['description'] ); ?></span>
+			<?php endif; ?>
 		</div>
-		<a href="#consultation-modal" class="button button--gold js-consultation-modal">Đặt lịch tư vấn ngay <span aria-hidden="true">→</span></a>
+		<a href="#consultation-modal" class="button button--gold js-consultation-modal"><?php echo esc_html( $closing_cta['button_label'] ?? '' ); ?> <span aria-hidden="true">→</span></a>
 	</div>
 </section>
 <?php

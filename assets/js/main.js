@@ -388,7 +388,7 @@
 		}
 
 		element.dataset.counted = 'true';
-		const duration = 900;
+		const duration = 2500;
 		const start = performance.now();
 		const tick = (time) => {
 			const progress = Math.min((time - start) / duration, 1);

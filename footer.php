@@ -84,7 +84,18 @@ function luxnova_footer_services_fallback(): void {
 }
 
 function luxnova_footer_support_fallback(): void {
-	luxnova_footer_menu_fallback( array( 'Chính sách bảo hành', 'Quy trình làm việc', 'Câu hỏi thường gặp', 'Liên hệ' ) );
+	echo '<ul class="footer-menu">';
+	$items = array(
+		array( 'label' => 'Chính sách bảo hành', 'url' => '#' ),
+		array( 'label' => 'Quy trình làm việc', 'url' => '#' ),
+		array( 'label' => 'Câu hỏi thường gặp', 'url' => home_url( '/faq/' ) ),
+		array( 'label' => 'Liên hệ', 'url' => home_url( '/lien-he/' ) ),
+	);
+
+	foreach ( $items as $item ) {
+		printf( '<li><a href="%s">%s</a></li>', esc_url( $item['url'] ), esc_html( $item['label'] ) );
+	}
+	echo '</ul>';
 }
 
 function luxnova_footer_menu_fallback( array $items ): void {

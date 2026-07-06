@@ -2,6 +2,8 @@
 /**
  * Contact page slug fallback.
  *
+ * Template Name: LuxNova Contact Fallback
+ *
  * @package LuxNova
  */
 

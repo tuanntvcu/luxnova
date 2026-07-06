@@ -17,7 +17,7 @@ $embedded = ! empty( $args['embedded'] );
 	<div class="container stats-band__grid">
 		<?php foreach ( $items as $item ) : ?>
 			<article class="stat-item reveal-on-scroll">
-				<span class="stat-item__icon"><?php echo luxnova_icon( $item['icon'] ?? 'chart' ); ?></span>
+				<span class="stat-item__icon"><?php echo luxnova_icon_media( $item, 'chart' ); ?></span>
 				<span class="stat-item__value"><span data-count-up="<?php echo esc_attr( preg_replace( '/\D+/', '', (string) ( $item['number'] ?? '0' ) ) ); ?>"><?php echo esc_html( $item['number'] ?? '' ); ?></span><?php echo esc_html( $item['suffix'] ?? '' ); ?></span>
 				<span class="stat-item__label"><?php echo esc_html( $item['label'] ?? '' ); ?></span>
 			</article>

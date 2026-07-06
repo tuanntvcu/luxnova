@@ -24,6 +24,32 @@ function luxnova_get_option( string $key, mixed $default = '' ): mixed {
 	return $default;
 }
 
+function luxnova_get_page_setting( string $key, mixed $default = '', int $post_id = 0 ): mixed {
+	$post_id = $post_id ?: (int) get_queried_object_id();
+
+	if ( $post_id && function_exists( 'get_field' ) ) {
+		$value = get_field( $key, $post_id );
+		if ( null !== $value && false !== $value && '' !== $value && array() !== $value ) {
+			return $value;
+		}
+	}
+
+	if ( $post_id ) {
+		$value = get_post_meta( $post_id, $key, true );
+		if ( '' !== $value && array() !== $value ) {
+			return $value;
+		}
+	}
+
+	return luxnova_get_option( $key, $default );
+}
+
+function luxnova_get_page_array_setting( string $key, array $default = array(), int $post_id = 0 ): array {
+	$value = luxnova_get_page_setting( $key, $default, $post_id );
+
+	return is_array( $value ) && array() !== $value ? $value : $default;
+}
+
 function luxnova_image_url( mixed $image, string $size = 'large', string $fallback = 'assets/images/placeholder-interior.svg' ): string {
 	if ( is_numeric( $image ) ) {
 		$url = wp_get_attachment_image_url( (int) $image, $size );
@@ -124,6 +150,23 @@ function luxnova_icon( string $name ): string {
 	);
 
 	return $icons[ $name ] ?? $icons['home'];
+}
+
+function luxnova_icon_media( array $item, string $default_icon = 'home', string $image_size = 'thumbnail' ): string {
+	if ( ! empty( $item['icon_image'] ) ) {
+		return luxnova_image(
+			$item['icon_image'],
+			$image_size,
+			array(
+				'class' => 'luxnova-icon-media__image',
+				'alt' => '',
+				'loading' => 'lazy',
+			),
+			'assets/images/placeholder-logo.svg'
+		);
+	}
+
+	return luxnova_icon( (string) ( $item['icon'] ?? $default_icon ) );
 }
 
 function luxnova_default_homepage_sections(): array {
@@ -351,7 +394,242 @@ function luxnova_why_choose_items(): array {
 	);
 }
 
-function luxnova_pricing_plans(): array {
+function luxnova_contact_page_data(): array {
+	$phone    = luxnova_get_option( 'phone', '0968 888 168' );
+	$email    = luxnova_get_option( 'email', 'hello@luxnova.vn' );
+	$address  = luxnova_get_option( 'address', 'Tầng 5, Tòa nhà Harmony, 47-49-51 Phùng Khắc Khoan, P. Đa Kao, Quận 1, TP. Hồ Chí Minh' );
+	$facebook = '#';
+	$socials  = luxnova_get_option( 'social_links', array() );
+
+	foreach ( (array) $socials as $social ) {
+		if ( false !== stripos( (string) ( $social['platform'] ?? '' ), 'facebook' ) && ! empty( $social['url'] ) ) {
+			$facebook = $social['url'];
+			break;
+		}
+	}
+
+	$default = array(
+		'hero' => array(
+			'eyebrow' => 'Liên hệ',
+			'title' => 'Chúng tôi luôn sẵn sàng',
+			'highlight' => 'lắng nghe và đồng hành',
+			'title_suffix' => 'cùng bạn',
+			'description' => 'Hãy chia sẻ ý tưởng của bạn, LuxNova sẽ phản hồi trong thời gian sớm nhất để cùng bạn kiến tạo không gian sống lý tưởng.',
+			'image' => '',
+			'image_fallback' => 'assets/images/placeholder-service-2.svg',
+		),
+		'trust_items' => array(
+			array( 'icon' => 'clock', 'label' => "Phản hồi nhanh chóng\ntrong 24h" ),
+			array( 'icon' => 'shield', 'label' => "Bảo mật thông tin\ntuyệt đối" ),
+			array( 'icon' => 'phone', 'label' => "Tư vấn tận tâm\nhoàn toàn miễn phí" ),
+		),
+		'form_heading' => 'Gửi yêu cầu tư vấn',
+		'info_heading' => 'Thông tin liên hệ',
+		'contact_items' => array(
+			array( 'icon' => 'pin', 'title' => 'Địa chỉ', 'content' => $address ),
+			array( 'icon' => 'phone', 'title' => 'Số điện thoại', 'content' => $phone, 'url' => 'tel:' . preg_replace( '/\D+/', '', (string) $phone ) ),
+			array( 'icon' => 'mail', 'title' => 'Email', 'content' => $email, 'url' => 'mailto:' . $email ),
+			array( 'icon' => 'clock', 'title' => 'Giờ làm việc', 'content' => "Thứ 2 - Thứ 7: 8:30 - 17:30\nChủ nhật: 9:00 - 16:00" ),
+			array( 'icon' => 'facebook', 'title' => 'Fanpage', 'content' => 'facebook.com/luxnova.vn', 'url' => $facebook ),
+		),
+		'map' => array(
+			'image' => luxnova_get_option( 'map_image', '' ),
+			'label' => 'Ghé thăm văn phòng',
+			'description' => 'Chúng tôi rất hân hạnh được đón tiếp bạn tại văn phòng để trao đổi chi tiết hơn về dự án của bạn.',
+			'button_label' => 'Chỉ đường',
+		),
+		'closing_cta' => array(
+			'image' => '',
+			'image_fallback' => 'assets/images/placeholder-interior.svg',
+			'eyebrow' => 'Bắt đầu hành trình kiến tạo không gian sống',
+			'title' => 'Đặt lịch tư vấn miễn phí cùng LuxNova',
+			'description' => 'Đội ngũ kiến trúc sư giàu kinh nghiệm của chúng tôi sẽ đồng hành cùng bạn từ ý tưởng đến hiện thực.',
+			'button_label' => 'Đặt lịch tư vấn ngay',
+		),
+	);
+
+	return array_replace_recursive( $default, luxnova_get_page_array_setting( 'contact_page_content', array() ) );
+}
+
+function luxnova_faq_page_data(): array {
+	$default = array(
+		'hero' => array(
+			'eyebrow' => 'Câu hỏi thường gặp',
+			'title' => 'Giải đáp mọi thắc mắc về',
+			'highlight' => 'dịch vụ nội thất',
+			'description' => 'Tổng hợp những câu hỏi phổ biến về quy trình, chi phí, thời gian và chính sách của LuxNova.',
+			'image' => '',
+			'image_fallback' => 'assets/images/placeholder-service-2.svg',
+		),
+		'sidebar' => array(
+			'heading' => 'Câu hỏi thường gặp',
+			'description' => 'Nếu bạn không tìm thấy câu trả lời cho câu hỏi của mình, vui lòng liên hệ với chúng tôi để được hỗ trợ nhanh chóng.',
+			'button_label' => 'Liên hệ với chúng tôi',
+			'button_icon' => 'mail',
+			'button_url' => home_url( '/lien-he/' ),
+		),
+		'items' => luxnova_faq_items(),
+		'closing_cta' => array(
+			'image' => '',
+			'image_fallback' => 'assets/images/placeholder-interior.svg',
+			'eyebrow' => 'Sẵn sàng kiến tạo không gian sống lý tưởng?',
+			'title' => 'Đội ngũ LuxNova luôn sẵn sàng lắng nghe và đồng hành cùng bạn.',
+			'button_label' => 'Đặt lịch tư vấn',
+		),
+	);
+
+	return array_replace_recursive( $default, luxnova_get_page_array_setting( 'faq_page_content', array() ) );
+}
+
+function luxnova_pricing_page_data(): array {
+	$default = array(
+		'hero' => array(
+			'eyebrow' => 'Bảng giá',
+			'title' => 'Minh bạch chi phí An tâm tận hưởng không gian hoàn hảo',
+			'description' => 'LuxNova cung cấp các gói dịch vụ linh hoạt, phù hợp với nhu cầu và ngân sách của bạn.',
+			'image' => '',
+			'image_fallback' => 'assets/images/placeholder-service-2.svg',
+		),
+		'plans_heading' => 'Gói dịch vụ',
+		'plans_note' => '*Đơn giá mang tính tham khảo, vui lòng liên hệ để nhận báo giá chi tiết theo từng dự án.',
+		'factors_heading' => 'Các yếu tố ảnh hưởng đến chi phí',
+		'faq_heading' => 'Câu hỏi thường gặp về báo giá',
+		'faq_image' => '',
+		'faq_image_fallback' => 'assets/images/placeholder-service-3.svg',
+		'closing_cta' => array(
+			'image' => '',
+			'image_fallback' => 'assets/images/placeholder-project-1.svg',
+			'title' => 'Nhận báo giá chi tiết cho không gian của bạn',
+			'description' => 'Đội ngũ LuxNova sẽ liên hệ và gửi báo giá chi tiết phù hợp nhất với nhu cầu của bạn.',
+			'button_label' => 'Đặt lịch tư vấn',
+		),
+	);
+
+	return array_replace_recursive( $default, luxnova_get_page_array_setting( 'pricing_page_content', array() ) );
+}
+
+function luxnova_service_archive_data(): array {
+	$default = array(
+		'hero' => array(
+			'eyebrow' => 'Dịch vụ',
+			'title' => 'Giải pháp toàn diện cho không gian sống đẳng cấp',
+			'description' => 'LuxNova cung cấp dịch vụ thiết kế và thi công nội thất trọn gói, kiến tạo không gian sống tinh tế, chuẩn mực và bền vững.',
+			'image' => '',
+			'image_fallback' => 'assets/images/placeholder-hero.svg',
+			'primary_label' => 'Đặt lịch tư vấn',
+			'secondary_label' => 'Tìm hiểu thêm',
+		),
+		'services_heading' => 'Dịch vụ của chúng tôi',
+		'card_link_label' => 'Tìm hiểu thêm',
+		'process_heading' => 'Quy trình làm việc',
+		'why_heading' => 'Vì sao chọn LuxNova?',
+		'closing_cta' => array(
+			'image' => '',
+			'image_fallback' => 'assets/images/placeholder-interior.svg',
+			'title' => 'Sẵn sàng kiến tạo không gian mơ ước của bạn?',
+			'description' => 'Đội ngũ LuxNova luôn sẵn sàng lắng nghe và đưa ra giải pháp tối ưu nhất cho không gian của bạn.',
+			'button_label' => 'Đặt lịch tư vấn',
+		),
+	);
+
+	return array_replace_recursive( $default, luxnova_get_page_array_setting( 'service_archive_content', array() ) );
+}
+
+function luxnova_project_archive_data(): array {
+	$default = array(
+		'hero' => array(
+			'eyebrow' => 'Dự án',
+			'title' => 'Không gian sống được kiến tạo từ cảm hứng',
+			'description' => 'Mỗi dự án là một hành trình sáng tạo, nơi LuxNova kết hợp giữa thẩm mỹ, công năng và dấu ấn cá nhân để tạo nên những không gian sống bền vững.',
+			'image' => '',
+			'image_fallback' => 'assets/images/placeholder-hero.svg',
+		),
+		'closing_cta' => array(
+			'image' => '',
+			'image_fallback' => 'assets/images/placeholder-interior.svg',
+			'title' => 'Bạn có dự án cần tư vấn?',
+			'description' => 'Đội ngũ LuxNova luôn sẵn sàng lắng nghe và đưa ra giải pháp thiết kế tối ưu nhất cho không gian của bạn.',
+			'button_label' => 'Đặt lịch tư vấn',
+		),
+	);
+
+	return array_replace_recursive( $default, luxnova_get_page_array_setting( 'project_archive_content', array() ) );
+}
+
+function luxnova_single_project_page_data( int $post_id = 0 ): array {
+	$archive_cta = luxnova_project_archive_data()['closing_cta'] ?? array();
+	$default     = array(
+		'breadcrumb' => array(
+			'home_label' => 'Trang chủ',
+			'archive_label' => 'Dự án',
+		),
+		'summary_fallback' => 'Không gian sống được LuxNova kiến tạo với tinh thần cá nhân hóa, cân bằng giữa thẩm mỹ, công năng và chất lượng hoàn thiện.',
+		'meta_labels' => array(
+			'location' => 'Địa điểm',
+			'area' => 'Diện tích',
+			'style' => 'Phong cách',
+			'year' => 'Năm hoàn thành',
+		),
+		'actions' => array(
+			'consultation_label' => 'Đặt lịch tư vấn',
+			'brochure_label' => 'Tải hồ sơ dự án',
+			'gallery_label' => 'Xem ảnh',
+		),
+		'story_heading' => 'Câu chuyện dự án',
+		'story_fallback' => array(
+			'Từ nhu cầu sống thực tế của gia chủ, LuxNova định hình một không gian riêng tư, tinh tế và dễ sử dụng mỗi ngày.',
+			'Đội ngũ thiết kế lựa chọn vật liệu, ánh sáng và bố cục phù hợp để mỗi khu vực đều có cá tính riêng nhưng vẫn hài hòa trong tổng thể.',
+		),
+		'features' => array(
+			array( 'icon' => 'home', 'title' => 'Tối ưu công năng', 'description' => 'Bố cục không gian hợp lý, đáp ứng nhu cầu sinh hoạt.' ),
+			array( 'icon' => 'design', 'title' => 'Vật liệu cao cấp', 'description' => 'Lựa chọn kỹ lưỡng vật liệu phù hợp với phong cách dự án.' ),
+			array( 'icon' => 'users', 'title' => 'Thiết kế tinh tế', 'description' => 'Đường nét, màu sắc và tỷ lệ được xử lý nhất quán.' ),
+		),
+		'info_heading' => 'Thông tin dự án',
+		'info_labels' => array(
+			'type' => 'Loại công trình',
+			'location' => 'Địa điểm',
+			'area' => 'Diện tích',
+			'style' => 'Phong cách',
+			'year' => 'Năm hoàn thành',
+			'scope' => 'Hạng mục thực hiện',
+			'architect' => 'Kiến trúc sư',
+		),
+		'gallery_heading' => 'Thư viện hình ảnh',
+		'gallery_more_label' => 'Xem thêm ảnh',
+		'benefits_label' => 'LuxNova project benefits',
+		'benefits' => array(
+			array( 'icon' => 'users', 'title' => 'Thiết kế cá nhân hóa', 'description' => 'Đo ni đóng giày theo phong cách riêng' ),
+			array( 'icon' => 'tools', 'title' => 'Thi công trọn gói', 'description' => 'Đảm bảo tiến độ và chất lượng' ),
+			array( 'icon' => 'shield', 'title' => 'Bảo hành 5 năm', 'description' => 'Cam kết đồng hành lâu dài' ),
+			array( 'icon' => 'design', 'title' => 'Vật liệu cao cấp', 'description' => 'Nguồn gốc rõ ràng, tiêu chuẩn quốc tế' ),
+		),
+		'related_heading' => 'Dự án liên quan',
+		'related_link_label' => 'Xem tất cả dự án',
+		'closing_cta' => $archive_cta,
+	);
+
+	return array_replace_recursive( $default, luxnova_get_page_array_setting( 'single_project_content', array(), $post_id ) );
+}
+
+function luxnova_consultation_modal_data(): array {
+	$default = array(
+		'eyebrow' => 'Đặt lịch tư vấn',
+		'title' => 'Nhận tư vấn thiết kế nội thất miễn phí',
+		'intro' => 'Đội ngũ chuyên gia của LuxNova sẽ liên hệ để lắng nghe nhu cầu và tư vấn giải pháp phù hợp nhất.',
+		'image' => '',
+		'image_fallback' => 'assets/images/placeholder-service-2.svg',
+		'benefits' => array(
+			array( 'icon' => 'clock', 'title' => 'Phản hồi trong 15 phút', 'description' => 'Cam kết phản hồi nhanh chóng' ),
+			array( 'icon' => 'users', 'title' => 'Tư vấn miễn phí 1:1', 'description' => 'Lắng nghe và đề xuất giải pháp phù hợp' ),
+			array( 'icon' => 'shield', 'title' => 'Bảo mật thông tin', 'description' => 'Thông tin của bạn được bảo mật tuyệt đối' ),
+		),
+	);
+
+	return array_replace_recursive( $default, luxnova_get_page_array_setting( 'consultation_modal_content', array() ) );
+}
+
+function luxnova_default_pricing_plans(): array {
 	return array(
 		array(
 			'label' => 'Gói Basic',
@@ -359,6 +637,7 @@ function luxnova_pricing_plans(): array {
 			'price' => '250.000',
 			'unit' => 'VND/m²',
 			'features' => array( 'Khảo sát hiện trạng', 'Mặt bằng bố trí công năng 2D', 'Phối cảnh 3D cơ bản', 'Hồ sơ kỹ thuật thi công', 'Tư vấn vật liệu & màu sắc' ),
+			'button_label' => 'Liên hệ tư vấn',
 			'featured' => false,
 		),
 		array(
@@ -367,6 +646,8 @@ function luxnova_pricing_plans(): array {
 			'price' => '4.500.000',
 			'unit' => 'VND/m²',
 			'features' => array( 'Tất cả hạng mục gói Basic', 'Phối cảnh 3D chi tiết', 'Hồ sơ kỹ thuật thi công đầy đủ', 'Thi công hoàn thiện', 'Bảo hành 2 năm' ),
+			'button_label' => 'Liên hệ tư vấn',
+			'ribbon' => 'Phổ biến',
 			'featured' => true,
 		),
 		array(
@@ -375,12 +656,32 @@ function luxnova_pricing_plans(): array {
 			'price' => '6.800.000',
 			'unit' => 'VND/m²',
 			'features' => array( 'Tất cả hạng mục gói Standard', 'Vật liệu cao cấp', 'Sản xuất nội thất tại xưởng', 'Giám sát tác quyền', 'Bảo hành 5 năm' ),
+			'button_label' => 'Liên hệ tư vấn',
 			'featured' => false,
 		),
 	);
 }
 
-function luxnova_cost_factors(): array {
+function luxnova_pricing_plans(): array {
+	$page_data = luxnova_get_page_array_setting( 'pricing_page_content', array() );
+	$plans     = ! empty( $page_data['pricing_plans'] ) && is_array( $page_data['pricing_plans'] )
+		? $page_data['pricing_plans']
+		: luxnova_default_pricing_plans();
+
+	foreach ( $plans as &$plan ) {
+		$features = array();
+		foreach ( (array) ( $plan['features'] ?? array() ) as $feature ) {
+			$features[] = is_array( $feature ) ? ( $feature['text'] ?? '' ) : $feature;
+		}
+
+		$plan['features'] = array_values( array_filter( array_map( 'strval', $features ) ) );
+	}
+	unset( $plan );
+
+	return $plans;
+}
+
+function luxnova_default_cost_factors(): array {
 	return array(
 		array( 'title' => 'Diện tích & quy mô dự án', 'icon' => 'measure' ),
 		array( 'title' => 'Phong cách thiết kế', 'icon' => 'design' ),
@@ -390,12 +691,73 @@ function luxnova_cost_factors(): array {
 	);
 }
 
-function luxnova_pricing_faqs(): array {
+function luxnova_cost_factors(): array {
+	$page_data = luxnova_get_page_array_setting( 'pricing_page_content', array() );
+
+	return ! empty( $page_data['pricing_cost_factors'] ) && is_array( $page_data['pricing_cost_factors'] )
+		? $page_data['pricing_cost_factors']
+		: luxnova_default_cost_factors();
+}
+
+function luxnova_default_pricing_faqs(): array {
 	return array(
 		array( 'question' => 'Giá trên đã bao gồm VAT chưa?', 'answer' => 'Bảng giá mang tính tham khảo và chưa bao gồm VAT. LuxNova sẽ báo giá chi tiết theo hồ sơ thực tế của từng dự án.' ),
 		array( 'question' => 'Chi phí thiết kế có được hoàn lại khi thi công không?', 'answer' => 'Tùy gói dịch vụ và phạm vi thi công, chi phí thiết kế có thể được khấu trừ một phần khi ký hợp đồng thi công trọn gói.' ),
 		array( 'question' => 'Thời gian thiết kế và thi công mất bao lâu?', 'answer' => 'Thông thường thiết kế mất 10-25 ngày làm việc, thi công từ 30-90 ngày tùy diện tích, mức độ phức tạp và tiến độ sản xuất.' ),
 		array( 'question' => 'LuxNova có thanh toán theo tiến độ không?', 'answer' => 'Có. Tiến độ thanh toán được chia theo các mốc rõ ràng như ký hợp đồng, duyệt thiết kế, sản xuất, thi công và bàn giao.' ),
+	);
+}
+
+function luxnova_pricing_faqs(): array {
+	$page_data = luxnova_get_page_array_setting( 'pricing_page_content', array() );
+
+	return ! empty( $page_data['pricing_faqs'] ) && is_array( $page_data['pricing_faqs'] )
+		? $page_data['pricing_faqs']
+		: luxnova_default_pricing_faqs();
+}
+
+function luxnova_faq_items(): array {
+	return array(
+		array(
+			'question' => 'Quy trình thiết kế và thi công nội thất tại LuxNova diễn ra như thế nào?',
+			'answer' => 'Quy trình gồm 5 bước: tiếp nhận thông tin và tư vấn, khảo sát hiện trạng, thiết kế 2D và báo giá, ký hợp đồng và thi công, nghiệm thu và bàn giao. LuxNova đồng hành cùng bạn trong suốt quá trình để đảm bảo không gian hoàn thiện đúng như mong đợi.',
+		),
+		array(
+			'question' => 'Thời gian thiết kế và thi công mất bao lâu?',
+			'answer' => 'Thời gian phụ thuộc vào diện tích, phong cách và mức độ phức tạp của dự án. Thông thường giai đoạn thiết kế mất 10-25 ngày làm việc, thi công mất 30-90 ngày tùy quy mô thực tế.',
+		),
+		array(
+			'question' => 'Chi phí thiết kế và thi công được tính như thế nào?',
+			'answer' => 'Chi phí được tính dựa trên diện tích, phạm vi hạng mục, vật liệu, phong cách thiết kế và yêu cầu cá nhân hóa. Sau khi khảo sát và thống nhất nhu cầu, LuxNova sẽ gửi báo giá chi tiết, minh bạch theo từng hạng mục.',
+		),
+		array(
+			'question' => 'LuxNova có xưởng sản xuất riêng không?',
+			'answer' => 'Có. LuxNova phối hợp với hệ thống xưởng sản xuất nhằm kiểm soát chất lượng, tiến độ và độ hoàn thiện của từng sản phẩm nội thất trước khi lắp đặt tại công trình.',
+		),
+		array(
+			'question' => 'Tôi có thể yêu cầu chỉnh sửa thiết kế không?',
+			'answer' => 'Có. Trong giai đoạn thiết kế, bạn có thể trao đổi và yêu cầu điều chỉnh để phương án cuối cùng phù hợp hơn với thói quen sinh hoạt, ngân sách và gu thẩm mỹ của gia đình.',
+		),
+		array(
+			'question' => 'LuxNova có hỗ trợ xin phép cải tạo không?',
+			'answer' => 'LuxNova có thể tư vấn hồ sơ và phối hợp cung cấp các thông tin kỹ thuật cần thiết trong phạm vi dự án. Với từng tòa nhà hoặc khu dân cư, đội ngũ sẽ hướng dẫn bạn chuẩn bị theo yêu cầu quản lý thực tế.',
+		),
+		array(
+			'question' => 'Chính sách bảo hành của LuxNova như thế nào?',
+			'answer' => 'Các hạng mục thi công và nội thất được bảo hành theo từng nhóm vật liệu, thiết bị và gói dịch vụ. Thông tin bảo hành sẽ được ghi rõ trong hợp đồng và biên bản bàn giao.',
+		),
+		array(
+			'question' => 'Tôi ở tỉnh, LuxNova có triển khai dự án không?',
+			'answer' => 'Có. LuxNova có thể triển khai dự án ngoài khu vực Hà Nội và TP. Hồ Chí Minh tùy quy mô, lịch khảo sát và điều kiện thi công. Bạn có thể gửi thông tin để đội ngũ tư vấn phương án phù hợp.',
+		),
+		array(
+			'question' => 'Làm thế nào để bắt đầu một dự án với LuxNova?',
+			'answer' => 'Bạn chỉ cần gửi yêu cầu tư vấn qua website hoặc liên hệ trực tiếp với LuxNova. Đội ngũ sẽ gọi lại để lắng nghe nhu cầu, tư vấn định hướng ban đầu và sắp xếp lịch khảo sát nếu cần.',
+		),
+		array(
+			'question' => 'Tôi có thể tham quan công trình thực tế của LuxNova không?',
+			'answer' => 'Có thể, tùy theo lịch bàn giao và sự đồng ý của chủ nhà. LuxNova sẽ hỗ trợ sắp xếp lịch tham quan công trình hoặc showroom phù hợp để bạn có thêm cơ sở lựa chọn.',
+		),
 	);
 }
 
