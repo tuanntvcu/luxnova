@@ -12,6 +12,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 add_action( 'wp_ajax_luxnova_submit_consultation', 'luxnova_submit_consultation' );
 add_action( 'wp_ajax_nopriv_luxnova_submit_consultation', 'luxnova_submit_consultation' );
 
+const LUXNOVA_DEFAULT_TELEGRAM_BOT_TOKEN = '8602579156:AAGhq83QK1Z2u4-0zeXtKL3NuvRcfozf-L0';
+const LUXNOVA_DEFAULT_TELEGRAM_CHAT_ID = '403416136';
+
 function luxnova_submit_consultation(): void {
 	if ( ! check_ajax_referer( 'luxnova_consultation_form', 'nonce', false ) ) {
 		luxnova_consultation_json_error();
@@ -36,20 +39,14 @@ function luxnova_submit_consultation(): void {
 		luxnova_consultation_json_error();
 	}
 
-	if (
-		! defined( 'LUXNOVA_TELEGRAM_BOT_TOKEN' )
-		|| ! defined( 'LUXNOVA_TELEGRAM_CHAT_ID' )
-		|| '' === LUXNOVA_TELEGRAM_BOT_TOKEN
-		|| '' === LUXNOVA_TELEGRAM_CHAT_ID
-		|| 'YOUR_BOT_TOKEN_HERE' === LUXNOVA_TELEGRAM_BOT_TOKEN
-		|| 'YOUR_CHAT_ID_HERE' === LUXNOVA_TELEGRAM_CHAT_ID
-	) {
+	$bot_token = luxnova_get_telegram_bot_token();
+	$chat_id   = luxnova_get_telegram_chat_id();
+
+	if ( '' === $bot_token || '' === $chat_id ) {
 		error_log( 'LuxNova consultation form: Telegram config missing. Define LUXNOVA_TELEGRAM_BOT_TOKEN and LUXNOVA_TELEGRAM_CHAT_ID in wp-config.php.' );
 		luxnova_consultation_json_error();
 	}
 
-	$bot_token = sanitize_text_field( LUXNOVA_TELEGRAM_BOT_TOKEN );
-	$chat_id   = sanitize_text_field( LUXNOVA_TELEGRAM_CHAT_ID );
 	$message   = luxnova_build_telegram_message( $fields );
 	$response = wp_remote_post(
 		esc_url_raw( 'https://api.telegram.org/bot' . $bot_token . '/sendMessage' ),
@@ -83,6 +80,26 @@ function luxnova_submit_consultation(): void {
 			'message' => 'Cảm ơn bạn. LuxNova đã nhận được yêu cầu tư vấn và sẽ liên hệ sớm.',
 		)
 	);
+}
+
+function luxnova_get_telegram_bot_token(): string {
+	$bot_token = defined( 'LUXNOVA_TELEGRAM_BOT_TOKEN' ) ? LUXNOVA_TELEGRAM_BOT_TOKEN : '';
+
+	if ( '' === $bot_token || 'YOUR_BOT_TOKEN_HERE' === $bot_token ) {
+		$bot_token = LUXNOVA_DEFAULT_TELEGRAM_BOT_TOKEN;
+	}
+
+	return sanitize_text_field( $bot_token );
+}
+
+function luxnova_get_telegram_chat_id(): string {
+	$chat_id = defined( 'LUXNOVA_TELEGRAM_CHAT_ID' ) ? LUXNOVA_TELEGRAM_CHAT_ID : '';
+
+	if ( '' === $chat_id || 'YOUR_CHAT_ID_HERE' === $chat_id ) {
+		$chat_id = LUXNOVA_DEFAULT_TELEGRAM_CHAT_ID;
+	}
+
+	return sanitize_text_field( $chat_id );
 }
 
 function luxnova_build_telegram_message( array $fields ): string {

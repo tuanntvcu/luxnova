@@ -71,7 +71,7 @@ function luxnova_primary_menu_fallback(): void {
 		array( 'label' => 'Dịch vụ', 'url' => get_post_type_archive_link( 'luxnova_service' ) ?: '#' ),
 		array( 'label' => 'Bảng giá', 'url' => '#' ),
 		array( 'label' => 'Kiến thức', 'url' => get_permalink( get_option( 'page_for_posts' ) ) ?: '#' ),
-		array( 'label' => 'Liên hệ', 'url' => '#lien-he' ),
+		array( 'label' => 'Liên hệ', 'url' => home_url( '/lien-he/' ) ),
 	);
 	foreach ( $items as $item ) {
 		printf( '<li><a href="%s">%s</a></li>', esc_url( $item['url'] ), esc_html( $item['label'] ) );
@@ -87,7 +87,7 @@ function luxnova_primary_menu_fallback_v2(): void {
 		array( 'label' => 'Dịch vụ', 'url' => get_post_type_archive_link( 'luxnova_service' ) ?: '#', 'active' => is_post_type_archive( 'luxnova_service' ) || is_singular( 'luxnova_service' ) ),
 		array( 'label' => 'Bảng giá', 'url' => '#', 'active' => false ),
 		array( 'label' => 'Kiến thức', 'url' => get_permalink( get_option( 'page_for_posts' ) ) ?: '#', 'active' => is_home() || is_singular( 'post' ) ),
-		array( 'label' => 'Liên hệ', 'url' => '#lien-he', 'active' => false ),
+		array( 'label' => 'Liên hệ', 'url' => home_url( '/lien-he/' ), 'active' => is_page( array( 'lien-he', 'contact' ) ) ),
 	);
 	foreach ( $items as $item ) {
 		printf(
@@ -108,7 +108,7 @@ function luxnova_primary_menu_fallback_v3(): void {
 		array( 'label' => 'Dịch vụ', 'url' => get_post_type_archive_link( 'luxnova_service' ) ?: home_url( '/dich-vu/' ), 'active' => luxnova_is_service_context() ),
 		array( 'label' => 'Bảng giá', 'url' => home_url( '/bang-gia/' ), 'active' => luxnova_is_pricing_context() ),
 		array( 'label' => 'Kiến thức', 'url' => get_permalink( get_option( 'page_for_posts' ) ) ?: '#', 'active' => is_home() || is_singular( 'post' ) ),
-		array( 'label' => 'Liên hệ', 'url' => '#lien-he', 'active' => false ),
+		array( 'label' => 'Liên hệ', 'url' => home_url( '/lien-he/' ), 'active' => is_page( array( 'lien-he', 'contact' ) ) ),
 	);
 	foreach ( $items as $item ) {
 		printf(

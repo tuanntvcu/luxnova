@@ -180,6 +180,190 @@
 		}
 	}
 
+	const inlineConsultationForms = document.querySelectorAll('[data-consultation-form]');
+	inlineConsultationForms.forEach((consultationForm) => {
+		if (consultationForm.closest('#consultation-modal')) {
+			return;
+		}
+
+		consultationForm.addEventListener('submit', async (event) => {
+			event.preventDefault();
+			const successMessage = consultationForm.querySelector('[data-consultation-success]');
+			const errorMessage = consultationForm.querySelector('[data-consultation-error]');
+			const submitButton = consultationForm.querySelector('[data-consultation-submit]');
+			const defaultSubmitText = submitButton ? submitButton.innerHTML : '';
+
+			if (successMessage) {
+				successMessage.hidden = true;
+			}
+			if (errorMessage) {
+				errorMessage.hidden = true;
+			}
+
+			if (!window.LuxNovaConsultation || !window.LuxNovaConsultation.ajaxUrl || !window.LuxNovaConsultation.nonce) {
+				if (errorMessage) {
+					errorMessage.textContent = 'KhÃ´ng thá»ƒ gá»­i yÃªu cáº§u lÃºc nÃ y. Vui lÃ²ng thá»­ láº¡i sau.';
+					errorMessage.hidden = false;
+				}
+				return;
+			}
+
+			if (submitButton) {
+				submitButton.disabled = true;
+				submitButton.textContent = 'Äang gá»­i...';
+			}
+
+			const formData = new FormData(consultationForm);
+			formData.append('action', 'luxnova_submit_consultation');
+			formData.append('nonce', window.LuxNovaConsultation.nonce);
+			formData.append('page_url', window.location.href);
+
+			try {
+				const response = await fetch(window.LuxNovaConsultation.ajaxUrl, {
+					method: 'POST',
+					body: formData,
+					credentials: 'same-origin',
+				});
+				const result = await response.json();
+				const message = result && result.message ? result.message : 'KhÃ´ng thá»ƒ gá»­i yÃªu cáº§u lÃºc nÃ y. Vui lÃ²ng thá»­ láº¡i sau.';
+
+				if (response.ok && result && result.success) {
+					if (successMessage) {
+						successMessage.textContent = message;
+						successMessage.hidden = false;
+					}
+					consultationForm.reset();
+				} else if (errorMessage) {
+					errorMessage.textContent = message;
+					errorMessage.hidden = false;
+				}
+			} catch (error) {
+				if (errorMessage) {
+					errorMessage.textContent = 'KhÃ´ng thá»ƒ gá»­i yÃªu cáº§u lÃºc nÃ y. Vui lÃ²ng thá»­ láº¡i sau.';
+					errorMessage.hidden = false;
+				}
+			} finally {
+				if (submitButton) {
+					submitButton.disabled = false;
+					submitButton.innerHTML = defaultSubmitText;
+				}
+			}
+		});
+	});
+
+	const testimonialSliders = document.querySelectorAll('[data-testimonial-slider]');
+	testimonialSliders.forEach((slider) => {
+		const track = slider.querySelector('.testimonial-slider__track');
+		if (!track) {
+			return;
+		}
+
+		const originalSlides = Array.from(track.children);
+		if (originalSlides.length < 2) {
+			return;
+		}
+
+		let currentIndex = 0;
+		let slideStep = 0;
+		let autoplayTimer = null;
+		let resizeTimer = null;
+
+		const getVisibleColumns = () => {
+			const value = Number.parseInt(window.getComputedStyle(slider).getPropertyValue('--testimonial-columns'), 10);
+			return Number.isNaN(value) ? 1 : Math.max(1, value);
+		};
+
+		const getSlideStep = () => {
+			const firstSlide = track.querySelector('.testimonial-slider__slide');
+			if (!firstSlide) {
+				return 0;
+			}
+
+			const trackStyle = window.getComputedStyle(track);
+			const gap = Number.parseFloat(trackStyle.columnGap || trackStyle.gap || '0') || 0;
+			return firstSlide.getBoundingClientRect().width + gap;
+		};
+
+		const setTrackPosition = (animate = true) => {
+			track.classList.toggle('is-resetting', !animate);
+			track.style.transform = `translate3d(-${currentIndex * slideStep}px, 0, 0)`;
+
+			if (!animate) {
+				window.requestAnimationFrame(() => {
+					track.classList.remove('is-resetting');
+				});
+			}
+		};
+
+		const stopAutoplay = () => {
+			if (autoplayTimer) {
+				window.clearInterval(autoplayTimer);
+				autoplayTimer = null;
+			}
+		};
+
+		const startAutoplay = () => {
+			stopAutoplay();
+			autoplayTimer = window.setInterval(() => {
+				currentIndex += 1;
+				setTrackPosition();
+			}, 3000);
+		};
+
+		const removeClones = () => {
+			track.querySelectorAll('[data-testimonial-clone]').forEach((clone) => clone.remove());
+		};
+
+		const appendClones = () => {
+			const cloneCount = Math.min(getVisibleColumns(), originalSlides.length);
+			originalSlides.slice(0, cloneCount).forEach((slide) => {
+				const clone = slide.cloneNode(true);
+				clone.setAttribute('aria-hidden', 'true');
+				clone.setAttribute('data-testimonial-clone', 'true');
+				clone.classList.add('is-visible');
+				clone.querySelectorAll('a, button, input, select, textarea, [tabindex]').forEach((item) => {
+					item.setAttribute('tabindex', '-1');
+				});
+				track.appendChild(clone);
+			});
+		};
+
+		const setupSlider = () => {
+			stopAutoplay();
+			removeClones();
+			appendClones();
+			currentIndex = 0;
+			slideStep = getSlideStep();
+			setTrackPosition(false);
+			startAutoplay();
+		};
+
+		track.addEventListener('transitionend', () => {
+			if (currentIndex >= originalSlides.length) {
+				currentIndex = 0;
+				setTrackPosition(false);
+			}
+		});
+
+		slider.addEventListener('mouseenter', stopAutoplay);
+		slider.addEventListener('mouseleave', startAutoplay);
+		slider.addEventListener('focusin', stopAutoplay);
+		slider.addEventListener('focusout', startAutoplay);
+		window.addEventListener('resize', () => {
+			window.clearTimeout(resizeTimer);
+			resizeTimer = window.setTimeout(setupSlider, 160);
+		});
+		document.addEventListener('visibilitychange', () => {
+			if (document.hidden) {
+				stopAutoplay();
+			} else {
+				startAutoplay();
+			}
+		});
+
+		setupSlider();
+	});
+
 	const revealItems = document.querySelectorAll('.reveal-on-scroll');
 	if ('IntersectionObserver' in window) {
 		const revealObserver = new IntersectionObserver((entries, observer) => {

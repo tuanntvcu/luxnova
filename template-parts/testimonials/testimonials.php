@@ -26,23 +26,24 @@ if ( ! empty( $items ) && is_numeric( reset( $items ) ) ) {
 	<div class="container">
 		<header class="section-heading">
 			<h2><?php echo esc_html( $section['heading'] ?? '' ); ?></h2>
-			<?php echo luxnova_link( $section['archive_link'] ?? array(), 'section-heading__link', 'Xem tất cả đánh giá' ); ?>
 		</header>
 
-		<div class="testimonial-grid">
-			<?php foreach ( $items as $item ) : ?>
-				<article class="testimonial-card reveal-on-scroll">
-					<div class="testimonial-card__stars" aria-label="<?php echo esc_attr( sprintf( __( '%d out of 5 stars', 'luxnova' ), (int) ( $item['rating'] ?? 5 ) ) ); ?>"><?php echo luxnova_stars( (int) ( $item['rating'] ?? 5 ) ); ?></div>
-					<blockquote>“<?php echo esc_html( $item['quote'] ?? '' ); ?>”</blockquote>
-					<footer>
-						<?php echo luxnova_image( $item['avatar'] ?? '', 'luxnova-avatar', array( 'alt' => esc_attr( $item['name'] ?? '' ) ), 'assets/images/placeholder-avatar-1.svg' ); ?>
-						<div>
-							<strong><?php echo esc_html( $item['name'] ?? '' ); ?></strong>
-							<span><?php echo esc_html( $item['context'] ?? '' ); ?></span>
-						</div>
-					</footer>
-				</article>
-			<?php endforeach; ?>
+		<div class="testimonial-grid testimonial-slider" data-testimonial-slider>
+			<div class="testimonial-slider__track">
+				<?php foreach ( $items as $item ) : ?>
+					<article class="testimonial-card testimonial-slider__slide reveal-on-scroll">
+						<div class="testimonial-card__stars" aria-label="<?php echo esc_attr( sprintf( __( '%d out of 5 stars', 'luxnova' ), (int) ( $item['rating'] ?? 5 ) ) ); ?>"><?php echo luxnova_stars( (int) ( $item['rating'] ?? 5 ) ); ?></div>
+						<blockquote>“<?php echo esc_html( $item['quote'] ?? '' ); ?>”</blockquote>
+						<footer>
+							<?php echo luxnova_image( $item['avatar'] ?? '', 'luxnova-avatar', array( 'alt' => esc_attr( $item['name'] ?? '' ) ), 'assets/images/placeholder-avatar-1.svg' ); ?>
+							<div>
+								<strong><?php echo esc_html( $item['name'] ?? '' ); ?></strong>
+								<span><?php echo esc_html( $item['context'] ?? '' ); ?></span>
+							</div>
+						</footer>
+					</article>
+				<?php endforeach; ?>
+			</div>
 		</div>
 	</div>
 </section>
