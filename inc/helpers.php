@@ -39,6 +39,11 @@ function luxnova_get_acf_option_group_value( string $key ): array {
 		return array();
 	}
 
+	$value = get_field( $key, 'option' );
+	if ( is_array( $value ) && array() !== $value ) {
+		return $value;
+	}
+
 	return luxnova_get_acf_option_group_sub_fields( $field['sub_fields'], $key );
 }
 
@@ -57,7 +62,15 @@ function luxnova_get_acf_option_group_sub_fields( array $sub_fields, string $pre
 			continue;
 		}
 
-		$data[ $name ] = get_field( $field_name, 'option' );
+		$value = get_field( $field_name, 'option' );
+		if ( null === $value || false === $value || '' === $value ) {
+			$raw_value = get_option( "options_{$field_name}", null );
+			if ( null !== $raw_value && false !== $raw_value && '' !== $raw_value ) {
+				$value = $raw_value;
+			}
+		}
+
+		$data[ $name ] = $value;
 	}
 
 	return $data;
@@ -140,6 +153,44 @@ function luxnova_image( mixed $image, string $size, array $attrs = array(), stri
 	}
 
 	return sprintf( '<img src="%s"%s>', esc_url( luxnova_image_url( $image, $size, $fallback ) ), $attr_html );
+}
+
+function luxnova_brand_markup( string $class = 'site-brand' ): string {
+	$brand      = luxnova_get_option( 'brand_logo_text', 'LUXNOVA' );
+	$tagline    = luxnova_get_option( 'brand_tagline', 'Interior Design & Build' );
+	$logo_image = luxnova_get_option( 'brand_logo_image', '' );
+	$label      = trim( wp_strip_all_tags( (string) $brand ) );
+	$label      = '' !== $label ? $label : get_bloginfo( 'name' );
+
+	$markup = sprintf(
+		'<a class="%s" href="%s" aria-label="%s">',
+		esc_attr( $class ),
+		esc_url( home_url( '/' ) ),
+		esc_attr( $label )
+	);
+
+	if ( ! empty( $logo_image ) ) {
+		$markup .= luxnova_image(
+			$logo_image,
+			'medium',
+			array(
+				'class' => 'site-brand__logo',
+				'alt' => $label,
+				'loading' => 'eager',
+				'decoding' => 'async',
+			),
+			'assets/images/placeholder-logo.svg'
+		);
+	} else {
+		$markup .= sprintf( '<span class="site-brand__name">%s</span>', esc_html( $brand ) );
+		if ( '' !== trim( (string) $tagline ) ) {
+			$markup .= sprintf( '<span class="site-brand__tagline">%s</span>', esc_html( $tagline ) );
+		}
+	}
+
+	$markup .= '</a>';
+
+	return $markup;
 }
 
 function luxnova_map_embed( mixed $embed, string $class = '', string $title = 'Google Map' ): string {
@@ -234,6 +285,10 @@ function luxnova_icon( string $name ): string {
 		'mail' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4V6Zm0 0 8 7 8-7"/></svg>',
 		'pin' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.2 7-11a7 7 0 1 0-14 0c0 5.8 7 11 7 11Zm0-8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/></svg>',
 		'facebook' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 8h2V4h-2c-3 0-5 2-5 5v2H7v4h3v5h4v-5h3l1-4h-4V9c0-.6.4-1 1-1Z"/></svg>',
+		'instagram' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4Zm5 5.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Zm5.2-1.2h.01"/></svg>',
+		'youtube' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8.5a3 3 0 0 0-2.1-2.1C17.1 6 12 6 12 6s-5.1 0-6.9.4A3 3 0 0 0 3 8.5a31 31 0 0 0 0 7 3 3 0 0 0 2.1 2.1c1.8.4 6.9.4 6.9.4s5.1 0 6.9-.4A3 3 0 0 0 21 15.5a31 31 0 0 0 0-7ZM10 15l5-3-5-3v6Z"/></svg>',
+		'tiktok' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4v10.2a4.2 4.2 0 1 1-3.8-4.2M14 4c.5 3 2.3 4.8 5 5"/></svg>',
+		'linkedin' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v9M5 6v.01M10 19v-9m0 3.5a3.5 3.5 0 0 1 7 0V19"/></svg>',
 		'menu' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>',
 	);
 
@@ -255,6 +310,59 @@ function luxnova_icon_media( array $item, string $default_icon = 'home', string 
 	}
 
 	return luxnova_icon( (string) ( $item['icon'] ?? $default_icon ) );
+}
+
+function luxnova_social_platform_slug( array $social ): string {
+	$haystack = strtolower( trim( (string) ( $social['platform'] ?? '' ) . ' ' . ( $social['url'] ?? '' ) ) );
+
+	if ( str_contains( $haystack, 'facebook' ) || str_contains( $haystack, 'fb.com' ) ) {
+		return 'facebook';
+	}
+
+	if ( str_contains( $haystack, 'instagram' ) || str_contains( $haystack, 'instagr.am' ) ) {
+		return 'instagram';
+	}
+
+	if ( str_contains( $haystack, 'youtube' ) || str_contains( $haystack, 'youtu.be' ) ) {
+		return 'youtube';
+	}
+
+	if ( str_contains( $haystack, 'tiktok' ) ) {
+		return 'tiktok';
+	}
+
+	if ( str_contains( $haystack, 'linkedin' ) ) {
+		return 'linkedin';
+	}
+
+	return 'home';
+}
+
+function luxnova_social_icon_media( array $social ): string {
+	if ( ! empty( $social['icon_image'] ) ) {
+		return luxnova_image(
+			$social['icon_image'],
+			'thumbnail',
+			array(
+				'class' => 'luxnova-icon-media__image',
+				'alt' => '',
+				'loading' => 'lazy',
+			),
+			'assets/images/placeholder-logo.svg'
+		);
+	}
+
+	return luxnova_icon( luxnova_social_platform_slug( $social ) );
+}
+
+function luxnova_social_label( array $social ): string {
+	$platform = trim( (string) ( $social['platform'] ?? '' ) );
+	if ( '' !== $platform ) {
+		return $platform;
+	}
+
+	$slug = luxnova_social_platform_slug( $social );
+	return 'home' === $slug ? 'Social' : ucfirst( $slug );
 }
 
 function luxnova_default_homepage_sections(): array {

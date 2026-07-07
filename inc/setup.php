@@ -51,6 +51,7 @@ function luxnova_nav_active_class( array $classes, WP_Post $menu_item ): array {
 		( luxnova_is_project_context() && ( 'du an' === $title || untrailingslashit( get_post_type_archive_link( 'luxnova_project' ) ?: '' ) === $url ) )
 		|| ( luxnova_is_service_context() && ( 'dich vu' === $title || untrailingslashit( get_post_type_archive_link( 'luxnova_service' ) ?: '' ) === $url ) )
 		|| ( luxnova_is_pricing_context() && ( 'bang gia' === $title || untrailingslashit( home_url( '/bang-gia/' ) ) === $url ) )
+		|| ( luxnova_is_knowledge_context() && ( 'kien thuc' === $title || untrailingslashit( luxnova_knowledge_url() ) === $url ) )
 	) {
 		$classes[] = 'current-menu-item';
 	}
@@ -68,6 +69,8 @@ function luxnova_nav_link_attributes( array $atts, WP_Post $menu_item ): array {
 		$atts['href'] = get_post_type_archive_link( 'luxnova_service' ) ?: home_url( '/dich-vu/' );
 	} elseif ( 'bang gia' === $title ) {
 		$atts['href'] = home_url( '/bang-gia/' );
+	} elseif ( 'kien thuc' === $title ) {
+		$atts['href'] = luxnova_knowledge_url();
 	}
 
 	return $atts;
@@ -85,7 +88,37 @@ function luxnova_is_pricing_context(): bool {
 	return is_page( 'bang-gia' ) || luxnova_is_pricing_request_path();
 }
 
+function luxnova_knowledge_url(): string {
+	return home_url( '/kien-thuc/' );
+}
+
+function luxnova_is_knowledge_context(): bool {
+	return is_page( 'kien-thuc' ) || ( is_home() && ! is_front_page() ) || is_singular( 'post' ) || luxnova_is_knowledge_request_path();
+}
+
 function luxnova_is_pricing_request_path(): bool {
+	return luxnova_is_request_path( 'bang-gia' );
+}
+
+function luxnova_is_knowledge_request_path(): bool {
+	return luxnova_is_request_path( 'kien-thuc' ) || 0 < luxnova_knowledge_paged_from_request();
+}
+
+function luxnova_knowledge_paged_from_request(): int {
+	$request_path = luxnova_current_relative_request_path();
+
+	if ( preg_match( '#^kien-thuc/page/([0-9]+)/?$#', $request_path, $matches ) ) {
+		return max( 1, (int) $matches[1] );
+	}
+
+	return 0;
+}
+
+function luxnova_is_request_path( string $path ): bool {
+	return trim( $path, '/' ) === luxnova_current_relative_request_path();
+}
+
+function luxnova_current_relative_request_path(): string {
 	$request_path = trim( (string) wp_parse_url( sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) ), PHP_URL_PATH ), '/' );
 	$home_path    = trim( (string) wp_parse_url( home_url( '/' ), PHP_URL_PATH ), '/' );
 
@@ -93,7 +126,7 @@ function luxnova_is_pricing_request_path(): bool {
 		$request_path = trim( substr( $request_path, strlen( $home_path ) ), '/' );
 	}
 
-	return 'bang-gia' === $request_path;
+	return $request_path;
 }
 
 add_filter( 'template_include', 'luxnova_pricing_template_include' );
@@ -117,10 +150,40 @@ function luxnova_pricing_template_include( string $template ): string {
 	return $template;
 }
 
+add_filter( 'template_include', 'luxnova_knowledge_template_include' );
+function luxnova_knowledge_template_include( string $template ): string {
+	if ( luxnova_is_knowledge_request_path() || is_page( 'kien-thuc' ) || ( is_home() && ! is_front_page() ) ) {
+		$knowledge_template = LUXNOVA_DIR . 'page-kien-thuc.php';
+
+		if ( file_exists( $knowledge_template ) ) {
+			global $wp_query;
+
+			if ( $wp_query instanceof WP_Query && luxnova_is_knowledge_request_path() ) {
+				$wp_query->is_404  = false;
+				$wp_query->is_page = true;
+			}
+
+			status_header( 200 );
+			return $knowledge_template;
+		}
+	}
+
+	return $template;
+}
+
 add_filter( 'pre_get_document_title', 'luxnova_pricing_document_title' );
 function luxnova_pricing_document_title( string $title ): string {
 	if ( luxnova_is_pricing_context() ) {
 		return sprintf( 'Bảng giá - %s', get_bloginfo( 'name' ) );
+	}
+
+	return $title;
+}
+
+add_filter( 'pre_get_document_title', 'luxnova_knowledge_document_title' );
+function luxnova_knowledge_document_title( string $title ): string {
+	if ( luxnova_is_knowledge_request_path() || is_page( 'kien-thuc' ) || ( is_home() && ! is_front_page() ) ) {
+		return sprintf( 'Kiến thức - %s', get_bloginfo( 'name' ) );
 	}
 
 	return $title;
