@@ -24,12 +24,16 @@ while ( have_posts() ) :
 	$brochure_url           = luxnova_project_brochure_url( $brochure );
 	$brochure_download_attr = '#project-info' === $brochure_url ? '' : ' download';
 	$gallery                = function_exists( 'get_field' ) ? (array) get_field( 'gallery', $project_id ) : array();
+	$gallery_videos         = function_exists( 'get_field' ) ? (array) get_field( 'gallery_videos', $project_id ) : array();
 	$hero_image             = get_post_thumbnail_id( $project_id );
 	$summary                = has_excerpt() ? get_the_excerpt() : ( $page_data['summary_fallback'] ?? '' );
 	$meta_labels            = $page_data['meta_labels'] ?? array();
 	$actions                = $page_data['actions'] ?? array();
 	$info_labels            = $page_data['info_labels'] ?? array();
 	$closing_cta            = $page_data['closing_cta'] ?? array();
+	$gallery_thumb_fallback = $hero_image
+		? luxnova_image_url( $hero_image, 'luxnova-card', 'assets/images/placeholder-project-2.svg' )
+		: luxnova_asset( 'assets/images/placeholder-project-2.svg' );
 
 	if ( empty( $gallery ) ) {
 		$gallery = array(
@@ -40,6 +44,32 @@ while ( have_posts() ) :
 			luxnova_asset( 'assets/images/placeholder-interior.svg' ),
 			luxnova_asset( 'assets/images/placeholder-service-3.svg' ),
 		);
+	}
+
+	$gallery_media = array();
+	foreach ( $gallery as $media ) {
+		$gallery_item = luxnova_project_gallery_media_item( $media, get_the_title() . ' gallery image', $gallery_thumb_fallback );
+		if ( ! empty( $gallery_item['url'] ) ) {
+			$gallery_media[] = $gallery_item;
+		}
+	}
+
+	foreach ( $gallery_videos as $video_row ) {
+		$video_media = is_array( $video_row ) ? ( $video_row['video'] ?? '' ) : $video_row;
+		$video_item  = luxnova_project_gallery_media_item( $video_media, get_the_title() . ' gallery video', $gallery_thumb_fallback );
+
+		if ( ! empty( $video_row['poster'] ) ) {
+			$video_item['thumb'] = luxnova_image_url( $video_row['poster'], 'luxnova-card', 'assets/images/placeholder-interior.svg' );
+		}
+
+		if ( ! empty( $video_item['url'] ) ) {
+			$video_item['type'] = 'video';
+			$gallery_media[]    = $video_item;
+		}
+	}
+
+	if ( empty( $gallery_media ) ) {
+		$gallery_media[] = luxnova_project_gallery_media_item( luxnova_asset( 'assets/images/placeholder-project-2.svg' ), get_the_title() . ' gallery image', $gallery_thumb_fallback );
 	}
 	?>
 	<article <?php post_class( 'single-project' ); ?>>
@@ -75,7 +105,7 @@ while ( have_posts() ) :
 					<a href="<?php echo esc_url( $brochure_url ); ?>" class="button button--outline"<?php echo $brochure_download_attr; ?>><?php echo esc_html( $actions['brochure_label'] ?? '' ); ?> <span aria-hidden="true">↓</span></a>
 				</div>
 			</div>
-			<a class="single-project-hero__gallery-link" href="#project-gallery"><?php echo esc_html( $actions['gallery_label'] ?? '' ); ?> (1/<?php echo esc_html( (string) count( $gallery ) ); ?>) <span aria-hidden="true">⌗</span></a>
+			<a class="single-project-hero__gallery-link" href="#project-gallery"><?php echo esc_html( $actions['gallery_label'] ?? '' ); ?> (1/<?php echo esc_html( (string) count( $gallery_media ) ); ?>) <span aria-hidden="true">⌗</span></a>
 		</section>
 
 		<section class="single-project-story" id="project-info">
@@ -129,17 +159,35 @@ while ( have_posts() ) :
 				<header class="single-project-section-heading">
 					<h2><?php echo esc_html( $page_data['gallery_heading'] ?? '' ); ?></h2>
 				</header>
-				<div class="single-project-gallery__grid">
-					<?php foreach ( array_slice( $gallery, 0, 6 ) as $index => $image ) : ?>
-						<a class="single-project-gallery__item <?php echo 0 === $index ? 'is-large' : ''; ?>" href="<?php echo esc_url( luxnova_image_url( $image, 'luxnova-hero', 'assets/images/placeholder-project-2.svg' ) ); ?>">
-							<?php echo luxnova_image( $image, 0 === $index ? 'luxnova-hero' : 'luxnova-card', array( 'alt' => esc_attr( get_the_title() . ' gallery image' ) ), 'assets/images/placeholder-project-2.svg' ); ?>
-							<?php if ( 0 === $index ) : ?><span aria-hidden="true">▶</span><?php endif; ?>
-							<?php if ( 5 === $index && count( $gallery ) > 6 ) : ?><strong>+<?php echo esc_html( (string) ( count( $gallery ) - 5 ) ); ?><small><?php echo esc_html( $page_data['gallery_more_label'] ?? '' ); ?></small></strong><?php endif; ?>
-						</a>
+				<div class="single-project-gallery__grid" data-project-gallery>
+					<?php foreach ( array_slice( $gallery_media, 0, 6 ) as $index => $media ) : ?>
+						<button
+							type="button"
+							class="single-project-gallery__item <?php echo 0 === $index ? 'is-large' : ''; ?>"
+							data-project-gallery-item="<?php echo esc_attr( wp_json_encode( $media ) ); ?>"
+							data-project-gallery-index="<?php echo esc_attr( (string) $index ); ?>"
+							aria-label="<?php echo esc_attr( sprintf( '%s %d', $page_data['gallery_heading'] ?? 'Gallery item', $index + 1 ) ); ?>"
+						>
+							<img src="<?php echo esc_url( $media['thumb'] ); ?>" alt="<?php echo esc_attr( $media['alt'] ); ?>" loading="lazy" decoding="async">
+							<?php if ( 'video' === ( $media['type'] ?? '' ) ) : ?><span class="single-project-gallery__play" aria-hidden="true">▶</span><?php endif; ?>
+							<?php if ( 5 === $index && count( $gallery_media ) > 6 ) : ?><strong>+<?php echo esc_html( (string) ( count( $gallery_media ) - 6 ) ); ?><small><?php echo esc_html( $page_data['gallery_more_label'] ?? '' ); ?></small></strong><?php endif; ?>
+						</button>
 					<?php endforeach; ?>
 				</div>
+				<script type="application/json" data-project-gallery-data><?php echo wp_json_encode( $gallery_media, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT ); ?></script>
 			</div>
 		</section>
+
+		<div class="project-gallery-lightbox" data-project-gallery-lightbox hidden aria-hidden="true">
+			<div class="project-gallery-lightbox__backdrop" data-project-gallery-close></div>
+			<div class="project-gallery-lightbox__dialog" role="dialog" aria-modal="true" aria-label="<?php echo esc_attr( $page_data['gallery_heading'] ?? 'Thư viện hình ảnh' ); ?>" tabindex="-1">
+				<button type="button" class="project-gallery-lightbox__close" data-project-gallery-close aria-label="Đóng">×</button>
+				<button type="button" class="project-gallery-lightbox__nav project-gallery-lightbox__nav--prev" data-project-gallery-prev aria-label="Ảnh trước">‹</button>
+				<div class="project-gallery-lightbox__media" data-project-gallery-media></div>
+				<button type="button" class="project-gallery-lightbox__nav project-gallery-lightbox__nav--next" data-project-gallery-next aria-label="Ảnh tiếp theo">›</button>
+				<div class="project-gallery-lightbox__counter" data-project-gallery-counter></div>
+			</div>
+		</div>
 
 		<?php if ( ! empty( $page_data['benefits'] ) ) : ?>
 			<section class="single-project-benefits" aria-label="<?php echo esc_attr( $page_data['benefits_label'] ?? '' ); ?>">
@@ -163,13 +211,41 @@ while ( have_posts() ) :
 				</header>
 				<div class="single-project-related__grid">
 					<?php
-					$related = new WP_Query(
-						array(
-							'post_type' => 'luxnova_project',
-							'posts_per_page' => 4,
-							'post__not_in' => array( $project_id ),
-						)
+					$related_term_ids = ( ! is_wp_error( $terms ) && ! empty( $terms ) ) ? wp_list_pluck( $terms, 'term_id' ) : array();
+					$related_args     = array(
+						'post_type' => 'luxnova_project',
+						'posts_per_page' => 4,
+						'post__not_in' => array( $project_id ),
 					);
+
+					if ( ! empty( $related_term_ids ) ) {
+						$related_args['tax_query'] = array(
+							array(
+								'taxonomy' => 'luxnova_project_type',
+								'field' => 'term_id',
+								'terms' => $related_term_ids,
+							),
+						);
+					}
+
+					$related     = new WP_Query( $related_args );
+					$related_ids = wp_list_pluck( $related->posts, 'ID' );
+					$remaining   = 4 - count( $related_ids );
+
+					if ( $remaining > 0 && ! empty( $related_term_ids ) ) {
+						$related_fallback = new WP_Query(
+							array(
+								'post_type' => 'luxnova_project',
+								'posts_per_page' => $remaining,
+								'post__not_in' => array_merge( array( $project_id ), $related_ids ),
+							)
+						);
+
+						if ( $related_fallback->have_posts() ) {
+							$related->posts      = array_merge( $related->posts, $related_fallback->posts );
+							$related->post_count = count( $related->posts );
+						}
+					}
 					if ( $related->have_posts() ) :
 						while ( $related->have_posts() ) :
 							$related->the_post();

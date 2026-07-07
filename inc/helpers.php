@@ -19,9 +19,48 @@ function luxnova_get_option( string $key, mixed $default = '' ): mixed {
 		if ( null !== $value && false !== $value && '' !== $value ) {
 			return $value;
 		}
+
+		$group_value = luxnova_get_acf_option_group_value( $key );
+		if ( array() !== $group_value ) {
+			return $group_value;
+		}
 	}
 
 	return $default;
+}
+
+function luxnova_get_acf_option_group_value( string $key ): array {
+	if ( ! function_exists( 'get_field_object' ) ) {
+		return array();
+	}
+
+	$field = get_field_object( $key, 'option', false, false );
+	if ( ! is_array( $field ) || 'group' !== ( $field['type'] ?? '' ) || empty( $field['sub_fields'] ) ) {
+		return array();
+	}
+
+	return luxnova_get_acf_option_group_sub_fields( $field['sub_fields'], $key );
+}
+
+function luxnova_get_acf_option_group_sub_fields( array $sub_fields, string $prefix ): array {
+	$data = array();
+
+	foreach ( $sub_fields as $sub_field ) {
+		$name = $sub_field['name'] ?? '';
+		if ( '' === $name ) {
+			continue;
+		}
+
+		$field_name = "{$prefix}_{$name}";
+		if ( 'group' === ( $sub_field['type'] ?? '' ) && ! empty( $sub_field['sub_fields'] ) ) {
+			$data[ $name ] = luxnova_get_acf_option_group_sub_fields( $sub_field['sub_fields'], $field_name );
+			continue;
+		}
+
+		$data[ $name ] = get_field( $field_name, 'option' );
+	}
+
+	return $data;
 }
 
 function luxnova_get_page_setting( string $key, mixed $default = '', int $post_id = 0 ): mixed {
@@ -101,6 +140,55 @@ function luxnova_image( mixed $image, string $size, array $attrs = array(), stri
 	}
 
 	return sprintf( '<img src="%s"%s>', esc_url( luxnova_image_url( $image, $size, $fallback ) ), $attr_html );
+}
+
+function luxnova_map_embed( mixed $embed, string $class = '', string $title = 'Google Map' ): string {
+	$embed = trim( (string) $embed );
+	if ( '' === $embed ) {
+		return '';
+	}
+
+	if ( ! str_contains( strtolower( $embed ), '<iframe' ) ) {
+		$embed = sprintf(
+			'<iframe src="%s" title="%s" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>',
+			esc_url( $embed ),
+			esc_attr( $title )
+		);
+	}
+
+	if ( '' !== $class ) {
+		if ( preg_match( '/<iframe\b[^>]*\bclass=(["\'])(.*?)\1/i', $embed ) ) {
+			$embed = preg_replace( '/(<iframe\b[^>]*\bclass=(["\']))(.*?)(\2)/i', '$1$3 ' . esc_attr( $class ) . '$4', $embed, 1 );
+		} else {
+			$embed = preg_replace( '/<iframe\b/i', '<iframe class="' . esc_attr( $class ) . '"', $embed, 1 );
+		}
+	}
+
+	if ( ! preg_match( '/<iframe\b[^>]*\btitle=/i', $embed ) ) {
+		$embed = preg_replace( '/<iframe\b/i', '<iframe title="' . esc_attr( $title ) . '"', $embed, 1 );
+	}
+
+	if ( ! preg_match( '/<iframe\b[^>]*\bloading=/i', $embed ) ) {
+		$embed = preg_replace( '/<iframe\b/i', '<iframe loading="lazy"', $embed, 1 );
+	}
+
+	return wp_kses(
+		$embed,
+		array(
+			'iframe' => array(
+				'allowfullscreen' => true,
+				'aria-label' => true,
+				'class' => true,
+				'height' => true,
+				'loading' => true,
+				'referrerpolicy' => true,
+				'src' => true,
+				'style' => true,
+				'title' => true,
+				'width' => true,
+			),
+		)
+	);
 }
 
 function luxnova_link( mixed $link, string $class = '', string $fallback_title = '' ): string {
@@ -258,9 +346,35 @@ function luxnova_default_homepage_sections(): array {
 		),
 		array(
 			'layout' => 'partner_logos',
-			'items' => array( 'An Cường', 'Häfele', 'Blum', 'Modulex', 'Vicostone', 'TOTO' ),
+			'items' => luxnova_default_partner_logos(),
 		),
 	);
+}
+
+function luxnova_default_partner_logos(): array {
+	return array(
+		array( 'name' => 'AN CUONG', 'logo' => luxnova_asset( 'assets/images/partner-an-cuong.svg' ), 'url' => '' ),
+		array( 'name' => 'HAFELE', 'logo' => luxnova_asset( 'assets/images/partner-hafele.svg' ), 'url' => '' ),
+		array( 'name' => 'blum', 'logo' => luxnova_asset( 'assets/images/partner-blum.svg' ), 'url' => '' ),
+		array( 'name' => 'MODULEX', 'logo' => luxnova_asset( 'assets/images/partner-modulex.svg' ), 'url' => '' ),
+		array( 'name' => 'VICOSTONE', 'logo' => luxnova_asset( 'assets/images/partner-vicostone.svg' ), 'url' => '' ),
+		array( 'name' => 'TOTO', 'logo' => luxnova_asset( 'assets/images/partner-toto.svg' ), 'url' => '' ),
+	);
+}
+
+function luxnova_partner_logo_by_name( string $name ): string {
+	$key   = strtolower( preg_replace( '/[^a-z0-9]+/', '', remove_accents( $name ) ) );
+	$logos = array(
+		'ancuong' => 'assets/images/partner-an-cuong.svg',
+		'hafele' => 'assets/images/partner-hafele.svg',
+		'hfele' => 'assets/images/partner-hafele.svg',
+		'blum' => 'assets/images/partner-blum.svg',
+		'modulex' => 'assets/images/partner-modulex.svg',
+		'vicostone' => 'assets/images/partner-vicostone.svg',
+		'toto' => 'assets/images/partner-toto.svg',
+	);
+
+	return isset( $logos[ $key ] ) ? luxnova_asset( $logos[ $key ] ) : '';
 }
 
 function luxnova_default_project_cards(): array {
@@ -324,6 +438,69 @@ function luxnova_project_brochure_url( mixed $file ): string {
 	}
 
 	return '#project-info';
+}
+
+function luxnova_project_gallery_media_item( mixed $media, string $alt = '', string $fallback_thumb = '' ): array {
+	$fallback_thumb = $fallback_thumb ?: luxnova_asset( 'assets/images/placeholder-interior.svg' );
+	$item = array(
+		'type' => 'image',
+		'url' => '',
+		'thumb' => $fallback_thumb,
+		'alt' => $alt,
+		'mime' => '',
+	);
+
+	if ( is_numeric( $media ) ) {
+		$attachment_id = (int) $media;
+		$mime          = (string) get_post_mime_type( $attachment_id );
+		$url           = (string) wp_get_attachment_url( $attachment_id );
+		$is_video      = str_starts_with( $mime, 'video/' );
+
+		$item['type']  = $is_video ? 'video' : 'image';
+		$item['url']   = $is_video ? $url : luxnova_image_url( $attachment_id, 'luxnova-hero', 'assets/images/placeholder-project-2.svg' );
+		$item['thumb'] = $is_video
+			? ( wp_get_attachment_image_url( $attachment_id, 'luxnova-card' ) ?: $fallback_thumb )
+			: luxnova_image_url( $attachment_id, 'luxnova-card', 'assets/images/placeholder-project-2.svg' );
+		$item['mime']  = $mime;
+
+		return $item;
+	}
+
+	if ( is_array( $media ) ) {
+		if ( ! empty( $media['ID'] ) ) {
+			return luxnova_project_gallery_media_item( (int) $media['ID'], $alt, $fallback_thumb );
+		}
+
+		if ( ! empty( $media['url'] ) ) {
+			$item['url'] = esc_url_raw( (string) $media['url'] );
+			$item['mime'] = (string) ( $media['mime_type'] ?? '' );
+			$item['type'] = luxnova_is_video_media_url( $item['url'], $item['mime'] ) ? 'video' : 'image';
+			$item['thumb'] = ! empty( $media['sizes']['large'] )
+				? esc_url_raw( (string) $media['sizes']['large'] )
+				: ( 'video' === $item['type'] ? $fallback_thumb : $item['url'] );
+
+			return $item;
+		}
+	}
+
+	if ( is_string( $media ) && '' !== trim( $media ) ) {
+		$item['url']   = esc_url_raw( $media );
+		$item['type']  = luxnova_is_video_media_url( $item['url'] ) ? 'video' : 'image';
+		$item['thumb'] = 'video' === $item['type'] ? $fallback_thumb : $item['url'];
+	}
+
+	return $item;
+}
+
+function luxnova_is_video_media_url( string $url, string $mime = '' ): bool {
+	if ( str_starts_with( $mime, 'video/' ) ) {
+		return true;
+	}
+
+	$path      = (string) wp_parse_url( $url, PHP_URL_PATH );
+	$extension = strtolower( pathinfo( $path, PATHINFO_EXTENSION ) );
+
+	return in_array( $extension, array( 'mp4', 'webm', 'ogv', 'ogg', 'mov', 'm4v' ), true );
 }
 
 function luxnova_render_project_listing_card( array $card ): void {
@@ -433,6 +610,7 @@ function luxnova_contact_page_data(): array {
 			array( 'icon' => 'facebook', 'title' => 'Fanpage', 'content' => 'facebook.com/luxnova.vn', 'url' => $facebook ),
 		),
 		'map' => array(
+			'iframe' => luxnova_get_option( 'map_iframe', '' ),
 			'image' => luxnova_get_option( 'map_image', '' ),
 			'label' => 'Ghé thăm văn phòng',
 			'description' => 'Chúng tôi rất hân hạnh được đón tiếp bạn tại văn phòng để trao đổi chi tiết hơn về dự án của bạn.',
@@ -448,7 +626,7 @@ function luxnova_contact_page_data(): array {
 		),
 	);
 
-	return array_replace_recursive( $default, luxnova_get_page_array_setting( 'contact_page_content', array() ) );
+	return luxnova_merge_filled_content( $default, luxnova_get_page_array_setting( 'contact_page_content', array() ) );
 }
 
 function luxnova_faq_page_data(): array {
@@ -478,7 +656,7 @@ function luxnova_faq_page_data(): array {
 		),
 	);
 
-	return array_replace_recursive( $default, luxnova_get_page_array_setting( 'faq_page_content', array() ) );
+	return luxnova_merge_filled_content( $default, luxnova_get_page_array_setting( 'faq_page_content', array() ) );
 }
 
 function luxnova_pricing_page_data(): array {
@@ -505,7 +683,7 @@ function luxnova_pricing_page_data(): array {
 		),
 	);
 
-	return array_replace_recursive( $default, luxnova_get_page_array_setting( 'pricing_page_content', array() ) );
+	return luxnova_merge_filled_content( $default, luxnova_get_page_array_setting( 'pricing_page_content', array() ) );
 }
 
 function luxnova_service_archive_data(): array {
@@ -532,7 +710,7 @@ function luxnova_service_archive_data(): array {
 		),
 	);
 
-	return array_replace_recursive( $default, luxnova_get_page_array_setting( 'service_archive_content', array() ) );
+	return luxnova_merge_filled_content( $default, luxnova_get_page_array_setting( 'service_archive_content', array() ) );
 }
 
 function luxnova_project_archive_data(): array {
@@ -553,7 +731,7 @@ function luxnova_project_archive_data(): array {
 		),
 	);
 
-	return array_replace_recursive( $default, luxnova_get_page_array_setting( 'project_archive_content', array() ) );
+	return luxnova_merge_filled_content( $default, luxnova_get_page_array_setting( 'project_archive_content', array() ) );
 }
 
 function luxnova_single_project_page_data( int $post_id = 0 ): array {
@@ -609,7 +787,7 @@ function luxnova_single_project_page_data( int $post_id = 0 ): array {
 		'closing_cta' => $archive_cta,
 	);
 
-	return array_replace_recursive( $default, luxnova_get_page_array_setting( 'single_project_content', array(), $post_id ) );
+	return luxnova_merge_filled_content( $default, luxnova_get_page_array_setting( 'single_project_content', array(), $post_id ) );
 }
 
 function luxnova_consultation_modal_data(): array {
@@ -626,7 +804,7 @@ function luxnova_consultation_modal_data(): array {
 		),
 	);
 
-	return array_replace_recursive( $default, luxnova_get_page_array_setting( 'consultation_modal_content', array() ) );
+	return luxnova_merge_filled_content( $default, luxnova_get_page_array_setting( 'consultation_modal_content', array() ) );
 }
 
 function luxnova_default_pricing_plans(): array {
@@ -762,6 +940,23 @@ function luxnova_faq_items(): array {
 }
 
 function luxnova_default_testimonials(): array {
+	$testimonial_posts = get_posts(
+		array(
+			'post_type' => 'luxnova_testimonial',
+			'post_status' => 'publish',
+			'posts_per_page' => 6,
+			'orderby' => 'date',
+			'order' => 'DESC',
+		)
+	);
+
+	if ( ! empty( $testimonial_posts ) ) {
+		return array_map(
+			static fn( WP_Post $post ): array => luxnova_testimonial_card_data( (int) $post->ID ),
+			$testimonial_posts
+		);
+	}
+
 	return array(
 		array( 'name' => 'Anh Minh', 'context' => 'Căn hộ 2PN - Vinhomes Ocean Park', 'quote' => 'LuxNova làm việc rất chuyên nghiệp, đúng tiến độ và không phát sinh thêm chi phí. Căn hộ đẹp hơn mong đợi!', 'rating' => 5, 'avatar' => luxnova_asset( 'assets/images/placeholder-avatar-1.svg' ) ),
 		array( 'name' => 'Chị Hương', 'context' => 'Căn hộ 3PN - Masteri West Heights', 'quote' => 'Mình ưng nhất cách tư vấn và thiết kế của LuxNova, rất tinh tế và phù hợp với nhu cầu gia đình.', 'rating' => 5, 'avatar' => luxnova_asset( 'assets/images/placeholder-avatar-2.svg' ) ),
@@ -769,42 +964,200 @@ function luxnova_default_testimonials(): array {
 	);
 }
 
-function luxnova_get_homepage_sections(): array {
-	if ( ! function_exists( 'have_rows' ) || ! have_rows( 'homepage_sections' ) ) {
-		return luxnova_default_homepage_sections();
+function luxnova_testimonial_card_data( int $testimonial_id ): array {
+	$quote = function_exists( 'get_field' ) ? get_field( 'quote', $testimonial_id ) : '';
+	if ( '' === trim( (string) $quote ) ) {
+		$quote = wp_strip_all_tags( get_post_field( 'post_content', $testimonial_id ) );
 	}
 
-	$sections = array();
+	$rating = function_exists( 'get_field' ) ? (int) get_field( 'rating', $testimonial_id ) : 5;
+	if ( $rating < 1 || $rating > 5 ) {
+		$rating = 5;
+	}
+
+	$avatar = function_exists( 'get_field' ) ? get_field( 'avatar', $testimonial_id ) : '';
+	if ( empty( $avatar ) ) {
+		$avatar = get_post_thumbnail_id( $testimonial_id );
+	}
+
+	return array(
+		'name' => get_the_title( $testimonial_id ),
+		'quote' => $quote,
+		'rating' => $rating,
+		'context' => function_exists( 'get_field' ) ? get_field( 'project_context', $testimonial_id ) : '',
+		'avatar' => $avatar,
+	);
+}
+
+function luxnova_get_homepage_sections(): array {
+	$defaults = luxnova_default_homepage_sections();
+
+	if ( ! function_exists( 'have_rows' ) || ! have_rows( 'homepage_sections' ) ) {
+		return $defaults;
+	}
+
+	$sections     = array();
+	$used_default = array();
 
 	while ( have_rows( 'homepage_sections' ) ) {
 		the_row();
 		$layout = get_row_layout();
 
-		switch ( $layout ) {
-			case 'hero':
-				$sections[] = array(
-					'layout' => 'hero',
-					'title' => get_sub_field( 'title' ),
-					'highlight' => get_sub_field( 'highlight' ),
-					'description' => get_sub_field( 'description' ),
-					'background_image' => get_sub_field( 'background_image' ),
-					'primary_button' => get_sub_field( 'primary_button' ),
-					'secondary_button' => get_sub_field( 'secondary_button' ),
-				);
-				break;
-			case 'statistics':
-			case 'services':
-			case 'featured_projects':
-			case 'home_audit_cta':
-			case 'work_process':
-			case 'testimonials':
-			case 'partner_logos':
-				$sections[] = array_merge( array( 'layout' => $layout ), luxnova_acf_sub_fields() );
-				break;
+		if ( ! in_array( $layout, luxnova_homepage_layout_names(), true ) ) {
+			continue;
+		}
+
+		$row           = array_merge( array( 'layout' => $layout ), luxnova_acf_sub_fields() );
+		$default_index = luxnova_homepage_next_default_index( $defaults, $used_default, $layout );
+
+		if ( null === $default_index ) {
+			$sections[] = $row;
+			continue;
+		}
+
+		$used_default[] = $default_index;
+		$sections[]     = luxnova_merge_filled_content( $defaults[ $default_index ], $row );
+	}
+
+	foreach ( $defaults as $index => $default_section ) {
+		if ( ! in_array( $index, $used_default, true ) ) {
+			$sections[] = $default_section;
 		}
 	}
 
-	return $sections ?: luxnova_default_homepage_sections();
+	return $sections ?: $defaults;
+}
+
+function luxnova_homepage_layout_names(): array {
+	return array(
+		'hero',
+		'statistics',
+		'services',
+		'featured_projects',
+		'home_audit_cta',
+		'work_process',
+		'testimonials',
+		'partner_logos',
+	);
+}
+
+function luxnova_homepage_next_default_index( array $defaults, array $used_default, string $layout ): ?int {
+	foreach ( $defaults as $index => $section ) {
+		if ( in_array( $index, $used_default, true ) ) {
+			continue;
+		}
+
+		if ( $layout === ( $section['layout'] ?? '' ) ) {
+			return $index;
+		}
+	}
+
+	return null;
+}
+
+function luxnova_merge_filled_content( mixed $default, mixed $override ): mixed {
+	if ( luxnova_is_empty_content_value( $override ) ) {
+		return $default;
+	}
+
+	if ( is_array( $default ) && is_array( $override ) ) {
+		if ( luxnova_is_list_array( $default ) || luxnova_is_list_array( $override ) ) {
+			return luxnova_merge_filled_list( $default, $override );
+		}
+
+		$merged = $default;
+		foreach ( $override as $key => $value ) {
+			if ( luxnova_is_empty_content_value( $value ) ) {
+				continue;
+			}
+
+			$merged[ $key ] = array_key_exists( $key, $default )
+				? luxnova_merge_filled_content( $default[ $key ], $value )
+				: $value;
+		}
+
+		return $merged;
+	}
+
+	return $override;
+}
+
+function luxnova_merge_filled_list( array $default, array $override ): array {
+	if ( luxnova_is_empty_content_value( $override ) ) {
+		return $default;
+	}
+
+	if ( luxnova_list_contains_only_scalars( $default ) || luxnova_list_contains_only_scalars( $override ) ) {
+		return array_values( array_filter( $override, static fn( mixed $value ): bool => ! luxnova_is_empty_content_value( $value ) ) );
+	}
+
+	$merged = array();
+	$count  = max( count( $default ), count( $override ) );
+
+	for ( $index = 0; $index < $count; $index++ ) {
+		$has_override = array_key_exists( $index, $override ) && ! luxnova_is_empty_content_value( $override[ $index ] );
+		$has_default  = array_key_exists( $index, $default );
+
+		if ( $has_override && $has_default ) {
+			$merged[] = luxnova_merge_filled_content( $default[ $index ], $override[ $index ] );
+		} elseif ( $has_override ) {
+			$merged[] = $override[ $index ];
+		} elseif ( $has_default ) {
+			$merged[] = $default[ $index ];
+		}
+	}
+
+	return $merged;
+}
+
+function luxnova_is_empty_content_value( mixed $value ): bool {
+	if ( null === $value || false === $value ) {
+		return true;
+	}
+
+	if ( is_string( $value ) ) {
+		return '' === trim( $value );
+	}
+
+	if ( is_array( $value ) ) {
+		if ( array() === $value ) {
+			return true;
+		}
+
+		foreach ( $value as $item ) {
+			if ( ! luxnova_is_empty_content_value( $item ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+function luxnova_is_list_array( array $value ): bool {
+	$expected_key = 0;
+
+	foreach ( array_keys( $value ) as $key ) {
+		if ( $key !== $expected_key ) {
+			return false;
+		}
+
+		$expected_key++;
+	}
+
+	return true;
+}
+
+function luxnova_list_contains_only_scalars( array $value ): bool {
+	foreach ( $value as $item ) {
+		if ( is_array( $item ) ) {
+			return false;
+		}
+	}
+
+	return true;
 }
 
 function luxnova_acf_sub_fields(): array {
@@ -819,6 +1172,13 @@ function luxnova_acf_sub_fields(): array {
 }
 
 function luxnova_stars( int $rating ): string {
-	$rating = max( 1, min( 5, $rating ) );
-	return str_repeat( '<span aria-hidden="true">★</span>', $rating );
+	$rating = max( 0, min( 5, $rating ) );
+	$output = '';
+
+	for ( $index = 1; $index <= 5; $index++ ) {
+		$class   = $index <= $rating ? 'is-filled' : 'is-empty';
+		$output .= sprintf( '<span class="%s" aria-hidden="true">&#9733;</span>', esc_attr( $class ) );
+	}
+
+	return $output;
 }

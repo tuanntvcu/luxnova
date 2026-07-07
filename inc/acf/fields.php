@@ -18,14 +18,15 @@ function luxnova_register_acf_fields(): void {
 	acf_add_local_field_group(
 		array(
 			'key' => 'group_luxnova_homepage',
-			'title' => 'Homepage Sections',
+			'title' => 'Các khối trang chủ',
 			'fields' => array(
 				array(
 					'key' => 'field_luxnova_homepage_sections',
-					'label' => 'Homepage Sections',
+					'label' => 'Các khối trang chủ',
 					'name' => 'homepage_sections',
 					'type' => 'flexible_content',
-					'button_label' => 'Add Section',
+					'instructions' => 'Thêm, sửa hoặc sắp xếp các khối nội dung trên trang chủ. Trường nào bỏ trống sẽ dùng nội dung mặc định của theme.',
+					'button_label' => 'Thêm khối',
 					'layouts' => luxnova_acf_homepage_layouts(),
 				),
 			),
@@ -44,18 +45,61 @@ function luxnova_register_acf_fields(): void {
 	acf_add_local_field_group(
 		array(
 			'key' => 'group_luxnova_project_details',
-			'title' => 'Project Details',
+			'title' => 'Thông tin dự án',
 			'fields' => array(
-				luxnova_acf_text( 'field_luxnova_project_area', 'Area', 'area' ),
-				luxnova_acf_text( 'field_luxnova_project_style', 'Style', 'style' ),
-				luxnova_acf_text( 'field_luxnova_project_budget', 'Budget', 'budget' ),
-				luxnova_acf_text( 'field_luxnova_project_timeline', 'Timeline', 'timeline' ),
-				luxnova_acf_text( 'field_luxnova_project_location', 'Location', 'location' ),
-				luxnova_acf_text( 'field_luxnova_project_completion_year', 'Completion Year', 'completion_year' ),
-				luxnova_acf_text( 'field_luxnova_project_scope', 'Scope', 'scope', 'Thiết kế & Thi công nội thất' ),
-				luxnova_acf_text( 'field_luxnova_project_architect', 'Architect', 'architect', 'LuxNova Design Team' ),
-				array( 'key' => 'field_luxnova_project_brochure', 'label' => 'Brochure', 'name' => 'brochure', 'type' => 'file', 'return_format' => 'array' ),
-				array( 'key' => 'field_luxnova_project_gallery', 'label' => 'Gallery', 'name' => 'gallery', 'type' => 'gallery', 'return_format' => 'id' ),
+				luxnova_acf_text( 'field_luxnova_project_area', 'Diện tích', 'area', '', 'Nhập diện tích hiển thị trên card và trang chi tiết. Ví dụ: 89m², 180m².' ),
+				luxnova_acf_text( 'field_luxnova_project_style', 'Phong cách', 'style', '', 'Nhập phong cách thiết kế chính. Ví dụ: Hiện đại, Japandi, Indochine, Tân cổ điển.' ),
+				luxnova_acf_text( 'field_luxnova_project_budget', 'Ngân sách', 'budget', '', 'Nhập ngân sách hoặc giá trị tham khảo để hiển thị trên card. Ví dụ: 620 triệu, 1.8 tỷ.' ),
+				luxnova_acf_text( 'field_luxnova_project_timeline', 'Thời gian thực hiện', 'timeline', '', 'Nhập thời gian thiết kế/thi công. Ví dụ: 45 ngày, 3 tháng.' ),
+				luxnova_acf_text( 'field_luxnova_project_location', 'Địa điểm', 'location', '', 'Nhập khu vực hoặc tên dự án. Ví dụ: Hà Nội, Masteri West Heights.' ),
+				luxnova_acf_text( 'field_luxnova_project_completion_year', 'Năm hoàn thành', 'completion_year', '', 'Nhập năm hoàn thành dự án. Ví dụ: 2024.' ),
+				luxnova_acf_text( 'field_luxnova_project_scope', 'Hạng mục thực hiện', 'scope', 'Thiết kế & Thi công nội thất', 'Mô tả phạm vi LuxNova thực hiện. Ví dụ: Thiết kế nội thất, Thi công trọn gói.' ),
+				luxnova_acf_text( 'field_luxnova_project_architect', 'Đội ngũ phụ trách', 'architect', 'LuxNova Design Team', 'Tên kiến trúc sư, nhóm thiết kế hoặc đội phụ trách dự án.' ),
+				array(
+					'key' => 'field_luxnova_project_brochure',
+					'label' => 'Hồ sơ dự án',
+					'name' => 'brochure',
+					'type' => 'file',
+					'return_format' => 'array',
+					'instructions' => 'Tải file PDF/brochure nếu muốn có nút tải hồ sơ trên trang chi tiết. Có thể bỏ trống.',
+				),
+				array(
+					'key' => 'field_luxnova_project_gallery',
+					'label' => 'Thư viện ảnh',
+					'name' => 'gallery',
+					'type' => 'gallery',
+					'return_format' => 'id',
+					'instructions' => 'Chọn nhiều ảnh cho gallery dự án. Ảnh đại diện chính vẫn dùng Featured Image của WordPress.',
+				),
+				array(
+					'key' => 'field_luxnova_project_gallery_videos',
+					'label' => 'Thư viện video',
+					'name' => 'gallery_videos',
+					'type' => 'repeater',
+					'layout' => 'block',
+					'button_label' => 'Thêm video',
+					'instructions' => 'Không bắt buộc. Thêm video vào cùng lightbox với thư viện ảnh. Video sẽ hiện nút play và mở bằng trình phát có điều khiển.',
+					'sub_fields' => array(
+						array(
+							'key' => 'field_luxnova_project_gallery_video_file',
+							'label' => 'File video',
+							'name' => 'video',
+							'type' => 'file',
+							'return_format' => 'array',
+							'mime_types' => 'mp4,webm,mov,m4v,ogg,ogv',
+							'instructions' => 'Upload hoặc chọn video dự án. Nên dùng MP4/WebM để trình duyệt phát ổn định.',
+						),
+						array(
+							'key' => 'field_luxnova_project_gallery_video_poster',
+							'label' => 'Ảnh đại diện video',
+							'name' => 'poster',
+							'type' => 'image',
+							'return_format' => 'id',
+							'preview_size' => 'medium',
+							'instructions' => 'Ảnh thumbnail hiển thị trong grid trước khi mở video. Nếu bỏ trống, website sẽ dùng ảnh đại diện chính của project.',
+						),
+					),
+				),
 			),
 			'location' => array(
 				array(
@@ -68,9 +112,9 @@ function luxnova_register_acf_fields(): void {
 	acf_add_local_field_group(
 		array(
 			'key' => 'group_luxnova_service_details',
-			'title' => 'Service Details',
+			'title' => 'Thông tin dịch vụ',
 			'fields' => array(
-				luxnova_acf_icon_select( 'field_luxnova_service_archive_icon', 'Archive Icon', 'icon', 'design' ),
+				luxnova_acf_icon_select( 'field_luxnova_service_archive_icon', 'Icon trang lưu trữ', 'icon', 'design' ),
 				luxnova_acf_icon_image( 'field_luxnova_service_archive_icon_image' ),
 			),
 			'location' => array(
@@ -84,11 +128,12 @@ function luxnova_register_acf_fields(): void {
 	acf_add_local_field_group(
 		array(
 			'key' => 'group_luxnova_testimonial_details',
-			'title' => 'Testimonial Details',
+			'title' => 'Thông tin đánh giá',
 			'fields' => array(
-				array( 'key' => 'field_luxnova_testimonial_rating', 'label' => 'Rating', 'name' => 'rating', 'type' => 'number', 'min' => 1, 'max' => 5, 'default_value' => 5 ),
-				luxnova_acf_text( 'field_luxnova_testimonial_context', 'Project Context', 'project_context' ),
-				array( 'key' => 'field_luxnova_testimonial_avatar', 'label' => 'Avatar', 'name' => 'avatar', 'type' => 'image', 'return_format' => 'id', 'preview_size' => 'thumbnail' ),
+				array( 'key' => 'field_luxnova_testimonial_rating', 'label' => 'Số sao', 'name' => 'rating', 'type' => 'number', 'min' => 1, 'max' => 5, 'default_value' => 5, 'instructions' => 'Nhập số sao đánh giá từ 1 đến 5.' ),
+				array( 'key' => 'field_luxnova_testimonial_quote', 'label' => 'Nội dung đánh giá', 'name' => 'quote', 'type' => 'textarea', 'rows' => 4, 'instructions' => 'Nhập lời nhận xét của khách hàng. Nếu bỏ trống, website sẽ lấy nội dung trong editor chính của bài đánh giá.' ),
+				luxnova_acf_text( 'field_luxnova_testimonial_context', 'Bối cảnh dự án', 'project_context', '', 'Ví dụ: Căn hộ 3PN - Masteri West Heights.' ),
+				array( 'key' => 'field_luxnova_testimonial_avatar', 'label' => 'Ảnh khách hàng', 'name' => 'avatar', 'type' => 'image', 'return_format' => 'id', 'preview_size' => 'thumbnail', 'instructions' => 'Ảnh đại diện khách hàng. Có thể bỏ trống để dùng ảnh mặc định.' ),
 			),
 			'location' => array(
 				array(
@@ -101,28 +146,28 @@ function luxnova_register_acf_fields(): void {
 	acf_add_local_field_group(
 		array(
 			'key' => 'group_luxnova_options',
-			'title' => 'Global Theme Settings',
+			'title' => 'Cài đặt chung của theme',
 			'fields' => array(
-				luxnova_acf_text( 'field_luxnova_brand_logo_text', 'Brand Logo Text', 'brand_logo_text', 'LUXNOVA' ),
-				luxnova_acf_text( 'field_luxnova_brand_tagline', 'Brand Tagline', 'brand_tagline', 'Interior Design & Build' ),
-				array( 'key' => 'field_luxnova_header_cta', 'label' => 'Header CTA', 'name' => 'header_cta', 'type' => 'link', 'return_format' => 'array' ),
-				array( 'key' => 'field_luxnova_footer_description', 'label' => 'Footer Description', 'name' => 'footer_description', 'type' => 'textarea', 'rows' => 3 ),
-				luxnova_acf_text( 'field_luxnova_phone', 'Phone', 'phone', '0968 888 168' ),
+				luxnova_acf_text( 'field_luxnova_brand_logo_text', 'Tên logo chữ', 'brand_logo_text', 'LUXNOVA' ),
+				luxnova_acf_text( 'field_luxnova_brand_tagline', 'Tagline thương hiệu', 'brand_tagline', 'Interior Design & Build' ),
+				array( 'key' => 'field_luxnova_header_cta', 'label' => 'Nút CTA trên header', 'name' => 'header_cta', 'type' => 'link', 'return_format' => 'array', 'instructions' => 'Nút kêu gọi hành động ở header, ví dụ Đặt lịch tư vấn.' ),
+				array( 'key' => 'field_luxnova_footer_description', 'label' => 'Mô tả footer', 'name' => 'footer_description', 'type' => 'textarea', 'rows' => 3, 'instructions' => 'Đoạn giới thiệu ngắn hiển thị ở footer.' ),
+				luxnova_acf_text( 'field_luxnova_phone', 'Số điện thoại', 'phone', '0968 888 168' ),
 				luxnova_acf_text( 'field_luxnova_email', 'Email', 'email', 'hello@luxnova.vn' ),
-				array( 'key' => 'field_luxnova_address', 'label' => 'Address', 'name' => 'address', 'type' => 'textarea', 'rows' => 2 ),
-				array( 'key' => 'field_luxnova_map_image', 'label' => 'Map Image', 'name' => 'map_image', 'type' => 'image', 'return_format' => 'id' ),
-				array( 'key' => 'field_luxnova_social_links', 'label' => 'Social Links', 'name' => 'social_links', 'type' => 'repeater', 'layout' => 'table', 'button_label' => 'Add Social Link', 'sub_fields' => array( luxnova_acf_text( 'field_luxnova_social_platform', 'Platform', 'platform' ), array( 'key' => 'field_luxnova_social_url', 'label' => 'URL', 'name' => 'url', 'type' => 'url' ) ) ),
-				array( 'key' => 'field_luxnova_default_og_image', 'label' => 'Default OG Image', 'name' => 'default_og_image', 'type' => 'image', 'return_format' => 'id' ),
+				array( 'key' => 'field_luxnova_address', 'label' => 'Địa chỉ', 'name' => 'address', 'type' => 'textarea', 'rows' => 2, 'instructions' => 'Địa chỉ hiển thị ở footer và trang liên hệ.' ),
+				array( 'key' => 'field_luxnova_map_iframe', 'label' => 'Iframe Google Maps', 'name' => 'map_iframe', 'type' => 'textarea', 'rows' => 4, 'new_lines' => '', 'instructions' => 'Dán mã iframe Google Maps lấy từ Google Maps > Chia sẻ > Nhúng bản đồ. Nếu bỏ trống, footer sẽ dùng ảnh bản đồ cũ nếu đã có.' ),
+				array( 'key' => 'field_luxnova_social_links', 'label' => 'Liên kết mạng xã hội', 'name' => 'social_links', 'type' => 'repeater', 'layout' => 'table', 'button_label' => 'Thêm liên kết', 'sub_fields' => array( luxnova_acf_text( 'field_luxnova_social_platform', 'Nền tảng', 'platform' ), array( 'key' => 'field_luxnova_social_url', 'label' => 'Đường dẫn', 'name' => 'url', 'type' => 'url', 'instructions' => 'Đường dẫn tới trang mạng xã hội.' ) ) ),
+				array( 'key' => 'field_luxnova_default_og_image', 'label' => 'Ảnh chia sẻ mặc định', 'name' => 'default_og_image', 'type' => 'image', 'return_format' => 'id', 'instructions' => 'Ảnh mặc định dùng khi chia sẻ link website lên mạng xã hội.' ),
 				array(
 					'key' => 'field_luxnova_archive_modal_content_tab',
-					'label' => 'Archive & Modal Content',
+					'label' => 'Nội dung trang lưu trữ & popup',
 					'name' => '',
 					'type' => 'tab',
 					'placement' => 'top',
 				),
-				luxnova_acf_group( 'field_luxnova_service_archive_content', 'Service Archive Content', 'service_archive_content', luxnova_acf_service_archive_fields() ),
-				luxnova_acf_group( 'field_luxnova_project_archive_content', 'Project Archive Content', 'project_archive_content', luxnova_acf_project_archive_fields() ),
-				luxnova_acf_group( 'field_luxnova_consultation_modal_content', 'Consultation Modal Content', 'consultation_modal_content', luxnova_acf_consultation_modal_fields() ),
+				luxnova_acf_group( 'field_luxnova_service_archive_content', 'Nội dung trang lưu trữ dịch vụ', 'service_archive_content', luxnova_acf_service_archive_fields() ),
+				luxnova_acf_group( 'field_luxnova_project_archive_content', 'Nội dung trang lưu trữ dự án', 'project_archive_content', luxnova_acf_project_archive_fields() ),
+				luxnova_acf_group( 'field_luxnova_consultation_modal_content', 'Nội dung popup tư vấn', 'consultation_modal_content', luxnova_acf_consultation_modal_fields() ),
 			),
 			'location' => array(
 				array(
@@ -135,7 +180,7 @@ function luxnova_register_acf_fields(): void {
 	acf_add_local_field_group(
 		array(
 			'key' => 'group_luxnova_contact_page_content',
-			'title' => 'Contact Page Content',
+			'title' => 'Nội dung trang liên hệ',
 			'fields' => luxnova_acf_contact_page_fields(),
 			'location' => array(
 				array(
@@ -151,7 +196,7 @@ function luxnova_register_acf_fields(): void {
 	acf_add_local_field_group(
 		array(
 			'key' => 'group_luxnova_faq_page_content',
-			'title' => 'FAQ Page Content',
+			'title' => 'Nội dung trang FAQ',
 			'fields' => luxnova_acf_faq_page_fields(),
 			'location' => array(
 				array(
@@ -167,7 +212,7 @@ function luxnova_register_acf_fields(): void {
 	acf_add_local_field_group(
 		array(
 			'key' => 'group_luxnova_pricing_page_content',
-			'title' => 'Pricing Page Content',
+			'title' => 'Nội dung trang bảng giá',
 			'fields' => luxnova_acf_pricing_page_fields(),
 			'location' => array(
 				array(
@@ -180,7 +225,7 @@ function luxnova_register_acf_fields(): void {
 	acf_add_local_field_group(
 		array(
 			'key' => 'group_luxnova_single_project_content',
-			'title' => 'Single Project Fallback Content',
+			'title' => 'Nội dung mặc định cho trang chi tiết dự án',
 			'fields' => luxnova_acf_single_project_fields(),
 			'location' => array(
 				array(
@@ -194,7 +239,7 @@ function luxnova_register_acf_fields(): void {
 function luxnova_acf_text( string $key, string $label, string $name, string $default = '', string $instructions = '' ): array {
 	return array(
 		'key' => $key,
-		'label' => $label,
+		'label' => luxnova_acf_label( $label ),
 		'name' => $name,
 		'type' => 'text',
 		'default_value' => $default,
@@ -206,25 +251,25 @@ function luxnova_acf_text( string $key, string $label, string $name, string $def
 function luxnova_acf_icon_select( string $key, string $label, string $name, string $default = 'home', string $instructions = '' ): array {
 	return array(
 		'key' => $key,
-		'label' => $label,
+		'label' => luxnova_acf_label( $label ),
 		'name' => $name,
 		'type' => 'select',
 		'instructions' => $instructions ?: luxnova_acf_default_instruction( $default ),
 		'choices' => array(
-			'chart' => 'Chart',
-			'users' => 'Users',
-			'shield' => 'Shield',
-			'document' => 'Document',
-			'home' => 'Home',
-			'measure' => 'Measure',
-			'design' => 'Design',
-			'quote' => 'Quote',
-			'tools' => 'Tools',
-			'key' => 'Key',
-			'clock' => 'Clock',
-			'phone' => 'Phone',
-			'mail' => 'Mail',
-			'pin' => 'Pin',
+			'chart' => 'Biểu đồ',
+			'users' => 'Khách hàng',
+			'shield' => 'Bảo hành',
+			'document' => 'Tài liệu',
+			'home' => 'Nhà',
+			'measure' => 'Đo đạc',
+			'design' => 'Thiết kế',
+			'quote' => 'Trích dẫn',
+			'tools' => 'Thi công',
+			'key' => 'Bàn giao',
+			'clock' => 'Thời gian',
+			'phone' => 'Điện thoại',
+			'mail' => 'Email',
+			'pin' => 'Vị trí',
 			'facebook' => 'Facebook',
 		),
 		'default_value' => $default,
@@ -240,14 +285,14 @@ function luxnova_acf_default_instruction( mixed $default ): string {
 	$default = trim( (string) $default );
 
 	return '' === $default
-		? 'Nếu bỏ trống, website sẽ dùng fallback mặc định trong theme.'
+		? 'Nếu bỏ trống, website sẽ dùng nội dung mặc định trong theme.'
 		: sprintf( 'Nếu bỏ trống, website sẽ dùng mặc định: %s', $default );
 }
 
 function luxnova_acf_dynamic_text( string $key, string $label, string $name, string $default = '' ): array {
 	return array(
 		'key' => $key,
-		'label' => $label,
+		'label' => luxnova_acf_label( $label ),
 		'name' => $name,
 		'type' => 'text',
 		'instructions' => luxnova_acf_default_instruction( $default ),
@@ -258,7 +303,7 @@ function luxnova_acf_dynamic_text( string $key, string $label, string $name, str
 function luxnova_acf_dynamic_textarea( string $key, string $label, string $name, string $default = '', int $rows = 3 ): array {
 	return array(
 		'key' => $key,
-		'label' => $label,
+		'label' => luxnova_acf_label( $label ),
 		'name' => $name,
 		'type' => 'textarea',
 		'rows' => $rows,
@@ -270,7 +315,7 @@ function luxnova_acf_dynamic_textarea( string $key, string $label, string $name,
 function luxnova_acf_dynamic_image( string $key, string $label, string $name, string $fallback = '' ): array {
 	return array(
 		'key' => $key,
-		'label' => $label,
+		'label' => luxnova_acf_label( $label ),
 		'name' => $name,
 		'type' => 'image',
 		'return_format' => 'id',
@@ -282,7 +327,7 @@ function luxnova_acf_dynamic_image( string $key, string $label, string $name, st
 function luxnova_acf_icon_image( string $key, string $label = 'Icon Image', string $name = 'icon_image' ): array {
 	return array(
 		'key' => $key,
-		'label' => $label,
+		'label' => luxnova_acf_label( $label ),
 		'name' => $name,
 		'type' => 'image',
 		'return_format' => 'id',
@@ -294,7 +339,7 @@ function luxnova_acf_icon_image( string $key, string $label = 'Icon Image', stri
 function luxnova_acf_group( string $key, string $label, string $name, array $sub_fields, string $instructions = '' ): array {
 	return array(
 		'key' => $key,
-		'label' => $label,
+		'label' => luxnova_acf_label( $label ),
 		'name' => $name,
 		'type' => 'group',
 		'layout' => 'block',
@@ -317,16 +362,127 @@ function luxnova_acf_dynamic_repeater( string $key, string $label, string $name,
 
 	return array(
 		'key' => $key,
-		'label' => $label,
+		'label' => luxnova_acf_label( $label ),
 		'name' => $name,
 		'type' => 'repeater',
 		'layout' => $layout,
-		'button_label' => 'Add item',
+		'button_label' => 'Thêm item',
 		'instructions' => empty( $summary )
 			? 'Nếu không thêm item nào, website sẽ dùng danh sách mặc định trong theme.'
 			: luxnova_acf_default_instruction( $summary ),
 		'sub_fields' => $sub_fields,
 	);
+}
+
+function luxnova_acf_label( string $label ): string {
+	$labels = array(
+		'Answer' => 'Câu trả lời',
+		'Archive Label' => 'Nhãn trang lưu trữ',
+		'Area Label' => 'Nhãn diện tích',
+		'Architect Label' => 'Nhãn đội ngũ phụ trách',
+		'Background Image' => 'Ảnh nền',
+		'Brochure Label' => 'Nhãn tải hồ sơ',
+		'Consultation Label' => 'Nhãn đặt lịch tư vấn',
+		'Eyebrow' => 'Dòng nhãn nhỏ',
+		'Gallery Label' => 'Nhãn xem ảnh',
+		'Highlight' => 'Dòng nhấn mạnh',
+		'Logo' => 'Logo',
+		'Price' => 'Giá',
+		'Scope Label' => 'Nhãn hạng mục thực hiện',
+		'Style Label' => 'Nhãn phong cách',
+		'Summary Fallback' => 'Tóm tắt mặc định',
+		'Tagline' => 'Tagline',
+		'Type Label' => 'Nhãn loại công trình',
+		'Year Label' => 'Nhãn năm hoàn thành',
+		'Action Labels' => 'Nhãn nút hành động',
+		'Archive Link' => 'Link xem tất cả',
+		'Area' => 'Diện tích',
+		'Avatar' => 'Ảnh đại diện',
+		'Benefits' => 'Lợi ích',
+		'Benefits Aria Label' => 'Nhãn hỗ trợ truy cập cho lợi ích',
+		'Breadcrumb Labels' => 'Nhãn breadcrumb',
+		'Brochure' => 'Hồ sơ dự án',
+		'Button' => 'Nút bấm',
+		'Button Icon' => 'Icon nút bấm',
+		'Button Icon Image' => 'Ảnh icon nút bấm',
+		'Button Label' => 'Nhãn nút bấm',
+		'Button URL' => 'URL nút bấm',
+		'Card Link Label' => 'Nhãn link trên card',
+		'Closing CTA' => 'CTA cuối trang',
+		'Contact Items' => 'Thông tin liên hệ',
+		'Contact Page Content' => 'Nội dung trang liên hệ',
+		'Content' => 'Nội dung',
+		'Cost Factors' => 'Yếu tố ảnh hưởng chi phí',
+		'Description' => 'Mô tả',
+		'FAQ Heading' => 'Tiêu đề FAQ',
+		'FAQ Image' => 'Ảnh FAQ',
+		'FAQ Items' => 'Câu hỏi thường gặp',
+		'FAQ Page Content' => 'Nội dung trang FAQ',
+		'Factors Heading' => 'Tiêu đề yếu tố chi phí',
+		'Feature' => 'Ý chính',
+		'Feature Cards' => 'Thẻ điểm nổi bật',
+		'Featured Plan' => 'Gói nổi bật',
+		'Features' => 'Danh sách ý chính',
+		'Form Heading' => 'Tiêu đề form',
+		'Gallery' => 'Thư viện ảnh',
+		'Gallery Heading' => 'Tiêu đề thư viện ảnh',
+		'Gallery More Label' => 'Nhãn xem thêm ảnh',
+		'Heading' => 'Tiêu đề',
+		'Hero' => 'Khối hero',
+		'Hero Meta Labels' => 'Nhãn thông tin hero',
+		'Hero Trust Items' => 'Cam kết trong hero',
+		'Home Label' => 'Nhãn trang chủ',
+		'Icon' => 'Icon',
+		'Icon Image' => 'Ảnh icon',
+		'Image' => 'Ảnh',
+		'Info Heading' => 'Tiêu đề thông tin',
+		'Info Labels' => 'Nhãn thông tin',
+		'Intro' => 'Đoạn giới thiệu',
+		'Items' => 'Danh sách',
+		'Label' => 'Nhãn',
+		'Link' => 'Link',
+		'Location' => 'Địa điểm',
+		'Location Label' => 'Nhãn địa điểm',
+		'Map Block' => 'Khối bản đồ',
+		'Map Image' => 'Ảnh bản đồ',
+		'Name' => 'Tên',
+		'Number' => 'Số',
+		'Paragraph' => 'Đoạn văn',
+		'Plans Heading' => 'Tiêu đề bảng giá',
+		'Plans Note' => 'Ghi chú bảng giá',
+		'Pricing FAQs' => 'FAQ bảng giá',
+		'Pricing Plans' => 'Gói giá',
+		'Pricing Page Content' => 'Nội dung trang bảng giá',
+		'Primary Button' => 'Nút chính',
+		'Primary Button Label' => 'Nhãn nút chính',
+		'Process Heading' => 'Tiêu đề quy trình',
+		'Project Context' => 'Bối cảnh dự án',
+		'Projects' => 'Dự án',
+		'Question' => 'Câu hỏi',
+		'Rating' => 'Số sao',
+		'Related Heading' => 'Tiêu đề dự án liên quan',
+		'Related Link Label' => 'Nhãn link dự án liên quan',
+		'Ribbon' => 'Nhãn nổi bật',
+		'Secondary Button' => 'Nút phụ',
+		'Secondary Button Label' => 'Nhãn nút phụ',
+		'Service Archive Content' => 'Nội dung trang lưu trữ dịch vụ',
+		'Services Heading' => 'Tiêu đề dịch vụ',
+		'Sidebar' => 'Thanh bên',
+		'Single Project Fallback Content' => 'Nội dung mặc định cho trang chi tiết dự án',
+		'Steps' => 'Các bước',
+		'Story Fallback Paragraphs' => 'Đoạn nội dung câu chuyện mặc định',
+		'Story Heading' => 'Tiêu đề câu chuyện',
+		'Subtitle' => 'Tiêu đề phụ',
+		'Suffix' => 'Hậu tố',
+		'Testimonials' => 'Đánh giá khách hàng',
+		'Timeline' => 'Thời gian thực hiện',
+		'Title' => 'Tiêu đề',
+		'Title Suffix' => 'Phần sau tiêu đề',
+		'Unit' => 'Đơn vị',
+		'Why Heading' => 'Tiêu đề lý do chọn',
+	);
+
+	return $labels[ $label ] ?? $label;
 }
 
 function luxnova_acf_hero_fields( string $prefix, array $defaults, bool $has_suffix = false, bool $has_actions = false ): array {
@@ -407,7 +563,7 @@ function luxnova_acf_contact_page_fields(): array {
 						luxnova_acf_icon_image( 'field_luxnova_contact_item_icon_image' ),
 						luxnova_acf_dynamic_text( 'field_luxnova_contact_item_title', 'Title', 'title' ),
 						luxnova_acf_dynamic_textarea( 'field_luxnova_contact_item_content', 'Content', 'content', '', 2 ),
-						array( 'key' => 'field_luxnova_contact_item_url', 'label' => 'URL', 'name' => 'url', 'type' => 'url', 'instructions' => 'Nếu bỏ trống, item sẽ hiển thị như text thường.' ),
+						array( 'key' => 'field_luxnova_contact_item_url', 'label' => 'Đường dẫn', 'name' => 'url', 'type' => 'url', 'instructions' => 'Nếu bỏ trống, item sẽ hiển thị như text thường.' ),
 					),
 					$defaults['contact_items'] ?? array()
 				),
@@ -416,7 +572,7 @@ function luxnova_acf_contact_page_fields(): array {
 					'Map Block',
 					'map',
 					array(
-						luxnova_acf_dynamic_image( 'field_luxnova_contact_map_image', 'Map Image', 'image', 'assets/images/placeholder-map.svg' ),
+						array( 'key' => 'field_luxnova_contact_map_iframe', 'label' => 'Iframe Google Maps', 'name' => 'iframe', 'type' => 'textarea', 'rows' => 4, 'new_lines' => '', 'instructions' => 'Dán mã iframe Google Maps cho block bản đồ trên trang Liên hệ. Nếu bỏ trống, website sẽ dùng iframe trong Cài đặt chung hoặc ảnh bản đồ cũ nếu có.' ),
 						luxnova_acf_dynamic_text( 'field_luxnova_contact_map_label', 'Label', 'label', $defaults['map']['label'] ?? '' ),
 						luxnova_acf_dynamic_textarea( 'field_luxnova_contact_map_description', 'Description', 'description', $defaults['map']['description'] ?? '', 3 ),
 						luxnova_acf_dynamic_text( 'field_luxnova_contact_map_button_label', 'Button Label', 'button_label', $defaults['map']['button_label'] ?? '' ),
@@ -448,7 +604,7 @@ function luxnova_acf_faq_page_fields(): array {
 						luxnova_acf_dynamic_text( 'field_luxnova_faq_sidebar_button_label', 'Button Label', 'button_label', $defaults['sidebar']['button_label'] ?? '' ),
 						luxnova_acf_icon_select( 'field_luxnova_faq_sidebar_button_icon', 'Button Icon', 'button_icon', $defaults['sidebar']['button_icon'] ?? 'mail', luxnova_acf_default_instruction( $defaults['sidebar']['button_icon'] ?? 'mail' ) ),
 						luxnova_acf_icon_image( 'field_luxnova_faq_sidebar_button_icon_image', 'Button Icon Image', 'button_icon_image' ),
-						array( 'key' => 'field_luxnova_faq_sidebar_button_url', 'label' => 'Button URL', 'name' => 'button_url', 'type' => 'url', 'instructions' => luxnova_acf_default_instruction( $defaults['sidebar']['button_url'] ?? home_url( '/lien-he/' ) ), 'placeholder' => $defaults['sidebar']['button_url'] ?? home_url( '/lien-he/' ) ),
+						array( 'key' => 'field_luxnova_faq_sidebar_button_url', 'label' => 'URL nút bấm', 'name' => 'button_url', 'type' => 'url', 'instructions' => luxnova_acf_default_instruction( $defaults['sidebar']['button_url'] ?? home_url( '/lien-he/' ) ), 'placeholder' => $defaults['sidebar']['button_url'] ?? home_url( '/lien-he/' ) ),
 					)
 				),
 				luxnova_acf_dynamic_repeater(
@@ -501,7 +657,7 @@ function luxnova_acf_pricing_page_fields(): array {
 						luxnova_acf_dynamic_text( 'field_luxnova_pricing_plan_ribbon', 'Ribbon', 'ribbon' ),
 						array(
 							'key' => 'field_luxnova_pricing_plan_featured',
-							'label' => 'Featured Plan',
+							'label' => 'Gói nổi bật',
 							'name' => 'featured',
 							'type' => 'true_false',
 							'ui' => 1,
@@ -687,101 +843,227 @@ function luxnova_acf_single_project_fields(): array {
 				luxnova_acf_dynamic_text( 'field_luxnova_single_project_related_heading', 'Related Heading', 'related_heading', $defaults['related_heading'] ?? '' ),
 				luxnova_acf_dynamic_text( 'field_luxnova_single_project_related_link_label', 'Related Link Label', 'related_link_label', $defaults['related_link_label'] ?? '' ),
 				luxnova_acf_group( 'field_luxnova_single_project_closing_cta', 'Closing CTA', 'closing_cta', luxnova_acf_cta_fields( 'field_luxnova_single_project_closing_cta', $defaults['closing_cta'] ?? array() ) ),
-			)
+			),
+			'Nhóm nâng cao: dùng để chỉnh chữ mặc định trên trang chi tiết dự án. Khi chỉ thêm dự án mới, bạn thường chỉ cần nhập tiêu đề, Featured Image, nội dung bài viết và nhóm "Thông tin dự án" phía trên.'
 		),
 	);
 }
 
+function luxnova_acf_homepage_defaults_by_layout(): array {
+	$defaults = array();
+
+	foreach ( luxnova_default_homepage_sections() as $section ) {
+		if ( ! empty( $section['layout'] ) ) {
+			$defaults[ $section['layout'] ] = $section;
+		}
+	}
+
+	return $defaults;
+}
+
+function luxnova_acf_link( string $key, string $label, string $name, array $default = array() ): array {
+	$default_title = trim( (string) ( $default['title'] ?? '' ) );
+	$default_url   = trim( (string) ( $default['url'] ?? '' ) );
+	$summary       = trim( $default_title . ( $default_url ? " ({$default_url})" : '' ) );
+
+	return array(
+		'key' => $key,
+		'label' => luxnova_acf_label( $label ),
+		'name' => $name,
+		'type' => 'link',
+		'return_format' => 'array',
+		'instructions' => $summary
+			? luxnova_acf_default_instruction( $summary )
+			: 'Nếu bỏ trống, website sẽ dùng link mặc định trong theme.',
+	);
+}
+
+function luxnova_acf_homepage_relationship( string $key, string $label, string $name, array $post_types, string $instructions ): array {
+	return array(
+		'key' => $key,
+		'label' => luxnova_acf_label( $label ),
+		'name' => $name,
+		'type' => 'relationship',
+		'post_type' => $post_types,
+		'return_format' => 'id',
+		'instructions' => $instructions,
+	);
+}
+
 function luxnova_acf_homepage_layouts(): array {
+	$defaults     = luxnova_acf_homepage_defaults_by_layout();
+	$hero         = $defaults['hero'] ?? array();
+	$statistics   = $defaults['statistics'] ?? array();
+	$services     = $defaults['services'] ?? array();
+	$projects     = $defaults['featured_projects'] ?? array();
+	$audit        = $defaults['home_audit_cta'] ?? array();
+	$process      = $defaults['work_process'] ?? array();
+	$testimonials = $defaults['testimonials'] ?? array();
+	$partners     = $defaults['partner_logos'] ?? array();
+
 	return array(
 		'layout_luxnova_hero' => array(
 			'key' => 'layout_luxnova_hero',
 			'name' => 'hero',
-			'label' => 'Hero',
+			'label' => 'Banner hero',
 			'display' => 'block',
 			'sub_fields' => array(
-				array( 'key' => 'field_luxnova_hero_title', 'label' => 'Title', 'name' => 'title', 'type' => 'textarea', 'rows' => 2 ),
-				luxnova_acf_text( 'field_luxnova_hero_highlight', 'Highlight', 'highlight' ),
-				array( 'key' => 'field_luxnova_hero_description', 'label' => 'Description', 'name' => 'description', 'type' => 'textarea', 'rows' => 3 ),
-				array( 'key' => 'field_luxnova_hero_background', 'label' => 'Background Image', 'name' => 'background_image', 'type' => 'image', 'return_format' => 'id', 'preview_size' => 'medium' ),
-				array( 'key' => 'field_luxnova_hero_primary_button', 'label' => 'Primary Button', 'name' => 'primary_button', 'type' => 'link', 'return_format' => 'array' ),
-				array( 'key' => 'field_luxnova_hero_secondary_button', 'label' => 'Secondary Button', 'name' => 'secondary_button', 'type' => 'link', 'return_format' => 'array' ),
+				luxnova_acf_dynamic_textarea( 'field_luxnova_hero_title', 'Title', 'title', $hero['title'] ?? '', 2 ),
+				luxnova_acf_dynamic_text( 'field_luxnova_hero_highlight', 'Highlight', 'highlight', $hero['highlight'] ?? '' ),
+				luxnova_acf_dynamic_textarea( 'field_luxnova_hero_description', 'Description', 'description', $hero['description'] ?? '', 3 ),
+				luxnova_acf_dynamic_image( 'field_luxnova_hero_background', 'Background Image', 'background_image', 'assets/images/placeholder-hero.svg' ),
+				luxnova_acf_link( 'field_luxnova_hero_primary_button', 'Primary Button', 'primary_button', $hero['primary_button'] ?? array() ),
+				luxnova_acf_link( 'field_luxnova_hero_secondary_button', 'Secondary Button', 'secondary_button', $hero['secondary_button'] ?? array() ),
 			),
 		),
 		'layout_luxnova_statistics' => array(
 			'key' => 'layout_luxnova_statistics',
 			'name' => 'statistics',
-			'label' => 'Statistics',
+			'label' => 'Thống kê',
 			'display' => 'block',
 			'sub_fields' => array(
-				array( 'key' => 'field_luxnova_statistics_items', 'label' => 'Items', 'name' => 'items', 'type' => 'repeater', 'min' => 1, 'layout' => 'table', 'sub_fields' => array( luxnova_acf_icon_select( 'field_luxnova_stat_icon', 'Icon', 'icon', 'chart' ), luxnova_acf_icon_image( 'field_luxnova_stat_icon_image' ), luxnova_acf_text( 'field_luxnova_stat_number', 'Number', 'number' ), luxnova_acf_text( 'field_luxnova_stat_suffix', 'Suffix', 'suffix' ), luxnova_acf_text( 'field_luxnova_stat_label', 'Label', 'label' ) ) ),
+				luxnova_acf_dynamic_repeater(
+					'field_luxnova_statistics_items',
+					'Items',
+					'items',
+					array(
+						luxnova_acf_icon_select( 'field_luxnova_stat_icon', 'Icon', 'icon', 'chart' ),
+						luxnova_acf_icon_image( 'field_luxnova_stat_icon_image' ),
+						luxnova_acf_dynamic_text( 'field_luxnova_stat_number', 'Number', 'number' ),
+						luxnova_acf_dynamic_text( 'field_luxnova_stat_suffix', 'Suffix', 'suffix' ),
+						luxnova_acf_dynamic_text( 'field_luxnova_stat_label', 'Label', 'label' ),
+					),
+					$statistics['items'] ?? array(),
+					'table'
+				),
 			),
 		),
 		'layout_luxnova_services' => array(
 			'key' => 'layout_luxnova_services',
 			'name' => 'services',
-			'label' => 'Services',
+			'label' => 'Dịch vụ',
 			'display' => 'block',
 			'sub_fields' => array(
-				luxnova_acf_text( 'field_luxnova_services_heading', 'Heading', 'heading' ),
-				luxnova_acf_text( 'field_luxnova_services_subtitle', 'Subtitle', 'subtitle' ),
-				array( 'key' => 'field_luxnova_services_archive_link', 'label' => 'Archive Link', 'name' => 'archive_link', 'type' => 'link', 'return_format' => 'array' ),
-				array( 'key' => 'field_luxnova_services_items', 'label' => 'Items', 'name' => 'items', 'type' => 'repeater', 'layout' => 'block', 'sub_fields' => array( luxnova_acf_text( 'field_luxnova_service_title', 'Title', 'title' ), luxnova_acf_text( 'field_luxnova_service_tagline', 'Tagline', 'tagline' ), array( 'key' => 'field_luxnova_service_image', 'label' => 'Image', 'name' => 'image', 'type' => 'image', 'return_format' => 'id' ), array( 'key' => 'field_luxnova_service_features', 'label' => 'Features', 'name' => 'features', 'type' => 'repeater', 'layout' => 'table', 'sub_fields' => array( luxnova_acf_text( 'field_luxnova_service_feature_text', 'Feature', 'text' ) ) ), array( 'key' => 'field_luxnova_service_link', 'label' => 'Link', 'name' => 'link', 'type' => 'link', 'return_format' => 'array' ) ) ),
+				luxnova_acf_dynamic_text( 'field_luxnova_services_heading', 'Heading', 'heading', $services['heading'] ?? '' ),
+				luxnova_acf_dynamic_text( 'field_luxnova_services_subtitle', 'Subtitle', 'subtitle', $services['subtitle'] ?? '' ),
+				luxnova_acf_link( 'field_luxnova_services_archive_link', 'Archive Link', 'archive_link', $services['archive_link'] ?? array() ),
+				luxnova_acf_dynamic_repeater(
+					'field_luxnova_services_items',
+					'Items',
+					'items',
+					array(
+						luxnova_acf_dynamic_text( 'field_luxnova_service_title', 'Title', 'title' ),
+						luxnova_acf_dynamic_text( 'field_luxnova_service_tagline', 'Tagline', 'tagline' ),
+						luxnova_acf_dynamic_image( 'field_luxnova_service_image', 'Image', 'image', 'assets/images/placeholder-interior.svg' ),
+						luxnova_acf_dynamic_repeater(
+							'field_luxnova_service_features',
+							'Features',
+							'features',
+							array(
+								luxnova_acf_dynamic_text( 'field_luxnova_service_feature_text', 'Feature', 'text' ),
+							),
+							array(),
+							'table'
+						),
+						luxnova_acf_link( 'field_luxnova_service_link', 'Link', 'link' ),
+					),
+					$services['items'] ?? array()
+				),
 			),
 		),
 		'layout_luxnova_projects' => array(
 			'key' => 'layout_luxnova_projects',
 			'name' => 'featured_projects',
-			'label' => 'Featured Projects',
+			'label' => 'Dự án tiêu biểu',
 			'display' => 'block',
 			'sub_fields' => array(
-				luxnova_acf_text( 'field_luxnova_projects_heading', 'Heading', 'heading' ),
-				array( 'key' => 'field_luxnova_projects_archive_link', 'label' => 'Archive Link', 'name' => 'archive_link', 'type' => 'link', 'return_format' => 'array' ),
-				array( 'key' => 'field_luxnova_projects_items', 'label' => 'Projects', 'name' => 'items', 'type' => 'relationship', 'post_type' => array( 'luxnova_project' ), 'return_format' => 'id' ),
+				luxnova_acf_dynamic_text( 'field_luxnova_projects_heading', 'Heading', 'heading', $projects['heading'] ?? '' ),
+				luxnova_acf_link( 'field_luxnova_projects_archive_link', 'Archive Link', 'archive_link', $projects['archive_link'] ?? array() ),
+				luxnova_acf_homepage_relationship( 'field_luxnova_projects_items', 'Projects', 'items', array( 'luxnova_project' ), 'Nếu bỏ trống, website sẽ dùng các card dự án mặc định trong theme.' ),
 			),
 		),
 		'layout_luxnova_home_audit' => array(
 			'key' => 'layout_luxnova_home_audit',
 			'name' => 'home_audit_cta',
-			'label' => 'Home Audit CTA',
+			'label' => 'CTA Home Audit',
 			'display' => 'block',
 			'sub_fields' => array(
-				array( 'key' => 'field_luxnova_audit_image', 'label' => 'Image', 'name' => 'image', 'type' => 'image', 'return_format' => 'id' ),
-				luxnova_acf_text( 'field_luxnova_audit_label', 'Label', 'label' ),
-				luxnova_acf_text( 'field_luxnova_audit_heading', 'Heading', 'heading' ),
-				array( 'key' => 'field_luxnova_audit_description', 'label' => 'Description', 'name' => 'description', 'type' => 'textarea', 'rows' => 3 ),
-				array( 'key' => 'field_luxnova_audit_benefits', 'label' => 'Benefits', 'name' => 'benefits', 'type' => 'repeater', 'layout' => 'table', 'sub_fields' => array( luxnova_acf_icon_select( 'field_luxnova_audit_benefit_icon', 'Icon', 'icon', 'document' ), luxnova_acf_icon_image( 'field_luxnova_audit_benefit_icon_image' ), luxnova_acf_text( 'field_luxnova_audit_benefit_label', 'Label', 'label' ) ) ),
-				array( 'key' => 'field_luxnova_audit_button', 'label' => 'Button', 'name' => 'button', 'type' => 'link', 'return_format' => 'array' ),
+				luxnova_acf_dynamic_image( 'field_luxnova_audit_image', 'Image', 'image', 'assets/images/placeholder-audit.svg' ),
+				luxnova_acf_dynamic_text( 'field_luxnova_audit_label', 'Label', 'label', $audit['label'] ?? '' ),
+				luxnova_acf_dynamic_text( 'field_luxnova_audit_heading', 'Heading', 'heading', $audit['heading'] ?? '' ),
+				luxnova_acf_dynamic_textarea( 'field_luxnova_audit_description', 'Description', 'description', $audit['description'] ?? '', 3 ),
+				luxnova_acf_dynamic_repeater(
+					'field_luxnova_audit_benefits',
+					'Benefits',
+					'benefits',
+					array(
+						luxnova_acf_icon_select( 'field_luxnova_audit_benefit_icon', 'Icon', 'icon', 'document' ),
+						luxnova_acf_icon_image( 'field_luxnova_audit_benefit_icon_image' ),
+						luxnova_acf_dynamic_text( 'field_luxnova_audit_benefit_label', 'Label', 'label' ),
+					),
+					$audit['benefits'] ?? array(),
+					'table'
+				),
+				luxnova_acf_link( 'field_luxnova_audit_button', 'Button', 'button', $audit['button'] ?? array() ),
 			),
 		),
 		'layout_luxnova_process' => array(
 			'key' => 'layout_luxnova_process',
 			'name' => 'work_process',
-			'label' => 'Work Process',
+			'label' => 'Quy trình làm việc',
 			'display' => 'block',
 			'sub_fields' => array(
-				luxnova_acf_text( 'field_luxnova_process_heading', 'Heading', 'heading' ),
-				array( 'key' => 'field_luxnova_process_steps', 'label' => 'Steps', 'name' => 'steps', 'type' => 'repeater', 'layout' => 'block', 'sub_fields' => array( luxnova_acf_icon_select( 'field_luxnova_process_icon', 'Icon', 'icon', 'home' ), luxnova_acf_icon_image( 'field_luxnova_process_icon_image' ), luxnova_acf_text( 'field_luxnova_process_number', 'Number', 'number' ), luxnova_acf_text( 'field_luxnova_process_title', 'Title', 'title' ), luxnova_acf_text( 'field_luxnova_process_description', 'Description', 'description' ) ) ),
+				luxnova_acf_dynamic_text( 'field_luxnova_process_heading', 'Heading', 'heading', $process['heading'] ?? '' ),
+				luxnova_acf_dynamic_repeater(
+					'field_luxnova_process_steps',
+					'Steps',
+					'steps',
+					array(
+						luxnova_acf_icon_select( 'field_luxnova_process_icon', 'Icon', 'icon', 'home' ),
+						luxnova_acf_icon_image( 'field_luxnova_process_icon_image' ),
+						luxnova_acf_dynamic_text( 'field_luxnova_process_number', 'Number', 'number' ),
+						luxnova_acf_dynamic_text( 'field_luxnova_process_title', 'Title', 'title' ),
+						luxnova_acf_dynamic_text( 'field_luxnova_process_description', 'Description', 'description' ),
+					),
+					$process['steps'] ?? array()
+				),
 			),
 		),
 		'layout_luxnova_testimonials' => array(
 			'key' => 'layout_luxnova_testimonials',
 			'name' => 'testimonials',
-			'label' => 'Testimonials',
+			'label' => 'Đánh giá khách hàng',
 			'display' => 'block',
 			'sub_fields' => array(
-				luxnova_acf_text( 'field_luxnova_testimonials_heading', 'Heading', 'heading' ),
-				array( 'key' => 'field_luxnova_testimonials_archive_link', 'label' => 'Archive Link', 'name' => 'archive_link', 'type' => 'link', 'return_format' => 'array' ),
-				array( 'key' => 'field_luxnova_testimonials_items', 'label' => 'Testimonials', 'name' => 'items', 'type' => 'relationship', 'post_type' => array( 'luxnova_testimonial' ), 'return_format' => 'id' ),
+				luxnova_acf_dynamic_text( 'field_luxnova_testimonials_heading', 'Heading', 'heading', $testimonials['heading'] ?? '' ),
+				luxnova_acf_link( 'field_luxnova_testimonials_archive_link', 'Archive Link', 'archive_link', $testimonials['archive_link'] ?? array() ),
+				luxnova_acf_homepage_relationship( 'field_luxnova_testimonials_items', 'Testimonials', 'items', array( 'luxnova_testimonial' ), 'Nếu bỏ trống, website sẽ dùng danh sách đánh giá mặc định trong theme.' ),
 			),
 		),
 		'layout_luxnova_partner_logos' => array(
 			'key' => 'layout_luxnova_partner_logos',
 			'name' => 'partner_logos',
-			'label' => 'Partner Logos',
+			'label' => 'Logo đối tác',
 			'display' => 'block',
 			'sub_fields' => array(
-				array( 'key' => 'field_luxnova_partner_items', 'label' => 'Logos', 'name' => 'items', 'type' => 'repeater', 'layout' => 'table', 'sub_fields' => array( array( 'key' => 'field_luxnova_partner_logo', 'label' => 'Logo', 'name' => 'logo', 'type' => 'image', 'return_format' => 'id' ), luxnova_acf_text( 'field_luxnova_partner_name', 'Name', 'name' ), array( 'key' => 'field_luxnova_partner_url', 'label' => 'URL', 'name' => 'url', 'type' => 'url' ) ) ),
+				luxnova_acf_dynamic_repeater(
+					'field_luxnova_partner_items',
+					'Logos',
+					'items',
+					array(
+						luxnova_acf_dynamic_image( 'field_luxnova_partner_logo', 'Logo', 'logo', 'assets/images/placeholder-logo.svg' ),
+						luxnova_acf_dynamic_text( 'field_luxnova_partner_name', 'Name', 'name' ),
+						array(
+							'key' => 'field_luxnova_partner_url',
+							'label' => 'Đường dẫn',
+							'name' => 'url',
+							'type' => 'url',
+							'instructions' => 'Không bắt buộc. Bỏ trống nếu logo không cần gắn link.',
+						),
+					),
+					$partners['items'] ?? array(),
+					'table'
+				),
 			),
 		),
 	);

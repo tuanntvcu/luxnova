@@ -11,13 +11,7 @@ $items   = $section['items'] ?? array();
 if ( ! empty( $items ) && is_numeric( reset( $items ) ) ) {
 	$cards = array();
 	foreach ( $items as $testimonial_id ) {
-		$cards[] = array(
-			'name' => get_the_title( (int) $testimonial_id ),
-			'quote' => wp_strip_all_tags( get_post_field( 'post_content', (int) $testimonial_id ) ),
-			'rating' => function_exists( 'get_field' ) ? (int) get_field( 'rating', (int) $testimonial_id ) : 5,
-			'context' => function_exists( 'get_field' ) ? get_field( 'project_context', (int) $testimonial_id ) : '',
-			'avatar' => function_exists( 'get_field' ) ? get_field( 'avatar', (int) $testimonial_id ) : get_post_thumbnail_id( (int) $testimonial_id ),
-		);
+		$cards[] = luxnova_testimonial_card_data( (int) $testimonial_id );
 	}
 	$items = $cards;
 }
@@ -32,8 +26,11 @@ if ( ! empty( $items ) && is_numeric( reset( $items ) ) ) {
 			<div class="testimonial-slider__track">
 				<?php foreach ( $items as $item ) : ?>
 					<article class="testimonial-card testimonial-slider__slide reveal-on-scroll">
-						<div class="testimonial-card__stars" aria-label="<?php echo esc_attr( sprintf( __( '%d out of 5 stars', 'luxnova' ), (int) ( $item['rating'] ?? 5 ) ) ); ?>"><?php echo luxnova_stars( (int) ( $item['rating'] ?? 5 ) ); ?></div>
-						<blockquote>“<?php echo esc_html( $item['quote'] ?? '' ); ?>”</blockquote>
+						<?php $rating = max( 1, min( 5, (int) ( $item['rating'] ?? 5 ) ) ); ?>
+						<div class="testimonial-card__stars" aria-label="<?php echo esc_attr( sprintf( __( '%d out of 5 stars', 'luxnova' ), $rating ) ); ?>"><?php echo luxnova_stars( $rating ); ?></div>
+						<?php if ( ! empty( $item['quote'] ) ) : ?>
+							<blockquote>&ldquo;<?php echo esc_html( $item['quote'] ); ?>&rdquo;</blockquote>
+						<?php endif; ?>
 						<footer>
 							<?php echo luxnova_image( $item['avatar'] ?? '', 'luxnova-avatar', array( 'alt' => esc_attr( $item['name'] ?? '' ) ), 'assets/images/placeholder-avatar-1.svg' ); ?>
 							<div>

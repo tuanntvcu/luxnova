@@ -134,7 +134,10 @@ foreach ( $contact_items as $item ) {
 <section class="contact-map-section">
 	<div class="container">
 		<div class="contact-map reveal-on-scroll">
-			<?php echo luxnova_image( $map['image'] ?? '', 'large', array( 'class' => 'contact-map__image', 'alt' => esc_attr__( 'LuxNova office map', 'luxnova' ) ), 'assets/images/placeholder-map.svg' ); ?>
+			<?php
+			$contact_map_embed = luxnova_map_embed( $map['iframe'] ?? '', 'contact-map__iframe', __( 'LuxNova office map', 'luxnova' ) );
+			echo $contact_map_embed ?: luxnova_image( $map['image'] ?? '', 'large', array( 'class' => 'contact-map__image', 'alt' => esc_attr__( 'LuxNova office map', 'luxnova' ) ), 'assets/images/placeholder-map.svg' );
+			?>
 			<div class="contact-map__card">
 				<p class="contact-map__label"><?php echo esc_html( $map['label'] ?? '' ); ?></p>
 				<?php if ( ! empty( $map['description'] ) ) : ?>

@@ -15,6 +15,7 @@ $description = luxnova_get_option( 'footer_description', 'LuxNova - Đơn vị t
 $phone       = luxnova_get_option( 'phone', '0968 888 168' );
 $email       = luxnova_get_option( 'email', 'hello@luxnova.vn' );
 $address     = luxnova_get_option( 'address', 'Tòa nhà HH1, KĐT Yên Hòa, Cầu Giấy, Hà Nội' );
+$map_iframe  = luxnova_get_option( 'map_iframe', '' );
 $map_image   = luxnova_get_option( 'map_image', '' );
 $socials     = luxnova_get_option(
 	'social_links',
@@ -64,7 +65,10 @@ $socials     = luxnova_get_option(
 			<p><?php echo luxnova_icon( 'phone' ); ?><a href="tel:<?php echo esc_attr( preg_replace( '/\D+/', '', (string) $phone ) ); ?>"><?php echo esc_html( $phone ); ?></a></p>
 			<p><?php echo luxnova_icon( 'mail' ); ?><a href="mailto:<?php echo esc_attr( $email ); ?>"><?php echo esc_html( $email ); ?></a></p>
 			<p><?php echo luxnova_icon( 'pin' ); ?><span><?php echo esc_html( $address ); ?></span></p>
-			<?php echo luxnova_image( $map_image, 'medium', array( 'class' => 'site-footer__map', 'alt' => esc_attr__( 'LuxNova map location', 'luxnova' ) ), 'assets/images/placeholder-map.svg' ); ?>
+			<?php
+			$footer_map_embed = luxnova_map_embed( $map_iframe, 'site-footer__map', __( 'LuxNova map location', 'luxnova' ) );
+			echo $footer_map_embed ?: luxnova_image( $map_image, 'medium', array( 'class' => 'site-footer__map', 'alt' => esc_attr__( 'LuxNova map location', 'luxnova' ) ), 'assets/images/placeholder-map.svg' );
+			?>
 		</address>
 	</div>
 </footer>
@@ -86,8 +90,8 @@ function luxnova_footer_services_fallback(): void {
 function luxnova_footer_support_fallback(): void {
 	echo '<ul class="footer-menu">';
 	$items = array(
-		array( 'label' => 'Chính sách bảo hành', 'url' => '#' ),
-		array( 'label' => 'Quy trình làm việc', 'url' => '#' ),
+		array( 'label' => 'Chính sách bảo hành', 'url' => home_url( '/faq/' ) ),
+		array( 'label' => 'Quy trình làm việc', 'url' => home_url( '/faq/' ) ),
 		array( 'label' => 'Câu hỏi thường gặp', 'url' => home_url( '/faq/' ) ),
 		array( 'label' => 'Liên hệ', 'url' => home_url( '/lien-he/' ) ),
 	);

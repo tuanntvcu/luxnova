@@ -15,6 +15,9 @@ $items   = $section['items'] ?? array();
 			$name = is_array( $item ) ? ( $item['name'] ?? '' ) : $item;
 			$url  = is_array( $item ) ? ( $item['url'] ?? '' ) : '';
 			$logo = is_array( $item ) ? ( $item['logo'] ?? '' ) : '';
+			if ( ! $logo && $name ) {
+				$logo = luxnova_partner_logo_by_name( (string) $name );
+			}
 			?>
 			<?php if ( $url ) : ?><a href="<?php echo esc_url( $url ); ?>" aria-label="<?php echo esc_attr( $name ); ?>"><?php else : ?><span><?php endif; ?>
 				<?php
