@@ -111,6 +111,21 @@ function luxnova_register_acf_fields(): void {
 
 	acf_add_local_field_group(
 		array(
+			'key' => 'group_luxnova_project_hero_mobile',
+			'title' => 'Hero mobile image',
+			'fields' => array(
+				luxnova_acf_dynamic_image( 'field_luxnova_project_hero_mobile_image', 'Hero Mobile Image', 'hero_mobile_image', 'Featured Image' ),
+			),
+			'location' => array(
+				array(
+					array( 'param' => 'post_type', 'operator' => '==', 'value' => 'luxnova_project' ),
+				),
+			),
+		)
+	);
+
+	acf_add_local_field_group(
+		array(
 			'key' => 'group_luxnova_service_details',
 			'title' => 'Thông tin dịch vụ',
 			'fields' => array(
@@ -519,6 +534,7 @@ function luxnova_acf_hero_fields( string $prefix, array $defaults, bool $has_suf
 
 	$fields[] = luxnova_acf_dynamic_textarea( "{$prefix}_description", 'Description', 'description', $defaults['description'] ?? '', 3 );
 	$fields[] = luxnova_acf_dynamic_image( "{$prefix}_image", 'Image', 'image', $defaults['image_fallback'] ?? '' );
+	$fields[] = luxnova_acf_dynamic_image( "{$prefix}_mobile_image", 'Mobile Image', 'mobile_image', 'desktop image above' );
 
 	if ( $has_actions ) {
 		$fields[] = luxnova_acf_dynamic_text( "{$prefix}_primary_label", 'Primary Button Label', 'primary_label', $defaults['primary_label'] ?? '' );
@@ -930,6 +946,7 @@ function luxnova_acf_homepage_layouts(): array {
 				luxnova_acf_dynamic_text( 'field_luxnova_hero_highlight', 'Highlight', 'highlight', $hero['highlight'] ?? '' ),
 				luxnova_acf_dynamic_textarea( 'field_luxnova_hero_description', 'Description', 'description', $hero['description'] ?? '', 3 ),
 				luxnova_acf_dynamic_image( 'field_luxnova_hero_background', 'Background Image', 'background_image', 'assets/images/placeholder-hero.svg' ),
+				luxnova_acf_dynamic_image( 'field_luxnova_hero_background_mobile', 'Background Image Mobile', 'background_image_mobile', 'desktop background image above' ),
 				luxnova_acf_link( 'field_luxnova_hero_primary_button', 'Primary Button', 'primary_button', $hero['primary_button'] ?? array() ),
 				luxnova_acf_link( 'field_luxnova_hero_secondary_button', 'Secondary Button', 'secondary_button', $hero['secondary_button'] ?? array() ),
 			),

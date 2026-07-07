@@ -21,6 +21,7 @@ function luxnova_register_options_pages(): void {
 			'menu_title' => esc_html__( 'LuxNova Settings', 'luxnova' ),
 			'menu_slug'  => 'luxnova-theme-settings',
 			'capability' => 'edit_theme_options',
+			'post_id'    => 'options',
 			'redirect'   => false,
 			'position'   => 59,
 		)

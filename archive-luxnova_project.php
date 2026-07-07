@@ -36,7 +36,7 @@ if ( 'oldest' === $selected_sort ) {
 ?>
 <section class="project-archive-hero">
 	<div class="project-archive-hero__media" aria-hidden="true">
-		<?php echo luxnova_image( $hero['image'] ?? '', 'luxnova-hero', array( 'class' => 'project-archive-hero__image', 'alt' => '', 'loading' => 'eager', 'fetchpriority' => 'high' ), $hero['image_fallback'] ?? 'assets/images/placeholder-hero.svg' ); ?>
+		<?php echo luxnova_responsive_image( $hero['image'] ?? '', $hero['mobile_image'] ?? '', 'luxnova-hero', array( 'class' => 'project-archive-hero__image', 'alt' => '', 'loading' => 'eager', 'fetchpriority' => 'high' ), $hero['image_fallback'] ?? 'assets/images/placeholder-hero.svg' ); ?>
 	</div>
 	<div class="project-archive-hero__overlay"></div>
 	<div class="container project-archive-hero__content reveal-on-scroll">

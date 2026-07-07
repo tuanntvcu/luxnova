@@ -26,7 +26,7 @@ foreach ( $contact_items as $item ) {
 ?>
 <section class="contact-hero">
 	<div class="contact-hero__media" aria-hidden="true">
-		<?php echo luxnova_image( $hero['image'] ?? '', 'luxnova-hero', array( 'class' => 'contact-hero__image', 'alt' => '', 'loading' => 'eager', 'fetchpriority' => 'high' ), $hero['image_fallback'] ?? 'assets/images/placeholder-service-2.svg' ); ?>
+		<?php echo luxnova_responsive_image( $hero['image'] ?? '', $hero['mobile_image'] ?? '', 'luxnova-hero', array( 'class' => 'contact-hero__image', 'alt' => '', 'loading' => 'eager', 'fetchpriority' => 'high' ), $hero['image_fallback'] ?? 'assets/images/placeholder-service-2.svg' ); ?>
 	</div>
 	<div class="contact-hero__overlay"></div>
 	<div class="container contact-hero__content reveal-on-scroll">

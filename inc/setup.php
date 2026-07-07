@@ -23,6 +23,7 @@ function luxnova_setup(): void {
 	add_editor_style( 'assets/css/editor.css' );
 
 	add_image_size( 'luxnova-hero', 1920, 1080, true );
+	add_image_size( 'luxnova-hero-mobile', 900, 1200, true );
 	add_image_size( 'luxnova-card', 760, 520, true );
 	add_image_size( 'luxnova-project', 620, 430, true );
 	add_image_size( 'luxnova-avatar', 96, 96, true );

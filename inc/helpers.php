@@ -15,7 +15,7 @@ function luxnova_asset( string $path ): string {
 
 function luxnova_get_option( string $key, mixed $default = '' ): mixed {
 	if ( function_exists( 'get_field' ) ) {
-		$value = get_field( $key, 'option' );
+		$value = get_field( $key, 'options' );
 		if ( null !== $value && false !== $value && '' !== $value ) {
 			return $value;
 		}
@@ -34,12 +34,12 @@ function luxnova_get_acf_option_group_value( string $key ): array {
 		return array();
 	}
 
-	$field = get_field_object( $key, 'option', false, false );
+	$field = get_field_object( $key, 'options', false, false );
 	if ( ! is_array( $field ) || 'group' !== ( $field['type'] ?? '' ) || empty( $field['sub_fields'] ) ) {
 		return array();
 	}
 
-	$value = get_field( $key, 'option' );
+	$value = get_field( $key, 'options' );
 	if ( is_array( $value ) && array() !== $value ) {
 		return $value;
 	}
@@ -62,7 +62,7 @@ function luxnova_get_acf_option_group_sub_fields( array $sub_fields, string $pre
 			continue;
 		}
 
-		$value = get_field( $field_name, 'option' );
+		$value = get_field( $field_name, 'options' );
 		if ( null === $value || false === $value || '' === $value ) {
 			$raw_value = get_option( "options_{$field_name}", null );
 			if ( null !== $raw_value && false !== $raw_value && '' !== $raw_value ) {
@@ -153,6 +153,51 @@ function luxnova_image( mixed $image, string $size, array $attrs = array(), stri
 	}
 
 	return sprintf( '<img src="%s"%s>', esc_url( luxnova_image_url( $image, $size, $fallback ) ), $attr_html );
+}
+
+function luxnova_image_srcset( mixed $image, string $size = 'large' ): string {
+	$attachment_id = 0;
+
+	if ( is_numeric( $image ) ) {
+		$attachment_id = (int) $image;
+	} elseif ( is_array( $image ) && ! empty( $image['ID'] ) ) {
+		$attachment_id = (int) $image['ID'];
+	}
+
+	if ( $attachment_id ) {
+		$srcset = wp_get_attachment_image_srcset( $attachment_id, $size );
+		if ( $srcset ) {
+			return $srcset;
+		}
+
+		$url = wp_get_attachment_image_url( $attachment_id, $size );
+		return $url ? esc_url_raw( $url ) : '';
+	}
+
+	if ( is_array( $image ) && ! empty( $image['url'] ) ) {
+		return esc_url_raw( $image['url'] );
+	}
+
+	if ( is_string( $image ) && '' !== $image ) {
+		return esc_url_raw( $image );
+	}
+
+	return '';
+}
+
+function luxnova_responsive_image( mixed $desktop_image, mixed $mobile_image, string $desktop_size, array $attrs = array(), string $fallback = 'assets/images/placeholder-interior.svg', string $mobile_size = 'luxnova-hero-mobile' ): string {
+	$desktop_markup = luxnova_image( $desktop_image, $desktop_size, $attrs, $fallback );
+	$mobile_srcset  = luxnova_image_srcset( $mobile_image, $mobile_size );
+
+	if ( '' === $mobile_srcset ) {
+		return $desktop_markup;
+	}
+
+	return sprintf(
+		'<picture><source media="(max-width: 767px)" srcset="%1$s">%2$s</picture>',
+		esc_attr( $mobile_srcset ),
+		$desktop_markup
+	);
 }
 
 function luxnova_brand_markup( string $class = 'site-brand' ): string {

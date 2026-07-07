@@ -10,7 +10,7 @@ $title   = $section['title'] ?? '';
 ?>
 <section class="hero-section<?php echo empty( $section['statistics'] ) ? '' : ' hero-section--with-stats'; ?>">
 	<div class="hero-section__media" aria-hidden="true">
-		<?php echo luxnova_image( $section['background_image'] ?? '', 'luxnova-hero', array( 'class' => 'hero-section__image', 'alt' => '', 'loading' => 'eager', 'fetchpriority' => 'high' ), 'assets/images/placeholder-hero.svg' ); ?>
+		<?php echo luxnova_responsive_image( $section['background_image'] ?? '', $section['background_image_mobile'] ?? '', 'luxnova-hero', array( 'class' => 'hero-section__image', 'alt' => '', 'loading' => 'eager', 'fetchpriority' => 'high' ), 'assets/images/placeholder-hero.svg' ); ?>
 	</div>
 	<div class="hero-section__overlay"></div>
 	<div class="container hero-section__content reveal-on-scroll">

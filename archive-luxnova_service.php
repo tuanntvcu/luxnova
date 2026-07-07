@@ -15,7 +15,7 @@ $has_services  = have_posts();
 ?>
 <section class="service-page-hero">
 	<div class="service-page-hero__media" aria-hidden="true">
-		<?php echo luxnova_image( $hero['image'] ?? '', 'luxnova-hero', array( 'class' => 'service-page-hero__image', 'alt' => '', 'loading' => 'eager', 'fetchpriority' => 'high' ), $hero['image_fallback'] ?? 'assets/images/placeholder-hero.svg' ); ?>
+		<?php echo luxnova_responsive_image( $hero['image'] ?? '', $hero['mobile_image'] ?? '', 'luxnova-hero', array( 'class' => 'service-page-hero__image', 'alt' => '', 'loading' => 'eager', 'fetchpriority' => 'high' ), $hero['image_fallback'] ?? 'assets/images/placeholder-hero.svg' ); ?>
 	</div>
 	<div class="service-page-hero__overlay"></div>
 	<div class="container service-page-hero__content reveal-on-scroll">

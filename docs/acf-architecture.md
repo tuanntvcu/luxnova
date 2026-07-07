@@ -12,6 +12,7 @@ The homepage is managed as ordered modules. Editors can reorder sections without
 - `highlight` text
 - `description` textarea
 - `background_image` image
+- `background_image_mobile` image, falls back to `background_image`
 - `primary_button` clone: link field
 - `secondary_button` clone: link field
 

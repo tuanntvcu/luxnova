@@ -26,6 +26,7 @@ while ( have_posts() ) :
 	$gallery                = function_exists( 'get_field' ) ? (array) get_field( 'gallery', $project_id ) : array();
 	$gallery_videos         = function_exists( 'get_field' ) ? (array) get_field( 'gallery_videos', $project_id ) : array();
 	$hero_image             = get_post_thumbnail_id( $project_id );
+	$hero_mobile_image      = function_exists( 'get_field' ) ? get_field( 'hero_mobile_image', $project_id ) : '';
 	$summary                = has_excerpt() ? get_the_excerpt() : ( $page_data['summary_fallback'] ?? '' );
 	$meta_labels            = $page_data['meta_labels'] ?? array();
 	$actions                = $page_data['actions'] ?? array();
@@ -75,7 +76,7 @@ while ( have_posts() ) :
 	<article <?php post_class( 'single-project' ); ?>>
 		<section class="single-project-hero">
 			<div class="single-project-hero__media" aria-hidden="true">
-				<?php echo luxnova_image( $hero_image, 'luxnova-hero', array( 'class' => 'single-project-hero__image', 'alt' => '', 'loading' => 'eager', 'fetchpriority' => 'high' ), 'assets/images/placeholder-project-2.svg' ); ?>
+				<?php echo luxnova_responsive_image( $hero_image, $hero_mobile_image, 'luxnova-hero', array( 'class' => 'single-project-hero__image', 'alt' => '', 'loading' => 'eager', 'fetchpriority' => 'high' ), 'assets/images/placeholder-project-2.svg' ); ?>
 			</div>
 			<div class="single-project-hero__overlay"></div>
 			<div class="container single-project-hero__content">

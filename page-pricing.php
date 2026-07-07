@@ -15,7 +15,7 @@ $closing_cta = $page_data['closing_cta'] ?? array();
 ?>
 <section class="pricing-page-hero">
 	<div class="pricing-page-hero__media" aria-hidden="true">
-		<?php echo luxnova_image( $hero['image'] ?? '', 'luxnova-hero', array( 'class' => 'pricing-page-hero__image', 'alt' => '', 'loading' => 'eager', 'fetchpriority' => 'high' ), $hero['image_fallback'] ?? 'assets/images/placeholder-service-2.svg' ); ?>
+		<?php echo luxnova_responsive_image( $hero['image'] ?? '', $hero['mobile_image'] ?? '', 'luxnova-hero', array( 'class' => 'pricing-page-hero__image', 'alt' => '', 'loading' => 'eager', 'fetchpriority' => 'high' ), $hero['image_fallback'] ?? 'assets/images/placeholder-service-2.svg' ); ?>
 	</div>
 	<div class="pricing-page-hero__overlay"></div>
 	<div class="container pricing-page-hero__content reveal-on-scroll">
