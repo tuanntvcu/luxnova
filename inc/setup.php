@@ -44,12 +44,13 @@ function luxnova_excerpt_length(): int {
 }
 
 add_filter( 'nav_menu_css_class', 'luxnova_nav_active_class', 10, 4 );
-function luxnova_nav_active_class( array $classes, WP_Post $menu_item ): array {
+function luxnova_nav_active_class( array $classes, object $menu_item ): array {
 	$title = strtolower( remove_accents( wp_strip_all_tags( $menu_item->title ) ) );
 	$url   = untrailingslashit( (string) $menu_item->url );
 
 	if (
 		( luxnova_is_project_context() && ( 'du an' === $title || untrailingslashit( get_post_type_archive_link( 'luxnova_project' ) ?: '' ) === $url ) )
+		|| ( luxnova_is_featured_projects_context() && ( 'du an tieu bieu' === $title || untrailingslashit( luxnova_featured_projects_url() ) === $url ) )
 		|| ( luxnova_is_service_context() && ( 'dich vu' === $title || untrailingslashit( get_post_type_archive_link( 'luxnova_service' ) ?: '' ) === $url ) )
 		|| ( luxnova_is_pricing_context() && ( 'bang gia' === $title || untrailingslashit( home_url( '/bang-gia/' ) ) === $url ) )
 		|| ( luxnova_is_knowledge_context() && ( 'kien thuc' === $title || untrailingslashit( luxnova_knowledge_url() ) === $url ) )
@@ -60,25 +61,143 @@ function luxnova_nav_active_class( array $classes, WP_Post $menu_item ): array {
 	return array_unique( $classes );
 }
 
-add_filter( 'nav_menu_link_attributes', 'luxnova_nav_link_attributes', 10, 4 );
-function luxnova_nav_link_attributes( array $atts, WP_Post $menu_item ): array {
-	$title = strtolower( remove_accents( wp_strip_all_tags( $menu_item->title ) ) );
+add_filter( 'wp_nav_menu_objects', 'luxnova_primary_menu_featured_projects_item', 10, 2 );
+function luxnova_primary_menu_featured_projects_item( array $items, stdClass $args ): array {
+	if ( 'primary' !== ( $args->theme_location ?? '' ) ) {
+		return $items;
+	}
 
-	if ( 'du an' === $title ) {
-		$atts['href'] = get_post_type_archive_link( 'luxnova_project' ) ?: home_url( '/du-an/' );
-	} elseif ( 'dich vu' === $title ) {
-		$atts['href'] = get_post_type_archive_link( 'luxnova_service' ) ?: home_url( '/dich-vu/' );
-	} elseif ( 'bang gia' === $title ) {
-		$atts['href'] = home_url( '/bang-gia/' );
-	} elseif ( 'kien thuc' === $title ) {
-		$atts['href'] = luxnova_knowledge_url();
+	foreach ( $items as $item ) {
+		$title = strtolower( remove_accents( wp_strip_all_tags( (string) ( $item->title ?? '' ) ) ) );
+		$url   = untrailingslashit( (string) ( $item->url ?? '' ) );
+
+		if ( 'du an tieu bieu' === $title || untrailingslashit( luxnova_featured_projects_url() ) === $url ) {
+			return $items;
+		}
+	}
+
+	$featured_item = (object) array(
+		'ID' => -1001,
+		'db_id' => 0,
+		'menu_item_parent' => 0,
+		'object_id' => 0,
+		'object' => 'custom',
+		'type' => 'custom',
+		'type_label' => 'Custom Link',
+		'title' => 'Dự án tiêu biểu',
+		'url' => luxnova_featured_projects_url(),
+		'target' => '',
+		'attr_title' => '',
+		'description' => '',
+		'classes' => luxnova_is_featured_projects_context() ? array( 'current-menu-item' ) : array(),
+		'xfn' => '',
+		'current' => luxnova_is_featured_projects_context(),
+		'current_item_ancestor' => false,
+		'current_item_parent' => false,
+		'menu_order' => 0,
+	);
+
+	$inserted = false;
+	$output   = array();
+
+	foreach ( $items as $item ) {
+		$output[] = $item;
+		$title    = strtolower( remove_accents( wp_strip_all_tags( (string) ( $item->title ?? '' ) ) ) );
+
+		if ( ! $inserted && 'du an' === $title ) {
+			$output[]  = $featured_item;
+			$inserted = true;
+		}
+	}
+
+	if ( ! $inserted ) {
+		$output[] = $featured_item;
+	}
+
+	foreach ( $output as $index => $item ) {
+		$item->menu_order = $index + 1;
+	}
+
+	return $output;
+}
+
+add_filter( 'wp_nav_menu_objects', 'luxnova_footer_support_menu_items', 20, 2 );
+function luxnova_footer_support_menu_items( array $items, stdClass $args ): array {
+	if ( 'footer_support' !== ( $args->theme_location ?? '' ) ) {
+		return $items;
+	}
+
+	return array_values(
+		array_filter(
+			$items,
+			static function ( object $item ): bool {
+				$title = strtolower( remove_accents( wp_strip_all_tags( (string) ( $item->title ?? '' ) ) ) );
+				return 'chinh sach bao hanh' !== $title;
+			}
+		)
+	);
+}
+
+add_filter( 'nav_menu_link_attributes', 'luxnova_nav_link_attributes', 10, 4 );
+function luxnova_nav_link_attributes( array $atts, object $menu_item ): array {
+	$title = strtolower( remove_accents( wp_strip_all_tags( $menu_item->title ) ) );
+	$mapped_url = luxnova_menu_url_for_title( $title );
+
+	if ( '' !== $mapped_url ) {
+		$atts['href'] = $mapped_url;
 	}
 
 	return $atts;
 }
 
+function luxnova_menu_url_for_title( string $title ): string {
+	$service_urls = array(
+		'thiet ke noi that' => luxnova_service_url_by_slug( 'thiet-ke-noi-that' ),
+		'thi cong noi that' => luxnova_service_url_by_slug( 'thi-cong-noi-that' ),
+		'noi that tron goi' => luxnova_service_url_by_slug( 'noi-that-tron-goi' ),
+	);
+
+	$urls = array(
+		'trang chu' => home_url( '/' ),
+		'home' => home_url( '/' ),
+		'du an' => get_post_type_archive_link( 'luxnova_project' ) ?: home_url( '/du-an/' ),
+		'du an tieu bieu' => luxnova_featured_projects_url(),
+		'dich vu' => get_post_type_archive_link( 'luxnova_service' ) ?: home_url( '/dich-vu/' ),
+		'bang gia' => home_url( '/bang-gia/' ),
+		'kien thuc' => luxnova_knowledge_url(),
+		'lien he' => home_url( '/lien-he/' ),
+		'faq' => home_url( '/faq/' ),
+		'cau hoi thuong gap' => home_url( '/faq/' ),
+		'quy trinh lam viec' => home_url( '/dich-vu/#service-process' ),
+		'home audit' => home_url( '/#home-audit' ),
+		'home audittm' => home_url( '/#home-audit' ),
+		'home audit™' => home_url( '/#home-audit' ),
+	);
+
+	$urls = array_merge( $urls, array_filter( $service_urls ) );
+
+	return $urls[ $title ] ?? '';
+}
+
+function luxnova_service_url_by_slug( string $slug ): string {
+	$post = get_page_by_path( $slug, OBJECT, 'luxnova_service' );
+	if ( $post instanceof WP_Post ) {
+		return get_permalink( $post );
+	}
+
+	return get_post_type_archive_link( 'luxnova_service' ) ?: home_url( '/dich-vu/' );
+}
+
 function luxnova_is_project_context(): bool {
 	return is_post_type_archive( 'luxnova_project' ) || is_singular( 'luxnova_project' ) || is_tax( 'luxnova_project_type' );
+}
+
+function luxnova_featured_projects_url(): string {
+	return home_url( '/du-an-tieu-bieu/' );
+}
+
+function luxnova_is_featured_projects_context(): bool {
+	return is_page( 'du-an-tieu-bieu' ) || luxnova_is_featured_projects_request_path();
 }
 
 function luxnova_is_service_context(): bool {
@@ -103,6 +222,10 @@ function luxnova_is_pricing_request_path(): bool {
 
 function luxnova_is_knowledge_request_path(): bool {
 	return luxnova_is_request_path( 'kien-thuc' ) || 0 < luxnova_knowledge_paged_from_request();
+}
+
+function luxnova_is_featured_projects_request_path(): bool {
+	return luxnova_is_request_path( 'du-an-tieu-bieu' );
 }
 
 function luxnova_knowledge_paged_from_request(): int {
@@ -151,6 +274,27 @@ function luxnova_pricing_template_include( string $template ): string {
 	return $template;
 }
 
+add_filter( 'template_include', 'luxnova_featured_projects_template_include' );
+function luxnova_featured_projects_template_include( string $template ): string {
+	if ( luxnova_is_featured_projects_context() ) {
+		$featured_projects_template = LUXNOVA_DIR . 'page-du-an-tieu-bieu.php';
+
+		if ( file_exists( $featured_projects_template ) ) {
+			global $wp_query;
+
+			if ( $wp_query instanceof WP_Query ) {
+				$wp_query->is_404  = false;
+				$wp_query->is_page = true;
+			}
+
+			status_header( 200 );
+			return $featured_projects_template;
+		}
+	}
+
+	return $template;
+}
+
 add_filter( 'template_include', 'luxnova_knowledge_template_include' );
 function luxnova_knowledge_template_include( string $template ): string {
 	if ( luxnova_is_knowledge_request_path() || is_page( 'kien-thuc' ) || ( is_home() && ! is_front_page() ) ) {
@@ -176,6 +320,15 @@ add_filter( 'pre_get_document_title', 'luxnova_pricing_document_title' );
 function luxnova_pricing_document_title( string $title ): string {
 	if ( luxnova_is_pricing_context() ) {
 		return sprintf( 'Bảng giá - %s', get_bloginfo( 'name' ) );
+	}
+
+	return $title;
+}
+
+add_filter( 'pre_get_document_title', 'luxnova_featured_projects_document_title' );
+function luxnova_featured_projects_document_title( string $title ): string {
+	if ( luxnova_is_featured_projects_context() ) {
+		return sprintf( 'Dự án tiêu biểu - %s', get_bloginfo( 'name' ) );
 	}
 
 	return $title;

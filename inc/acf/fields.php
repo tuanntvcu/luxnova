@@ -10,10 +10,60 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 add_action( 'acf/init', 'luxnova_register_acf_fields' );
+add_filter( 'acf/load_value/type=group', 'luxnova_acf_load_option_group_value', 10, 3 );
+add_filter( 'acf/prepare_field', 'luxnova_acf_prepare_option_group_sub_field' );
+
+function luxnova_acf_load_option_group_value( mixed $value, mixed $post_id, array $field ): mixed {
+	if ( ! in_array( $post_id, array( 'option', 'options' ), true ) || ! luxnova_is_empty_content_value( $value ) || empty( $field['name'] ) || empty( $field['sub_fields'] ) ) {
+		return $value;
+	}
+
+	$group_value = array();
+	foreach ( $field['sub_fields'] as $sub_field ) {
+		$sub_name = $sub_field['name'] ?? '';
+		if ( '' === $sub_name ) {
+			continue;
+		}
+
+		$option_name = sprintf( 'options_%s_%s', $field['name'], $sub_name );
+		$raw_value   = get_option( $option_name, null );
+		if ( null === $raw_value || false === $raw_value || '' === $raw_value ) {
+			continue;
+		}
+
+		$group_value[ $sub_name ] = maybe_unserialize( $raw_value );
+	}
+
+	return empty( $group_value ) ? $value : $group_value;
+}
+
+function luxnova_acf_prepare_option_group_sub_field( array $field ): array {
+	if ( ! is_admin() || empty( $field['parent'] ) || empty( $field['name'] ) || ! function_exists( 'acf_get_field' ) ) {
+		return $field;
+	}
+
+	$parent = acf_get_field( $field['parent'] );
+	if ( ! is_array( $parent ) || 'group' !== ( $parent['type'] ?? '' ) || empty( $parent['name'] ) ) {
+		return $field;
+	}
+
+	$sub_name    = $field['_name'] ?? $field['name'];
+	$option_name = sprintf( 'options_%s_%s', $parent['name'], $sub_name );
+	$raw_value   = get_option( $option_name, null );
+
+	if ( null !== $raw_value && false !== $raw_value && '' !== $raw_value ) {
+		$field['value'] = maybe_unserialize( $raw_value );
+	}
+
+	return $field;
+}
+
 function luxnova_register_acf_fields(): void {
 	if ( ! function_exists( 'acf_add_local_field_group' ) ) {
 		return;
 	}
+
+	$case_defaults = luxnova_project_case_study_defaults();
 
 	acf_add_local_field_group(
 		array(
@@ -47,14 +97,65 @@ function luxnova_register_acf_fields(): void {
 			'key' => 'group_luxnova_project_details',
 			'title' => 'Thông tin dự án',
 			'fields' => array(
-				luxnova_acf_text( 'field_luxnova_project_area', 'Diện tích', 'area', '', 'Nhập diện tích hiển thị trên card và trang chi tiết. Ví dụ: 89m², 180m².' ),
-				luxnova_acf_text( 'field_luxnova_project_style', 'Phong cách', 'style', '', 'Nhập phong cách thiết kế chính. Ví dụ: Hiện đại, Japandi, Indochine, Tân cổ điển.' ),
-				luxnova_acf_text( 'field_luxnova_project_budget', 'Ngân sách', 'budget', '', 'Nhập ngân sách hoặc giá trị tham khảo để hiển thị trên card. Ví dụ: 620 triệu, 1.8 tỷ.' ),
-				luxnova_acf_text( 'field_luxnova_project_timeline', 'Thời gian thực hiện', 'timeline', '', 'Nhập thời gian thiết kế/thi công. Ví dụ: 45 ngày, 3 tháng.' ),
-				luxnova_acf_text( 'field_luxnova_project_location', 'Địa điểm', 'location', '', 'Nhập khu vực hoặc tên dự án. Ví dụ: Hà Nội, Masteri West Heights.' ),
-				luxnova_acf_text( 'field_luxnova_project_completion_year', 'Năm hoàn thành', 'completion_year', '', 'Nhập năm hoàn thành dự án. Ví dụ: 2024.' ),
+				luxnova_acf_text( 'field_luxnova_project_area', 'Diện tích', 'area', $case_defaults['area'] ?? '115m²', 'Nhập diện tích hiển thị trên card và trang chi tiết. Ví dụ: 89m², 180m².' ),
+				luxnova_acf_text( 'field_luxnova_project_style', 'Phong cách', 'style', $case_defaults['style'] ?? 'Modern Minimalism', 'Nhập phong cách thiết kế chính. Ví dụ: Hiện đại, Japandi, Indochine, Tân cổ điển.' ),
+				luxnova_acf_text( 'field_luxnova_project_budget', 'Ngân sách', 'budget', $case_defaults['budget'] ?? '1,35 tỷ VND', 'Nhập ngân sách hoặc giá trị tham khảo để hiển thị trên card. Ví dụ: 620 triệu, 1.8 tỷ.' ),
+				luxnova_acf_text( 'field_luxnova_project_timeline', 'Thời gian thực hiện', 'timeline', $case_defaults['timeline'] ?? '45 ngày', 'Nhập thời gian thiết kế/thi công. Ví dụ: 45 ngày, 3 tháng.' ),
+				luxnova_acf_text( 'field_luxnova_project_location', 'Địa điểm', 'location', $case_defaults['location'] ?? 'Hà Nội', 'Nhập khu vực hoặc tên dự án. Ví dụ: Hà Nội, Masteri West Heights.' ),
+				luxnova_acf_text( 'field_luxnova_project_completion_year', 'Năm hoàn thành', 'completion_year', '2026', 'Nhập năm hoàn thành dự án. Ví dụ: 2024.' ),
 				luxnova_acf_text( 'field_luxnova_project_scope', 'Hạng mục thực hiện', 'scope', 'Thiết kế & Thi công nội thất', 'Mô tả phạm vi LuxNova thực hiện. Ví dụ: Thiết kế nội thất, Thi công trọn gói.' ),
 				luxnova_acf_text( 'field_luxnova_project_architect', 'Đội ngũ phụ trách', 'architect', 'LuxNova Design Team', 'Tên kiến trúc sư, nhóm thiết kế hoặc đội phụ trách dự án.' ),
+				array(
+					'key' => 'field_luxnova_project_case_study_tab',
+					'label' => 'Case study',
+					'name' => '',
+					'type' => 'tab',
+					'placement' => 'top',
+				),
+				luxnova_acf_dynamic_textarea( 'field_luxnova_project_case_overview', 'Tổng quan case study', 'case_overview', $case_defaults['overview'] ?? '', 3 ),
+				luxnova_acf_dynamic_textarea( 'field_luxnova_project_case_client_needs', 'Nhu cầu khách hàng', 'case_client_needs', $case_defaults['client_needs'] ?? '', 4 ),
+				luxnova_acf_dynamic_textarea( 'field_luxnova_project_case_existing_condition', 'Hiện trạng ban đầu', 'case_existing_condition', $case_defaults['existing_condition'] ?? '', 4 ),
+				luxnova_acf_dynamic_textarea( 'field_luxnova_project_case_solution', 'Giải pháp LuxNova', 'case_solution', $case_defaults['solution'] ?? '', 4 ),
+				luxnova_acf_dynamic_repeater(
+					'field_luxnova_project_case_result_items',
+					'Kết quả đạt được',
+					'case_result_items',
+					array(
+						luxnova_acf_dynamic_text( 'field_luxnova_project_case_result_text', 'Nội dung', 'text' ),
+					),
+					array_map(
+						static fn( string $result ): array => array( 'title' => $result ),
+						$case_defaults['results'] ?? array()
+					),
+					'table'
+				),
+				array(
+					'key' => 'field_luxnova_project_case_before_images',
+					'label' => 'Ảnh trước thi công',
+					'name' => 'case_before_images',
+					'type' => 'gallery',
+					'return_format' => 'id',
+					'instructions' => 'Dùng cho trang Dự án tiêu biểu. Nếu bỏ trống, website sẽ lấy ảnh đầu trong thư viện dự án.',
+				),
+				array(
+					'key' => 'field_luxnova_project_case_after_images',
+					'label' => 'Ảnh sau hoàn thiện',
+					'name' => 'case_after_images',
+					'type' => 'gallery',
+					'return_format' => 'id',
+					'instructions' => 'Dùng cho trang Dự án tiêu biểu. Nếu bỏ trống, website sẽ lấy ảnh còn lại trong thư viện dự án hoặc Featured Image.',
+				),
+				luxnova_acf_dynamic_textarea( 'field_luxnova_project_case_client_quote', 'Phản hồi khách hàng', 'case_client_quote', $case_defaults['quote'] ?? '', 3 ),
+				luxnova_acf_dynamic_text( 'field_luxnova_project_case_client_name', 'Tên khách hàng', 'case_client_name', $case_defaults['client_name'] ?? '' ),
+				array(
+					'key' => 'field_luxnova_project_case_client_avatar',
+					'label' => 'Ảnh khách hàng',
+					'name' => 'case_client_avatar',
+					'type' => 'image',
+					'return_format' => 'id',
+					'preview_size' => 'thumbnail',
+					'instructions' => 'Ảnh hiển thị trong ô phản hồi khách hàng trên trang Dự án tiêu biểu. Nếu bỏ trống, website sẽ dùng ảnh fallback 66b64460-c8de-4bd6-be2f-bf8c4128f083.png.',
+				),
 				array(
 					'key' => 'field_luxnova_project_brochure',
 					'label' => 'Hồ sơ dự án',
@@ -253,6 +354,60 @@ function luxnova_register_acf_fields(): void {
 
 	acf_add_local_field_group(
 		array(
+			'key' => 'group_luxnova_featured_projects_page_content',
+			'title' => 'Nội dung trang Dự án tiêu biểu',
+			'fields' => array(
+				luxnova_acf_group(
+					'field_luxnova_featured_projects_page_content',
+					'Nội dung trang Dự án tiêu biểu',
+					'featured_projects_page_content',
+					array(
+						luxnova_acf_group(
+							'field_luxnova_featured_projects_hero',
+							'Hero',
+							'hero',
+							luxnova_acf_hero_fields(
+								'field_luxnova_featured_projects_hero',
+								array(
+									'eyebrow' => '12 | HỒ SƠ NĂNG LỰC LUXNOVA',
+									'title' => 'DỰ ÁN TIÊU BIỂU',
+									'highlight' => 'CASE STUDY',
+									'description' => 'Mỗi dự án là một hành trình đồng hành cùng khách hàng để kiến tạo nên những không gian sống tiện nghi, thẩm mỹ và mang dấu ấn riêng.',
+									'image_fallback' => 'assets/images/placeholder-hero.svg',
+								),
+								false,
+								true
+							)
+						),
+						luxnova_acf_homepage_relationship( 'field_luxnova_featured_projects_selected', 'Dự án hiển thị', 'selected_projects', array( 'luxnova_project' ), 'Chọn các dự án sẽ xuất hiện trên trang Dự án tiêu biểu. Nếu bỏ trống, website sẽ dùng các dự án mới nhất.' ),
+						luxnova_acf_dynamic_textarea( 'field_luxnova_featured_projects_empty_message', 'Thông báo khi trống', 'empty_message', 'Chưa có dự án nào được chọn để hiển thị.', 2 ),
+						luxnova_acf_group(
+							'field_luxnova_featured_projects_closing_cta',
+							'Closing CTA',
+							'closing_cta',
+							luxnova_acf_cta_fields(
+								'field_luxnova_featured_projects_closing_cta',
+								array(
+									'image_fallback' => 'assets/images/placeholder-interior.svg',
+									'title' => 'Bạn muốn biến ý tưởng thành một case study tiếp theo?',
+									'description' => 'LuxNova sẵn sàng khảo sát, tư vấn và đề xuất phương án phù hợp với nhu cầu, ngân sách và gu thẩm mỹ của gia đình.',
+									'button_label' => 'Đặt lịch tư vấn',
+								)
+							)
+						),
+					)
+				),
+			),
+			'location' => array(
+				array(
+					array( 'param' => 'page_template', 'operator' => '==', 'value' => 'page-du-an-tieu-bieu.php' ),
+				),
+			),
+		)
+	);
+
+	acf_add_local_field_group(
+		array(
 			'key' => 'group_luxnova_single_project_content',
 			'title' => 'Nội dung mặc định cho trang chi tiết dự án',
 			'fields' => luxnova_acf_single_project_fields(),
@@ -328,6 +483,7 @@ function luxnova_acf_dynamic_text( string $key, string $label, string $name, str
 		'label' => luxnova_acf_label( $label ),
 		'name' => $name,
 		'type' => 'text',
+		'default_value' => $default,
 		'instructions' => luxnova_acf_default_instruction( $default ),
 		'placeholder' => $default,
 	);
@@ -339,6 +495,7 @@ function luxnova_acf_dynamic_textarea( string $key, string $label, string $name,
 		'label' => luxnova_acf_label( $label ),
 		'name' => $name,
 		'type' => 'textarea',
+		'default_value' => $default,
 		'rows' => $rows,
 		'instructions' => luxnova_acf_default_instruction( $default ),
 		'placeholder' => $default,

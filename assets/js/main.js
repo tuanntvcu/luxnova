@@ -2,16 +2,99 @@
 	const header = document.querySelector('[data-site-header]');
 	const menuToggle = document.querySelector('[data-menu-toggle]');
 	const nav = document.querySelector('#primary-nav');
+	const floatingActions = document.querySelector('[data-floating-actions]');
+	const floatingContacts = floatingActions ? floatingActions.querySelector('.floating-actions__contacts') : null;
+	const floatingContactLinks = floatingContacts ? Array.from(floatingContacts.querySelectorAll('a')) : [];
+	const scrollTopButton = document.querySelector('[data-scroll-top]');
+	const siteFooter = document.querySelector('.site-footer');
+	const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+	const hasGsap = () => window.gsap && !motionQuery.matches;
 
-	const setHeaderState = () => {
-		if (!header) {
+	const setFloatingContactsHidden = (isHidden) => {
+		if (!floatingActions || !floatingContacts) {
 			return;
 		}
-		header.classList.toggle('is-scrolled', window.scrollY > 18);
+
+		floatingActions.classList.toggle('is-footer-visible', isHidden);
+		floatingContacts.setAttribute('aria-hidden', String(isHidden));
+		floatingContactLinks.forEach((link) => {
+			link.tabIndex = isHidden ? -1 : 0;
+		});
+
+		if (hasGsap()) {
+			window.gsap.to(floatingContacts, {
+				autoAlpha: isHidden ? 0 : 1,
+				y: isHidden ? 12 : 0,
+				scale: isHidden ? 0.88 : 1,
+				duration: 0.36,
+				ease: isHidden ? 'power2.inOut' : 'power3.out',
+				overwrite: 'auto',
+			});
+			return;
+		}
+
+		floatingContacts.style.opacity = isHidden ? '0' : '1';
+		floatingContacts.style.visibility = isHidden ? 'hidden' : 'visible';
+		floatingContacts.style.transform = isHidden ? 'translateY(12px) scale(0.88)' : '';
 	};
 
-	setHeaderState();
-	window.addEventListener('scroll', setHeaderState, { passive: true });
+	const setChromeState = () => {
+		const isScrolled = window.scrollY > 18;
+		const canScrollTop = window.scrollY > 320;
+
+		if (header) {
+			header.classList.toggle('is-scrolled', isScrolled);
+		}
+
+		if (floatingActions) {
+			floatingActions.classList.toggle('is-scrollable', canScrollTop);
+		}
+
+		if (scrollTopButton) {
+			scrollTopButton.setAttribute('aria-disabled', String(!canScrollTop));
+			scrollTopButton.tabIndex = canScrollTop ? 0 : -1;
+		}
+	};
+
+	setChromeState();
+	window.addEventListener('scroll', setChromeState, { passive: true });
+
+	if (scrollTopButton) {
+		scrollTopButton.addEventListener('click', () => {
+			if (window.scrollY <= 320) {
+				return;
+			}
+
+			if (hasGsap()) {
+				window.gsap.to(document.scrollingElement || document.documentElement, {
+					scrollTop: 0,
+					duration: 0.85,
+					ease: 'power3.inOut',
+				});
+				return;
+			}
+
+			window.scrollTo({
+				top: 0,
+				behavior: motionQuery.matches ? 'auto' : 'smooth',
+			});
+		});
+	}
+
+	if (floatingActions && floatingContacts && siteFooter && 'IntersectionObserver' in window) {
+		const footerObserver = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					setFloatingContactsHidden(entry.isIntersecting);
+				});
+			},
+			{
+				threshold: 0.02,
+			}
+		);
+
+		footerObserver.observe(siteFooter);
+	}
 
 	if (menuToggle && nav) {
 		menuToggle.addEventListener('click', () => {

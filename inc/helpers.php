@@ -576,6 +576,166 @@ function luxnova_project_archive_tabs(): array {
 	return $tabs;
 }
 
+function luxnova_featured_case_study_page_data( int $post_id = 0 ): array {
+	$default = array(
+		'hero' => array(
+			'eyebrow' => '12 | HỒ SƠ NĂNG LỰC LUXNOVA',
+			'title' => 'DỰ ÁN TIÊU BIỂU',
+			'highlight' => 'CASE STUDY',
+			'description' => 'Mỗi dự án là một hành trình đồng hành cùng khách hàng để kiến tạo nên những không gian sống tiện nghi, thẩm mỹ và mang dấu ấn riêng.',
+			'image' => '',
+			'image_fallback' => 'assets/images/placeholder-hero.svg',
+		),
+		'selected_projects' => array(),
+		'empty_message' => 'Chưa có dự án nào được chọn để hiển thị.',
+		'closing_cta' => array(
+			'image' => '',
+			'image_fallback' => 'assets/images/placeholder-interior.svg',
+			'title' => 'Bạn muốn biến ý tưởng thành một case study tiếp theo?',
+			'description' => 'LuxNova sẵn sàng khảo sát, tư vấn và đề xuất phương án phù hợp với nhu cầu, ngân sách và gu thẩm mỹ của gia đình.',
+			'button_label' => 'Đặt lịch tư vấn',
+		),
+	);
+
+	return luxnova_merge_filled_content( $default, luxnova_get_page_array_setting( 'featured_projects_page_content', array(), $post_id ) );
+}
+
+function luxnova_featured_case_study_project_ids( array $page_data ): array {
+	$selected = array();
+
+	foreach ( (array) ( $page_data['selected_projects'] ?? array() ) as $project ) {
+		if ( $project instanceof WP_Post ) {
+			$selected[] = (int) $project->ID;
+		} elseif ( is_numeric( $project ) ) {
+			$selected[] = (int) $project;
+		}
+	}
+
+	$selected = array_values( array_filter( array_unique( $selected ) ) );
+	if ( ! empty( $selected ) ) {
+		return $selected;
+	}
+
+	$posts = get_posts(
+		array(
+			'post_type' => 'luxnova_project',
+			'post_status' => 'publish',
+			'posts_per_page' => 4,
+			'orderby' => 'date',
+			'order' => 'DESC',
+			'fields' => 'ids',
+		)
+	);
+
+	return array_map( 'intval', $posts );
+}
+
+function luxnova_project_case_study_data( int $project_id, int $index = 0 ): array {
+	$terms       = get_the_terms( $project_id, 'luxnova_project_type' );
+	$type        = ( ! is_wp_error( $terms ) && ! empty( $terms ) ) ? $terms[0]->name : 'Dự án';
+	$title       = get_the_title( $project_id );
+	$defaults    = luxnova_project_case_study_defaults( $type );
+	$hero_image  = get_post_thumbnail_id( $project_id );
+	$gallery     = function_exists( 'get_field' ) ? (array) get_field( 'gallery', $project_id ) : array();
+	$before_raw  = function_exists( 'get_field' ) ? (array) get_field( 'case_before_images', $project_id ) : array();
+	$after_raw   = function_exists( 'get_field' ) ? (array) get_field( 'case_after_images', $project_id ) : array();
+	$fallback    = $hero_image ?: luxnova_asset( 'assets/images/placeholder-project-2.svg' );
+	$content     = wp_trim_words( wp_strip_all_tags( get_post_field( 'post_content', $project_id ) ), 32 );
+	$summary     = has_excerpt( $project_id ) ? get_the_excerpt( $project_id ) : ( $content ?: $defaults['overview'] );
+	$results_raw = function_exists( 'get_field' ) ? (array) get_field( 'case_result_items', $project_id ) : array();
+	$results     = array();
+
+	foreach ( $results_raw as $result ) {
+		$text = is_array( $result ) ? ( $result['text'] ?? '' ) : $result;
+		if ( '' !== trim( (string) $text ) ) {
+			$results[] = (string) $text;
+		}
+	}
+
+	if ( empty( $before_raw ) ) {
+		$before_raw = array_slice( $gallery, 0, 3 );
+	}
+
+	if ( empty( $after_raw ) ) {
+		$after_raw = array_slice( $gallery, 3, 3 );
+	}
+
+	if ( empty( $after_raw ) ) {
+		$after_raw = array_filter( array( $hero_image, ...array_slice( $gallery, 0, 2 ) ) );
+	}
+
+	if ( empty( $results ) ) {
+		$results = $defaults['results'];
+	}
+
+	return array(
+		'number' => str_pad( (string) ( $index + 1 ), 2, '0', STR_PAD_LEFT ),
+		'id' => $project_id,
+		'title' => $title,
+		'url' => get_permalink( $project_id ),
+		'type' => $type,
+		'location' => function_exists( 'get_field' ) ? ( get_field( 'location', $project_id ) ?: $defaults['location'] ) : $defaults['location'],
+		'area' => function_exists( 'get_field' ) ? ( get_field( 'area', $project_id ) ?: $defaults['area'] ) : $defaults['area'],
+		'style' => function_exists( 'get_field' ) ? ( get_field( 'style', $project_id ) ?: $defaults['style'] ) : $defaults['style'],
+		'budget' => function_exists( 'get_field' ) ? ( get_field( 'budget', $project_id ) ?: $defaults['budget'] ) : $defaults['budget'],
+		'timeline' => function_exists( 'get_field' ) ? ( get_field( 'timeline', $project_id ) ?: $defaults['timeline'] ) : $defaults['timeline'],
+		'year' => function_exists( 'get_field' ) ? ( get_field( 'completion_year', $project_id ) ?: get_the_date( 'Y', $project_id ) ) : get_the_date( 'Y', $project_id ),
+		'overview' => function_exists( 'get_field' ) ? ( get_field( 'case_overview', $project_id ) ?: $summary ) : $summary,
+		'client_needs' => function_exists( 'get_field' ) ? ( get_field( 'case_client_needs', $project_id ) ?: $defaults['client_needs'] ) : $defaults['client_needs'],
+		'existing_condition' => function_exists( 'get_field' ) ? ( get_field( 'case_existing_condition', $project_id ) ?: $defaults['existing_condition'] ) : $defaults['existing_condition'],
+		'solution' => function_exists( 'get_field' ) ? ( get_field( 'case_solution', $project_id ) ?: $defaults['solution'] ) : $defaults['solution'],
+		'results' => $results,
+		'quote' => function_exists( 'get_field' ) ? ( get_field( 'case_client_quote', $project_id ) ?: $defaults['quote'] ) : $defaults['quote'],
+		'client_name' => function_exists( 'get_field' ) ? ( get_field( 'case_client_name', $project_id ) ?: $defaults['client_name'] ) : $defaults['client_name'],
+		'client_avatar' => function_exists( 'get_field' ) ? ( get_field( 'case_client_avatar', $project_id ) ?: $defaults['client_avatar'] ) : $defaults['client_avatar'],
+		'before_images' => luxnova_case_study_image_items( $before_raw, $title, $fallback, 3 ),
+		'after_images' => luxnova_case_study_image_items( $after_raw, $title, $fallback, 3 ),
+	);
+}
+
+function luxnova_project_case_study_defaults( string $type = 'Dự án' ): array {
+	return array(
+		'location' => 'Hà Nội',
+		'area' => '115m²',
+		'style' => 'Modern Minimalism',
+		'budget' => '1,35 tỷ VND',
+		'timeline' => '45 ngày',
+		'overview' => 'Không gian được thiết kế dành cho gia đình trẻ, đề cao sự tiện nghi, tối giản và cảm giác ấm cúng trong sinh hoạt hằng ngày.',
+		'client_needs' => 'Tối ưu không gian lưu trữ, bố trí công năng khoa học, phong cách hiện đại, vật liệu bền đẹp và dễ bảo trì.',
+		'existing_condition' => 'Hiện trạng bàn giao còn thô, thiếu điểm nhấn thẩm mỹ, ánh sáng chưa đồng đều và chưa khai thác hết công năng.',
+		'solution' => 'Thiết kế theo phong cách Modern Minimalism, tận dụng ánh sáng tự nhiên, sử dụng vật liệu gỗ An Cường kết hợp đá và kính. Bố trí hệ tủ âm tường, giải pháp lưu trữ ẩn giúp không gian gọn gàng.',
+		'results' => array(
+			'Bàn giao đúng tiến độ, đúng ngân sách.',
+			'Không phát sinh chi phí.',
+			'Không gian tối ưu, đáp ứng đầy đủ công năng và thẩm mỹ.',
+			'Khách hàng hài lòng và giới thiệu thêm 2 dự án khác.',
+		),
+		'quote' => 'LuxNova làm việc rất chuyên nghiệp, từ khâu thiết kế đến thi công đều minh bạch, rõ ràng. Gia đình mình rất hài lòng với không gian mới!',
+		'client_name' => 'Khách hàng LuxNova',
+		'client_avatar' => content_url( 'uploads/2026/07/66b64460-c8de-4bd6-be2f-bf8c4128f083.png' ),
+	);
+}
+
+function luxnova_case_study_image_items( array $images, string $alt, mixed $fallback, int $limit = 3 ): array {
+	$items = array();
+
+	foreach ( array_slice( $images, 0, $limit ) as $image ) {
+		$items[] = array(
+			'image' => $image,
+			'alt' => $alt,
+		);
+	}
+
+	if ( empty( $items ) ) {
+		$items[] = array(
+			'image' => $fallback,
+			'alt' => $alt,
+		);
+	}
+
+	return $items;
+}
+
 function luxnova_project_brochure_url( mixed $file ): string {
 	if ( is_array( $file ) && ! empty( $file['url'] ) ) {
 		return esc_url_raw( $file['url'] );

@@ -7,7 +7,7 @@
 
 $section = $args['section'] ?? array();
 ?>
-<section class="audit-cta">
+<section class="audit-cta" id="home-audit">
 	<div class="container audit-cta__grid">
 		<div class="audit-cta__image reveal-on-scroll">
 			<?php echo luxnova_image( $section['image'] ?? '', 'medium', array( 'alt' => esc_attr( $section['label'] ?? 'LuxNova Home Audit' ) ), 'assets/images/placeholder-audit.svg' ); ?>
