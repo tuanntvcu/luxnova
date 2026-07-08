@@ -67,7 +67,9 @@ $project_ids = luxnova_featured_case_study_project_ids( $page_data );
 			<article class="featured-case-card reveal-on-scroll" id="case-<?php echo esc_attr( (string) $case['id'] ); ?>">
 				<header class="featured-case-card__header">
 					<div>
-						<p class="featured-case-card__number"><span><?php echo esc_html( $case['number'] ); ?>.</span> <?php echo esc_html( $case['title'] ); ?></p>
+						<p class="featured-case-card__number">
+							<a href="<?php echo esc_url( $case['url'] ); ?>"><span><?php echo esc_html( $case['number'] ); ?>.</span> <?php echo esc_html( $case['title'] ); ?></a>
+						</p>
 						<span><?php echo esc_html( $case['type'] ); ?></span>
 					</div>
 					<?php if ( ! empty( $meta_items ) ) : ?>

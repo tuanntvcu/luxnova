@@ -2047,6 +2047,15 @@ body.is-modal-open {
 	text-transform: uppercase;
 }
 
+.featured-case-card__number a {
+	color: inherit;
+	transition: color 180ms ease;
+}
+
+.featured-case-card__number a:hover {
+	color: var(--color-gold-2);
+}
+
 .featured-case-card__number span {
 	color: var(--color-gold);
 }
@@ -2753,7 +2762,7 @@ body.is-modal-open {
 	max-width: 690px;
 	margin: 0;
 	font-size: var(--fs-display);
-	line-height: var(--lh-display);
+	line-height: 1.2;
 	letter-spacing: var(--ls-display);
 }
 
@@ -4707,6 +4716,8 @@ body.is-modal-open {
 	.consultation-modal__dialog {
 		width: 100%;
 		max-height: 94dvh;
+		overflow-y: auto;
+		overscroll-behavior: contain;
 		border-right: 0;
 		border-bottom: 0;
 		border-left: 0;
@@ -4714,6 +4725,8 @@ body.is-modal-open {
 	}
 
 	.consultation-modal__form-panel {
+		max-height: none;
+		overflow: visible;
 		padding: 24px 18px calc(24px + env(safe-area-inset-bottom));
 	}
 
@@ -4734,7 +4747,10 @@ body.is-modal-open {
 	}
 
 	.consultation-modal__close {
+		position: sticky;
 		top: 14px;
+		z-index: 4;
+		margin: 14px 14px 0 auto;
 		right: 14px;
 		width: 44px;
 		height: 44px;
