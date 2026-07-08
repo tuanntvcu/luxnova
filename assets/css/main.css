@@ -3885,17 +3885,17 @@ body.is-modal-open {
 	position: relative;
 	z-index: 1;
 	display: grid;
-	grid-template-columns: 52px minmax(0, 1fr) 52px;
-	grid-template-rows: minmax(0, 1fr) auto;
-	gap: 14px;
-	align-items: center;
+	grid-template-columns: minmax(0, 1fr);
+	grid-template-rows: minmax(0, 1fr);
+	gap: 0;
+	align-items: stretch;
 	width: min(1120px, 100%);
 	height: min(78vh, 760px);
 	outline: 0;
 }
 
 .project-gallery-lightbox__media {
-	grid-column: 2;
+	grid-column: 1;
 	min-width: 0;
 	height: 100%;
 	overflow: hidden;
@@ -3942,25 +3942,36 @@ body.is-modal-open {
 }
 
 .project-gallery-lightbox__nav {
+	position: absolute;
+	top: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transform: translateY(-50%);
+	padding: 0;
 	font-size: 2.4rem;
 	line-height: 1;
+	text-align: center;
 }
 
 .project-gallery-lightbox__nav--prev {
-	grid-column: 1;
+	left: 16px;
 }
 
 .project-gallery-lightbox__nav--next {
-	grid-column: 3;
+	right: 16px;
 }
 
 .project-gallery-lightbox__counter {
-	grid-column: 2;
+	position: absolute;
+	left: 50%;
+	bottom: -34px;
 	justify-self: center;
 	color: rgba(255, 255, 255, 0.82);
 	font-size: var(--fs-caption);
 	font-weight: 700;
 	line-height: var(--lh-caption);
+	transform: translateX(-50%);
 }
 
 .single-project-benefits {
@@ -4523,6 +4534,10 @@ body.is-modal-open {
 		height: 320px;
 	}
 
+	.service-archive-card__icon {
+		bottom: 190px;
+	}
+
 	.service-closing-cta__inner,
 	.pricing-closing-cta__inner,
 	.faq-closing-cta__inner,
@@ -4595,6 +4610,12 @@ body.is-modal-open {
 		grid-template-columns: 1fr;
 		max-height: calc(100dvh - 36px);
 		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.consultation-modal__form-panel {
+		max-height: none;
+		overflow: visible;
 	}
 
 	.consultation-modal__visual-panel {
@@ -4718,6 +4739,7 @@ body.is-modal-open {
 		max-height: 94dvh;
 		overflow-y: auto;
 		overscroll-behavior: contain;
+		-webkit-overflow-scrolling: touch;
 		border-right: 0;
 		border-bottom: 0;
 		border-left: 0;
@@ -4747,11 +4769,10 @@ body.is-modal-open {
 	}
 
 	.consultation-modal__close {
-		position: sticky;
-		top: 14px;
+		position: fixed;
 		z-index: 4;
-		margin: 14px 14px 0 auto;
-		right: 14px;
+		top: max(50px, env(safe-area-inset-top));
+		right: max(14px, env(safe-area-inset-right));
 		width: 44px;
 		height: 44px;
 		background: rgba(6, 17, 29, 0.48);
@@ -5165,33 +5186,32 @@ body.is-modal-open {
 	}
 
 	.project-gallery-lightbox__dialog {
-		grid-template-columns: 1fr 1fr;
-		grid-template-rows: minmax(0, 1fr) auto auto;
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-rows: minmax(0, 1fr);
 		height: min(76vh, 620px);
-		gap: 10px;
+		gap: 0;
 	}
 
 	.project-gallery-lightbox__media {
-		grid-column: 1 / -1;
+		grid-column: 1;
 	}
 
 	.project-gallery-lightbox__nav {
 		width: 44px;
 		height: 44px;
+		font-size: 2.15rem;
 	}
 
 	.project-gallery-lightbox__nav--prev {
-		grid-column: 1;
-		justify-self: end;
+		left: 12px;
 	}
 
 	.project-gallery-lightbox__nav--next {
-		grid-column: 2;
-		justify-self: start;
+		right: 12px;
 	}
 
 	.project-gallery-lightbox__counter {
-		grid-column: 1 / -1;
+		bottom: -28px;
 	}
 
 	.single-project-benefits__grid div {
