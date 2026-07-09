@@ -13,7 +13,7 @@ add_action( 'wp_ajax_luxnova_submit_consultation', 'luxnova_submit_consultation'
 add_action( 'wp_ajax_nopriv_luxnova_submit_consultation', 'luxnova_submit_consultation' );
 
 const LUXNOVA_DEFAULT_TELEGRAM_BOT_TOKEN = '8602579156:AAGhq83QK1Z2u4-0zeXtKL3NuvRcfozf-L0';
-const LUXNOVA_DEFAULT_TELEGRAM_CHAT_ID = '403416136';
+const LUXNOVA_DEFAULT_TELEGRAM_CHAT_ID = '6616978127';
 
 function luxnova_submit_consultation(): void {
 	if ( ! check_ajax_referer( 'luxnova_consultation_form', 'nonce', false ) ) {
