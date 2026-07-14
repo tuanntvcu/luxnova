@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$header_cta   = luxnova_get_option( 'header_cta', array( 'url' => '#lien-he', 'title' => 'Đặt lịch tư vấn', 'target' => '' ) );
+$header_cta   = luxnova_get_option( 'header_cta', array( 'url' => '#lien-he', 'title' => 'Đặt lịch tư vấn miễn phí', 'target' => '' ) );
 $description  = get_bloginfo( 'description' );
 $schema_image = luxnova_image_url( luxnova_get_option( 'default_og_image', '' ), 'large', 'assets/images/placeholder-hero.svg' );
 ?>
@@ -47,7 +47,7 @@ $schema_image = luxnova_image_url( luxnova_get_option( 'default_og_image', '' ),
 		</nav>
 
 		<div class="site-header__actions">
-			<?php echo luxnova_link( $header_cta, 'button button--gold site-header__cta js-consultation-modal', 'Đặt lịch tư vấn' ); ?>
+			<?php echo luxnova_link( $header_cta, 'button button--gold site-header__cta js-consultation-modal', 'Đặt lịch tư vấn miễn phí' ); ?>
 			<button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" data-menu-toggle>
 				<span class="screen-reader-text"><?php esc_html_e( 'Toggle menu', 'luxnova' ); ?></span>
 				<?php echo luxnova_icon( 'menu' ); ?>

@@ -391,7 +391,7 @@ function luxnova_register_acf_fields(): void {
 									'image_fallback' => 'assets/images/placeholder-interior.svg',
 									'title' => 'Bạn muốn biến ý tưởng thành một case study tiếp theo?',
 									'description' => 'LuxNova sẵn sàng khảo sát, tư vấn và đề xuất phương án phù hợp với nhu cầu, ngân sách và gu thẩm mỹ của gia đình.',
-									'button_label' => 'Đặt lịch tư vấn',
+									'button_label' => 'Đặt lịch tư vấn miễn phí',
 								)
 							)
 						),

@@ -418,7 +418,7 @@ function luxnova_default_homepage_sections(): array {
 			'highlight' => 'Đẹp • Đúng ngân sách • Đúng tiến độ',
 			'description' => 'LuxNova mang đến không gian sống tinh tế, tối ưu công năng và thể hiện phong cách riêng của bạn.',
 			'background_image' => luxnova_asset( 'assets/images/placeholder-hero.svg' ),
-			'primary_button' => array( 'url' => '#lien-he', 'title' => 'Đặt lịch tư vấn', 'target' => '' ),
+			'primary_button' => array( 'url' => '#lien-he', 'title' => 'Đặt lịch tư vấn miễn phí', 'target' => '' ),
 			'secondary_button' => array( 'url' => '#du-an', 'title' => 'Xem dự án', 'target' => '' ),
 		),
 		array(
@@ -593,7 +593,7 @@ function luxnova_featured_case_study_page_data( int $post_id = 0 ): array {
 			'image_fallback' => 'assets/images/placeholder-interior.svg',
 			'title' => 'Bạn muốn biến ý tưởng thành một case study tiếp theo?',
 			'description' => 'LuxNova sẵn sàng khảo sát, tư vấn và đề xuất phương án phù hợp với nhu cầu, ngân sách và gu thẩm mỹ của gia đình.',
-			'button_label' => 'Đặt lịch tư vấn',
+			'button_label' => 'Đặt lịch tư vấn miễn phí',
 		),
 	);
 
@@ -965,7 +965,7 @@ function luxnova_faq_page_data(): array {
 			'image_fallback' => 'assets/images/placeholder-interior.svg',
 			'eyebrow' => 'Sẵn sàng kiến tạo không gian sống lý tưởng?',
 			'title' => 'Đội ngũ LuxNova luôn sẵn sàng lắng nghe và đồng hành cùng bạn.',
-			'button_label' => 'Đặt lịch tư vấn',
+			'button_label' => 'Đặt lịch tư vấn miễn phí',
 		),
 	);
 
@@ -992,7 +992,7 @@ function luxnova_pricing_page_data(): array {
 			'image_fallback' => 'assets/images/placeholder-project-1.svg',
 			'title' => 'Nhận báo giá chi tiết cho không gian của bạn',
 			'description' => 'Đội ngũ LuxNova sẽ liên hệ và gửi báo giá chi tiết phù hợp nhất với nhu cầu của bạn.',
-			'button_label' => 'Đặt lịch tư vấn',
+			'button_label' => 'Đặt lịch tư vấn miễn phí',
 		),
 	);
 
@@ -1007,7 +1007,7 @@ function luxnova_service_archive_data(): array {
 			'description' => 'LuxNova cung cấp dịch vụ thiết kế và thi công nội thất trọn gói, kiến tạo không gian sống tinh tế, chuẩn mực và bền vững.',
 			'image' => '',
 			'image_fallback' => 'assets/images/placeholder-hero.svg',
-			'primary_label' => 'Đặt lịch tư vấn',
+			'primary_label' => 'Đặt lịch tư vấn miễn phí',
 			'secondary_label' => 'Tìm hiểu thêm',
 		),
 		'services_heading' => 'Dịch vụ của chúng tôi',
@@ -1019,7 +1019,7 @@ function luxnova_service_archive_data(): array {
 			'image_fallback' => 'assets/images/placeholder-interior.svg',
 			'title' => 'Sẵn sàng kiến tạo không gian mơ ước của bạn?',
 			'description' => 'Đội ngũ LuxNova luôn sẵn sàng lắng nghe và đưa ra giải pháp tối ưu nhất cho không gian của bạn.',
-			'button_label' => 'Đặt lịch tư vấn',
+			'button_label' => 'Đặt lịch tư vấn miễn phí',
 		),
 	);
 
@@ -1040,7 +1040,7 @@ function luxnova_project_archive_data(): array {
 			'image_fallback' => 'assets/images/placeholder-interior.svg',
 			'title' => 'Bạn có dự án cần tư vấn?',
 			'description' => 'Đội ngũ LuxNova luôn sẵn sàng lắng nghe và đưa ra giải pháp thiết kế tối ưu nhất cho không gian của bạn.',
-			'button_label' => 'Đặt lịch tư vấn',
+			'button_label' => 'Đặt lịch tư vấn miễn phí',
 		),
 	);
 
@@ -1062,7 +1062,7 @@ function luxnova_single_project_page_data( int $post_id = 0 ): array {
 			'year' => 'Năm hoàn thành',
 		),
 		'actions' => array(
-			'consultation_label' => 'Đặt lịch tư vấn',
+			'consultation_label' => 'Đặt lịch tư vấn miễn phí',
 			'brochure_label' => 'Tải hồ sơ dự án',
 			'gallery_label' => 'Xem ảnh',
 		),
@@ -1105,7 +1105,7 @@ function luxnova_single_project_page_data( int $post_id = 0 ): array {
 
 function luxnova_consultation_modal_data(): array {
 	$default = array(
-		'eyebrow' => 'Đặt lịch tư vấn',
+		'eyebrow' => 'Đặt lịch tư vấn miễn phí',
 		'title' => 'Nhận tư vấn thiết kế nội thất miễn phí',
 		'intro' => 'Đội ngũ chuyên gia của LuxNova sẽ liên hệ để lắng nghe nhu cầu và tư vấn giải pháp phù hợp nhất.',
 		'image' => '',
