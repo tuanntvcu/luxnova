@@ -1013,8 +1013,6 @@ select {
 	width: min(100%, 168px);
 	max-height: 42px;
 	object-fit: contain;
-	opacity: 0.72;
-	filter: grayscale(1);
 }
 
 .partner-strip a:hover {
