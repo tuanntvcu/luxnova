@@ -123,6 +123,7 @@ function luxnova_menu_url_for_title( string $title ): string {
 		'home' => home_url( '/' ),
 		'du an' => get_post_type_archive_link( 'luxnova_project' ) ?: home_url( '/du-an/' ),
 		'dich vu' => get_post_type_archive_link( 'luxnova_service' ) ?: home_url( '/dich-vu/' ),
+		'phong cach thiet ke' => luxnova_design_styles_url(),
 		'bang gia' => home_url( '/bang-gia/' ),
 		'kien thuc' => luxnova_knowledge_url(),
 		'lien he' => home_url( '/lien-he/' ),
@@ -164,6 +165,14 @@ function luxnova_is_service_context(): bool {
 	return is_post_type_archive( 'luxnova_service' ) || is_singular( 'luxnova_service' );
 }
 
+function luxnova_design_styles_url(): string {
+	return home_url( '/phong-cach-thiet-ke/' );
+}
+
+function luxnova_is_design_styles_context(): bool {
+	return is_page_template( array( 'page-phong-cach-thiet-ke.php', 'page-chi-tiet-phong-cach-thiet-ke.php' ) ) || luxnova_is_design_styles_request_path();
+}
+
 function luxnova_is_pricing_context(): bool {
 	return is_page( 'bang-gia' ) || luxnova_is_pricing_request_path();
 }
@@ -182,6 +191,12 @@ function luxnova_is_pricing_request_path(): bool {
 
 function luxnova_is_knowledge_request_path(): bool {
 	return luxnova_is_request_path( 'kien-thuc' ) || 0 < luxnova_knowledge_paged_from_request();
+}
+
+function luxnova_is_design_styles_request_path(): bool {
+	$request_path = luxnova_current_relative_request_path();
+
+	return 'phong-cach-thiet-ke' === $request_path || str_starts_with( $request_path, 'phong-cach-thiet-ke/' );
 }
 
 function luxnova_is_featured_projects_request_path(): bool {

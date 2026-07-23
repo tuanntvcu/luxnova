@@ -354,6 +354,32 @@ function luxnova_register_acf_fields(): void {
 
 	acf_add_local_field_group(
 		array(
+			'key' => 'group_luxnova_design_styles_page_content',
+			'title' => 'Nội dung trang Phong cách thiết kế',
+			'fields' => luxnova_acf_design_styles_page_fields(),
+			'location' => array(
+				array(
+					array( 'param' => 'page_template', 'operator' => '==', 'value' => 'page-phong-cach-thiet-ke.php' ),
+				),
+			),
+		)
+	);
+
+	acf_add_local_field_group(
+		array(
+			'key' => 'group_luxnova_design_style_detail_content',
+			'title' => 'Nội dung chi tiết phong cách thiết kế',
+			'fields' => luxnova_acf_design_style_detail_fields(),
+			'location' => array(
+				array(
+					array( 'param' => 'page_template', 'operator' => '==', 'value' => 'page-chi-tiet-phong-cach-thiet-ke.php' ),
+				),
+			),
+		)
+	);
+
+	acf_add_local_field_group(
+		array(
 			'key' => 'group_luxnova_featured_projects_page_content',
 			'title' => 'Nội dung trang Dự án tiêu biểu',
 			'fields' => array(
@@ -884,6 +910,225 @@ function luxnova_acf_pricing_page_fields(): array {
 				),
 				luxnova_acf_dynamic_image( 'field_luxnova_pricing_faq_image', 'FAQ Image', 'faq_image', $defaults['faq_image_fallback'] ?? '' ),
 				luxnova_acf_group( 'field_luxnova_pricing_closing_cta', 'Closing CTA', 'closing_cta', luxnova_acf_cta_fields( 'field_luxnova_pricing_closing_cta', $defaults['closing_cta'] ?? array() ) ),
+			)
+		),
+	);
+}
+
+function luxnova_acf_design_styles_page_fields(): array {
+	$defaults = luxnova_design_styles_page_data();
+
+	return array(
+		luxnova_acf_group(
+			'field_luxnova_design_styles_page_content',
+			'Design Styles Page Content',
+			'design_styles_page_content',
+			array(
+				luxnova_acf_group(
+					'field_luxnova_design_styles_hero',
+					'Hero',
+					'hero',
+					array(
+						luxnova_acf_dynamic_text( 'field_luxnova_design_styles_hero_eyebrow', 'Eyebrow', 'eyebrow', $defaults['hero']['eyebrow'] ?? '' ),
+						luxnova_acf_dynamic_textarea( 'field_luxnova_design_styles_hero_title', 'Title', 'title', $defaults['hero']['title'] ?? '', 2 ),
+						luxnova_acf_dynamic_textarea( 'field_luxnova_design_styles_hero_description', 'Description', 'description', $defaults['hero']['description'] ?? '', 3 ),
+						luxnova_acf_dynamic_image( 'field_luxnova_design_styles_hero_image', 'Background Image', 'image', $defaults['hero']['image_fallback'] ?? 'assets/images/placeholder-hero.svg' ),
+						luxnova_acf_dynamic_image( 'field_luxnova_design_styles_hero_mobile_image', 'Background Image Mobile', 'mobile_image', 'Dùng ảnh desktop nếu bỏ trống.' ),
+						luxnova_acf_dynamic_text( 'field_luxnova_design_styles_hero_button_label', 'Button Label', 'button_label', $defaults['hero']['button_label'] ?? '' ),
+					)
+				),
+				luxnova_acf_dynamic_text( 'field_luxnova_design_styles_heading', 'Styles Heading', 'styles_heading', $defaults['styles_heading'] ?? '' ),
+				luxnova_acf_dynamic_text( 'field_luxnova_design_styles_card_link_label', 'Card Link Label', 'card_link_label', $defaults['card_link_label'] ?? '' ),
+				luxnova_acf_dynamic_repeater(
+					'field_luxnova_design_styles_items',
+					'Style Cards',
+					'styles',
+					array(
+						luxnova_acf_dynamic_text( 'field_luxnova_design_styles_item_key', 'Key', 'key', 'modernLuxury' ),
+						luxnova_acf_dynamic_text( 'field_luxnova_design_styles_item_slug', 'Slug', 'slug', 'modern-luxury' ),
+						luxnova_acf_dynamic_text( 'field_luxnova_design_styles_item_title', 'Title', 'title' ),
+						luxnova_acf_dynamic_text( 'field_luxnova_design_styles_item_tagline', 'Tagline', 'tagline' ),
+						luxnova_acf_dynamic_image( 'field_luxnova_design_styles_item_image', 'Image', 'image', 'assets/images/placeholder-interior.svg' ),
+						luxnova_acf_link( 'field_luxnova_design_styles_item_link', 'Custom Link', 'link' ),
+					),
+					$defaults['styles'] ?? array()
+				),
+				luxnova_acf_group(
+					'field_luxnova_design_styles_quiz_cta',
+					'Quiz CTA',
+					'quiz_cta',
+					array(
+						luxnova_acf_dynamic_image( 'field_luxnova_design_styles_quiz_cta_image', 'Image', 'image', $defaults['quiz_cta']['image_fallback'] ?? 'assets/images/placeholder-project-1.svg' ),
+						luxnova_acf_dynamic_textarea( 'field_luxnova_design_styles_quiz_cta_title', 'Title', 'title', $defaults['quiz_cta']['title'] ?? '', 2 ),
+						luxnova_acf_dynamic_textarea( 'field_luxnova_design_styles_quiz_cta_description', 'Description', 'description', $defaults['quiz_cta']['description'] ?? '', 3 ),
+						luxnova_acf_dynamic_text( 'field_luxnova_design_styles_quiz_cta_button_label', 'Button Label', 'button_label', $defaults['quiz_cta']['button_label'] ?? '' ),
+					)
+				),
+				luxnova_acf_group(
+					'field_luxnova_design_styles_quiz_modal',
+					'Quiz Modal',
+					'quiz_modal',
+					array(
+						luxnova_acf_dynamic_text( 'field_luxnova_design_styles_quiz_modal_eyebrow', 'Eyebrow', 'eyebrow', $defaults['quiz_modal']['eyebrow'] ?? '' ),
+						luxnova_acf_dynamic_textarea( 'field_luxnova_design_styles_quiz_modal_title', 'Title', 'title', $defaults['quiz_modal']['title'] ?? '', 2 ),
+						luxnova_acf_dynamic_textarea( 'field_luxnova_design_styles_quiz_modal_intro', 'Intro', 'intro', $defaults['quiz_modal']['intro'] ?? '', 2 ),
+						luxnova_acf_dynamic_text( 'field_luxnova_design_styles_quiz_modal_cta_label', 'Result CTA Label', 'cta_label', $defaults['quiz_modal']['cta_label'] ?? '' ),
+					)
+				),
+			)
+		),
+	);
+}
+
+function luxnova_acf_design_style_detail_fields(): array {
+	$defaults = luxnova_design_style_detail_page_data();
+
+	return array(
+		luxnova_acf_group(
+			'field_luxnova_design_style_detail_content',
+			'Design Style Detail Content',
+			'design_style_detail_content',
+			array(
+				luxnova_acf_dynamic_text( 'field_luxnova_design_style_key', 'Style Key', 'style_key', $defaults['style_key'] ?? 'modernLuxury' ),
+				luxnova_acf_group(
+					'field_luxnova_design_style_hero',
+					'Hero',
+					'hero',
+					array(
+						luxnova_acf_dynamic_text( 'field_luxnova_design_style_home_label', 'Home Label', 'home_label', $defaults['hero']['home_label'] ?? '' ),
+						luxnova_acf_dynamic_text( 'field_luxnova_design_style_parent_label', 'Parent Breadcrumb Label', 'parent_label', $defaults['hero']['parent_label'] ?? '' ),
+						luxnova_acf_dynamic_textarea( 'field_luxnova_design_style_title', 'Title', 'title', $defaults['hero']['title'] ?? '', 2 ),
+						luxnova_acf_dynamic_textarea( 'field_luxnova_design_style_subtitle', 'Subtitle', 'subtitle', $defaults['hero']['subtitle'] ?? '', 2 ),
+						luxnova_acf_dynamic_image( 'field_luxnova_design_style_image', 'Hero Image', 'image', $defaults['hero']['image_fallback'] ?? 'assets/images/placeholder-hero.svg' ),
+						luxnova_acf_dynamic_image( 'field_luxnova_design_style_mobile_image', 'Hero Mobile Image', 'mobile_image', 'Dùng ảnh desktop nếu bỏ trống.' ),
+					)
+				),
+				luxnova_acf_dynamic_textarea( 'field_luxnova_design_style_summary', 'Summary', 'summary', $defaults['summary'] ?? '', 3 ),
+				luxnova_acf_dynamic_repeater(
+					'field_luxnova_design_style_meta',
+					'Hero Meta',
+					'meta',
+					array(
+						luxnova_acf_icon_select( 'field_luxnova_design_style_meta_icon', 'Icon', 'icon', 'design', luxnova_acf_default_instruction( 'design' ) ),
+						luxnova_acf_icon_image( 'field_luxnova_design_style_meta_icon_image' ),
+						luxnova_acf_dynamic_text( 'field_luxnova_design_style_meta_label', 'Label', 'label' ),
+						luxnova_acf_dynamic_textarea( 'field_luxnova_design_style_meta_value', 'Value', 'value', '', 2 ),
+					),
+					$defaults['meta'] ?? array(),
+					'table'
+				),
+				luxnova_acf_dynamic_text( 'field_luxnova_design_style_features_heading', 'Features Heading', 'features_heading', $defaults['features_heading'] ?? '' ),
+				luxnova_acf_dynamic_repeater(
+					'field_luxnova_design_style_features',
+					'Features',
+					'features',
+					array(
+						luxnova_acf_icon_select( 'field_luxnova_design_style_feature_icon', 'Icon', 'icon', 'shield', luxnova_acf_default_instruction( 'shield' ) ),
+						luxnova_acf_icon_image( 'field_luxnova_design_style_feature_icon_image' ),
+						luxnova_acf_dynamic_text( 'field_luxnova_design_style_feature_title', 'Title', 'title' ),
+						luxnova_acf_dynamic_textarea( 'field_luxnova_design_style_feature_description', 'Description', 'description', '', 2 ),
+					),
+					$defaults['features'] ?? array(),
+					'table'
+				),
+				luxnova_acf_dynamic_text( 'field_luxnova_design_style_collection_heading', 'Collection Heading', 'collection_heading', $defaults['collection_heading'] ?? '' ),
+				luxnova_acf_dynamic_repeater(
+					'field_luxnova_design_style_collection_filters',
+					'Collection Filters',
+					'collection_filters',
+					array(
+						luxnova_acf_dynamic_text( 'field_luxnova_design_style_collection_filter_label', 'Label', 'label' ),
+					),
+					array_map( static fn( string $label ): array => array( 'label' => $label ), $defaults['collection_filters'] ?? array() ),
+					'table'
+				),
+				luxnova_acf_dynamic_repeater(
+					'field_luxnova_design_style_gallery',
+					'Gallery',
+					'gallery',
+					array(
+						luxnova_acf_dynamic_image( 'field_luxnova_design_style_gallery_image', 'Image', 'image', 'assets/images/placeholder-interior.svg' ),
+						luxnova_acf_dynamic_text( 'field_luxnova_design_style_gallery_label', 'Label', 'label' ),
+					),
+					$defaults['gallery'] ?? array()
+				),
+				luxnova_acf_dynamic_text( 'field_luxnova_design_style_palette_heading', 'Palette Heading', 'palette_heading', $defaults['palette_heading'] ?? '' ),
+				luxnova_acf_dynamic_repeater(
+					'field_luxnova_design_style_palette',
+					'Palette',
+					'palette',
+					array(
+						luxnova_acf_dynamic_text( 'field_luxnova_design_style_palette_name', 'Name', 'name' ),
+						array(
+							'key' => 'field_luxnova_design_style_palette_color',
+							'label' => 'Color',
+							'name' => 'color',
+							'type' => 'color_picker',
+							'default_value' => '#d6a84f',
+							'instructions' => 'Chọn mã màu hiển thị trong bảng màu. Nếu bỏ trống, website dùng màu mặc định.',
+						),
+					),
+					$defaults['palette'] ?? array(),
+					'table'
+				),
+				luxnova_acf_dynamic_text( 'field_luxnova_design_style_materials_heading', 'Materials Heading', 'materials_heading', $defaults['materials_heading'] ?? '' ),
+				luxnova_acf_dynamic_repeater(
+					'field_luxnova_design_style_materials',
+					'Materials',
+					'materials',
+					array(
+						luxnova_acf_dynamic_image( 'field_luxnova_design_style_material_image', 'Image', 'image', 'assets/images/placeholder-interior.svg' ),
+						luxnova_acf_dynamic_text( 'field_luxnova_design_style_material_title', 'Title', 'title' ),
+					),
+					$defaults['materials'] ?? array(),
+					'table'
+				),
+				luxnova_acf_dynamic_text( 'field_luxnova_design_style_audience_heading', 'Audience Heading', 'audience_heading', $defaults['audience_heading'] ?? '' ),
+				luxnova_acf_dynamic_repeater(
+					'field_luxnova_design_style_audience',
+					'Audience',
+					'audience',
+					array(
+						luxnova_acf_icon_select( 'field_luxnova_design_style_audience_icon', 'Icon', 'icon', 'home', luxnova_acf_default_instruction( 'home' ) ),
+						luxnova_acf_icon_image( 'field_luxnova_design_style_audience_icon_image' ),
+						luxnova_acf_dynamic_text( 'field_luxnova_design_style_audience_title', 'Title', 'title' ),
+						luxnova_acf_dynamic_textarea( 'field_luxnova_design_style_audience_description', 'Description', 'description', '', 2 ),
+					),
+					$defaults['audience'] ?? array(),
+					'table'
+				),
+				luxnova_acf_dynamic_text( 'field_luxnova_design_style_budget_heading', 'Budget Heading', 'budget_heading', $defaults['budget_heading'] ?? '' ),
+				luxnova_acf_dynamic_repeater(
+					'field_luxnova_design_style_budgets',
+					'Budgets',
+					'budgets',
+					array(
+						luxnova_acf_dynamic_text( 'field_luxnova_design_style_budget_label', 'Label', 'label' ),
+						luxnova_acf_dynamic_text( 'field_luxnova_design_style_budget_area', 'Area', 'area' ),
+						luxnova_acf_dynamic_text( 'field_luxnova_design_style_budget_price', 'Price', 'price' ),
+					),
+					$defaults['budgets'] ?? array(),
+					'table'
+				),
+				luxnova_acf_dynamic_text( 'field_luxnova_design_style_projects_heading', 'Projects Heading', 'projects_heading', $defaults['projects_heading'] ?? '' ),
+				luxnova_acf_homepage_relationship( 'field_luxnova_design_style_selected_projects', 'Dự án thực tế', 'selected_projects', array( 'luxnova_project' ), 'Chọn dự án thực tế hiển thị trên trang chi tiết phong cách. Nếu bỏ trống, website dùng các dự án mới nhất.' ),
+				luxnova_acf_dynamic_text( 'field_luxnova_design_style_projects_link_label', 'Projects Link Label', 'projects_link_label', $defaults['projects_link_label'] ?? '' ),
+				luxnova_acf_link( 'field_luxnova_design_style_projects_link', 'Projects Link', 'projects_link', $defaults['projects_link'] ?? array() ),
+				luxnova_acf_dynamic_text( 'field_luxnova_design_style_related_heading', 'Related Heading', 'related_heading', $defaults['related_heading'] ?? '' ),
+				luxnova_acf_homepage_relationship( 'field_luxnova_design_style_related_posts', 'Bài viết liên quan', 'related_posts', array( 'post' ), 'Chọn bài viết liên quan hiển thị cuối trang. Nếu bỏ trống, website dùng các bài blog mới nhất.' ),
+				luxnova_acf_group(
+					'field_luxnova_design_style_closing_cta',
+					'Closing CTA',
+					'closing_cta',
+					array(
+						luxnova_acf_dynamic_textarea( 'field_luxnova_design_style_cta_title', 'Title', 'title', $defaults['closing_cta']['title'] ?? '', 2 ),
+						luxnova_acf_dynamic_textarea( 'field_luxnova_design_style_cta_description', 'Description', 'description', $defaults['closing_cta']['description'] ?? '', 2 ),
+						luxnova_acf_dynamic_text( 'field_luxnova_design_style_cta_primary_label', 'Primary Button Label', 'primary_label', $defaults['closing_cta']['primary_label'] ?? '' ),
+						luxnova_acf_dynamic_text( 'field_luxnova_design_style_cta_secondary_label', 'Secondary Button Label', 'secondary_label', $defaults['closing_cta']['secondary_label'] ?? '' ),
+						luxnova_acf_link( 'field_luxnova_design_style_cta_primary_link', 'Primary Button Link', 'primary_link', $defaults['closing_cta']['primary_link'] ?? array() ),
+						luxnova_acf_link( 'field_luxnova_design_style_cta_secondary_link', 'Secondary Button Link', 'secondary_link', $defaults['closing_cta']['secondary_link'] ?? array() ),
+					)
+				),
 			)
 		),
 	);

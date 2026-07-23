@@ -329,6 +329,7 @@ function luxnova_icon( string $name ): string {
 		'phone' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h4l1 5-2.5 1.5a12 12 0 0 0 5 5L15 13l5 1v4c0 1.1-.9 2-2 2A14 14 0 0 1 4 6c0-1.1.9-2 2-2Z"/></svg>',
 		'mail' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4V6Zm0 0 8 7 8-7"/></svg>',
 		'pin' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.2 7-11a7 7 0 1 0-14 0c0 5.8 7 11 7 11Zm0-8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/></svg>',
+		'star' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg>',
 		'facebook' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 8h2V4h-2c-3 0-5 2-5 5v2H7v4h3v5h4v-5h3l1-4h-4V9c0-.6.4-1 1-1Z"/></svg>',
 		'instagram' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4Zm5 5.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Zm5.2-1.2h.01"/></svg>',
 		'youtube' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8.5a3 3 0 0 0-2.1-2.1C17.1 6 12 6 12 6s-5.1 0-6.9.4A3 3 0 0 0 3 8.5a31 31 0 0 0 0 7 3 3 0 0 0 2.1 2.1c1.8.4 6.9.4 6.9.4s5.1 0 6.9-.4A3 3 0 0 0 21 15.5a31 31 0 0 0 0-7ZM10 15l5-3-5-3v6Z"/></svg>',
@@ -835,6 +836,413 @@ function luxnova_render_project_listing_card( array $card ): void {
 		</div>
 	</article>
 	<?php
+}
+
+function luxnova_design_style_catalog(): array {
+	$placeholder = luxnova_asset( 'assets/images/placeholder-interior.svg' );
+
+	return array(
+		'modern-luxury' => array(
+			'key' => 'modernLuxury',
+			'slug' => 'modern-luxury',
+			'title' => 'Modern Luxury',
+			'tagline' => 'Sang trọng hiện đại',
+			'subtitle' => 'Sự cân bằng giữa hiện đại và sang trọng.',
+			'image' => luxnova_asset( 'assets/images/placeholder-project-1.svg' ),
+			'image_fallback' => 'assets/images/placeholder-project-1.svg',
+			'summary' => 'Đường nét hiện đại, vật liệu cao cấp và ánh sáng tinh tế tạo nên một không gian sang trọng nhưng vẫn dễ sống mỗi ngày.',
+		),
+		'modern' => array(
+			'key' => 'modern',
+			'slug' => 'modern',
+			'title' => 'Modern',
+			'tagline' => 'Hiện đại tinh giản',
+			'subtitle' => 'Tối ưu công năng, gọn gàng và sáng thoáng.',
+			'image' => luxnova_asset( 'assets/images/placeholder-project-2.svg' ),
+			'image_fallback' => 'assets/images/placeholder-project-2.svg',
+			'summary' => 'Phong cách Modern ưu tiên bố cục rõ ràng, vật liệu dễ bảo trì và cảm giác sống linh hoạt cho gia đình đô thị.',
+		),
+		'japandi' => array(
+			'key' => 'japandi',
+			'slug' => 'japandi',
+			'title' => 'Japandi',
+			'tagline' => 'Tối giản & ấm áp',
+			'subtitle' => 'Sự giao thoa giữa Nhật Bản và Bắc Âu.',
+			'image' => luxnova_asset( 'assets/images/placeholder-project-3.svg' ),
+			'image_fallback' => 'assets/images/placeholder-project-3.svg',
+			'summary' => 'Japandi dùng chất liệu tự nhiên, đường nét mềm và bảng màu dịu để tạo nên không gian yên tĩnh, ấm áp.',
+		),
+		'scandinavian' => array(
+			'key' => 'scandinavian',
+			'slug' => 'scandinavian',
+			'title' => 'Scandinavian',
+			'tagline' => 'Đơn giản & sáng sủa',
+			'subtitle' => 'Sáng, thoáng và dễ ứng dụng.',
+			'image' => luxnova_asset( 'assets/images/placeholder-project-4.svg' ),
+			'image_fallback' => 'assets/images/placeholder-project-4.svg',
+			'summary' => 'Scandinavian hợp với căn hộ cần ánh sáng, cảm giác rộng rãi và những chi tiết nội thất thân thiện.',
+		),
+		'contemporary' => array(
+			'key' => 'contemporary',
+			'slug' => 'contemporary',
+			'title' => 'Contemporary',
+			'tagline' => 'Đương đại',
+			'subtitle' => 'Linh hoạt, cá tính và cập nhật.',
+			'image' => luxnova_asset( 'assets/images/placeholder-service-1.svg' ),
+			'image_fallback' => 'assets/images/placeholder-service-1.svg',
+			'summary' => 'Contemporary tạo điểm nhấn bằng tỷ lệ, màu sắc và vật liệu mới, phù hợp người thích không gian khác biệt.',
+		),
+		'minimalism' => array(
+			'key' => 'minimalist',
+			'slug' => 'minimalism',
+			'title' => 'Minimalism',
+			'tagline' => 'Tối giản',
+			'subtitle' => 'Ít chi tiết, nhiều khoảng thở.',
+			'image' => luxnova_asset( 'assets/images/placeholder-service-2.svg' ),
+			'image_fallback' => 'assets/images/placeholder-service-2.svg',
+			'summary' => 'Minimalism tập trung vào công năng, hệ lưu trữ và sự gọn gàng để căn nhà luôn nhẹ, sạch và dễ dùng.',
+		),
+		'wabi-sabi' => array(
+			'key' => 'wabiSabi',
+			'slug' => 'wabi-sabi',
+			'title' => 'Wabi Sabi',
+			'tagline' => 'Mộc mạc & tự nhiên',
+			'subtitle' => 'Vẻ đẹp của chất liệu nguyên bản.',
+			'image' => luxnova_asset( 'assets/images/placeholder-service-3.svg' ),
+			'image_fallback' => 'assets/images/placeholder-service-3.svg',
+			'summary' => 'Wabi Sabi yêu vẻ không hoàn hảo, bề mặt thô mộc và ánh sáng trầm ấm để tạo cảm giác tĩnh tại.',
+		),
+		'indochine' => array(
+			'key' => 'indochine',
+			'slug' => 'indochine',
+			'title' => 'Indochine',
+			'tagline' => 'Đông Dương',
+			'subtitle' => 'Bản sắc Á Đông hòa cùng tinh thần Pháp.',
+			'image' => luxnova_asset( 'assets/images/placeholder-hero.svg' ),
+			'image_fallback' => 'assets/images/placeholder-hero.svg',
+			'summary' => 'Indochine phù hợp không gian cần chiều sâu văn hóa, vật liệu gỗ, mây, đá và họa tiết vừa đủ.',
+		),
+		'tan-co-dien' => array(
+			'key' => 'frenchClassic',
+			'slug' => 'tan-co-dien',
+			'title' => 'Tân cổ điển',
+			'tagline' => 'Sang trọng & tinh tế',
+			'subtitle' => 'Đối xứng, mềm mại và trang nhã.',
+			'image' => luxnova_asset( 'assets/images/placeholder-project-2.svg' ),
+			'image_fallback' => 'assets/images/placeholder-project-2.svg',
+			'summary' => 'Tân cổ điển dùng phào chỉ, tỷ lệ cân đối và chất liệu sang để tạo không gian thanh lịch, bền với thời gian.',
+		),
+		'luxury' => array(
+			'key' => 'luxury',
+			'slug' => 'luxury',
+			'title' => 'Luxury',
+			'tagline' => 'Đẳng cấp vượt thời gian',
+			'subtitle' => 'Hoàn thiện cao cấp, giàu trải nghiệm.',
+			'image' => luxnova_asset( 'assets/images/placeholder-audit.svg' ),
+			'image_fallback' => 'assets/images/placeholder-audit.svg',
+			'summary' => 'Luxury dành cho công trình quy mô lớn, ưu tiên vật liệu đắt giá, chi tiết thủ công và trải nghiệm tiếp khách nổi bật.',
+		),
+	);
+}
+
+function luxnova_design_style_by_slug( string $slug = '' ): array {
+	$catalog = luxnova_design_style_catalog();
+	$slug    = sanitize_title( $slug );
+
+	if ( isset( $catalog[ $slug ] ) ) {
+		return $catalog[ $slug ];
+	}
+
+	return $catalog['modern-luxury'];
+}
+
+function luxnova_design_style_archive_cards(): array {
+	$cards = array();
+
+	foreach ( luxnova_design_style_catalog() as $style ) {
+		$cards[] = array(
+			'key' => $style['key'],
+			'slug' => $style['slug'],
+			'title' => $style['title'],
+			'tagline' => $style['tagline'],
+			'image' => $style['image'],
+			'image_fallback' => $style['image_fallback'],
+			'link' => array(
+				'url' => trailingslashit( luxnova_design_styles_url() ) . $style['slug'] . '/',
+				'title' => 'Xem chi tiết',
+				'target' => '',
+			),
+		);
+	}
+
+	return $cards;
+}
+
+function luxnova_design_styles_page_data( int $post_id = 0 ): array {
+	$default = array(
+		'hero' => array(
+			'eyebrow' => 'Khám phá',
+			'title' => 'Phong cách thiết kế phù hợp với bạn',
+			'description' => 'Mỗi phong cách mang một cá tính riêng. Hãy tìm cảm hứng cho không gian sống của bạn.',
+			'image' => '',
+			'mobile_image' => '',
+			'image_fallback' => 'assets/images/placeholder-hero.svg',
+			'button_label' => 'Khám phá ngay',
+		),
+		'styles_heading' => 'Bạn thích phong cách nào?',
+		'card_link_label' => 'Xem chi tiết',
+		'styles' => luxnova_design_style_archive_cards(),
+		'quiz_cta' => array(
+			'image' => '',
+			'image_fallback' => 'assets/images/placeholder-project-1.svg',
+			'title' => 'Bạn chưa biết mình hợp phong cách nào?',
+			'description' => 'Trả lời 7 câu hỏi ngắn để nhận gợi ý phong cách phù hợp nhất với bạn.',
+			'button_label' => 'Khám phá ngay',
+		),
+		'quiz_modal' => array(
+			'eyebrow' => 'Tiêu đề',
+			'title' => 'Khám phá phong cách thiết kế phù hợp với bạn',
+			'intro' => 'Chỉ mất 1 phút để nhận gợi ý miễn phí.',
+			'cta_label' => 'Nhận tư vấn miễn phí',
+		),
+	);
+
+	return luxnova_merge_filled_content( $default, luxnova_get_page_array_setting( 'design_styles_page_content', array(), $post_id ) );
+}
+
+function luxnova_design_style_detail_page_data( int $post_id = 0 ): array {
+	$slug  = $post_id ? (string) get_post_field( 'post_name', $post_id ) : '';
+	$style = luxnova_design_style_by_slug( $slug );
+
+	$default = array(
+		'style_key' => $style['key'],
+		'hero' => array(
+			'home_label' => 'Trang chủ',
+			'parent_label' => 'Phong cách thiết kế',
+			'title' => $style['title'],
+			'subtitle' => $style['subtitle'],
+			'image' => $style['image'],
+			'mobile_image' => '',
+			'image_fallback' => $style['image_fallback'],
+		),
+		'summary' => $style['summary'],
+		'meta' => array(
+			array( 'icon' => 'design', 'label' => 'Phong cách', 'value' => $style['title'] ),
+			array( 'icon' => 'home', 'label' => 'Phù hợp', 'value' => 'Chung cư cao cấp, Nhà phố, Biệt thự' ),
+			array( 'icon' => 'document', 'label' => 'Mức đầu tư', 'value' => '$$$' ),
+			array( 'icon' => 'star', 'label' => 'Độ phổ biến', 'value' => '★★★★★' ),
+		),
+		'features_heading' => 'Đặc điểm nổi bật',
+		'features' => array(
+			array( 'icon' => 'shield', 'title' => 'Sang trọng', 'description' => 'Tinh tế trong từng chi tiết.' ),
+			array( 'icon' => 'design', 'title' => 'Vật liệu cao cấp', 'description' => 'Đá tự nhiên, gỗ, kim loại cao cấp.' ),
+			array( 'icon' => 'clock', 'title' => 'Ánh sáng tự nhiên', 'description' => 'Không gian thoáng, tận dụng nắng trong.' ),
+			array( 'icon' => 'measure', 'title' => 'Đường nét tinh giản', 'description' => 'Tối giản nhưng không đơn điệu, tinh tế.' ),
+		),
+		'collection_heading' => 'Bộ sưu tập',
+		'collection_filters' => array( 'Tất cả', 'Phòng khách', 'Phòng bếp', 'Phòng ngủ', 'WC', 'Walk-in Closet', 'Phòng làm việc' ),
+		'gallery' => luxnova_default_design_style_gallery( $style ),
+		'palette_heading' => 'Bảng màu',
+		'palette' => array(
+			array( 'name' => 'Kem', 'color' => '#eadfce' ),
+			array( 'name' => 'Đen', 'color' => '#202326' ),
+			array( 'name' => 'Gỗ óc chó', 'color' => '#6a4b31' ),
+			array( 'name' => 'Champagne Gold', 'color' => '#d6b46d' ),
+			array( 'name' => 'Đá xám', 'color' => '#8e8c86' ),
+		),
+		'materials_heading' => 'Vật liệu chủ đạo',
+		'materials' => array(
+			array( 'title' => 'Đá tự nhiên', 'image' => luxnova_asset( 'assets/images/placeholder-project-2.svg' ) ),
+			array( 'title' => 'Kính', 'image' => luxnova_asset( 'assets/images/placeholder-service-1.svg' ) ),
+			array( 'title' => 'Kim loại', 'image' => luxnova_asset( 'assets/images/placeholder-service-2.svg' ) ),
+			array( 'title' => 'Da', 'image' => luxnova_asset( 'assets/images/placeholder-project-3.svg' ) ),
+			array( 'title' => 'Gỗ Veneer', 'image' => luxnova_asset( 'assets/images/placeholder-project-4.svg' ) ),
+			array( 'title' => 'Lam gỗ', 'image' => luxnova_asset( 'assets/images/placeholder-hero.svg' ) ),
+		),
+		'audience_heading' => 'Phù hợp với ai?',
+		'audience' => array(
+			array( 'icon' => 'home', 'title' => 'Gia đình trẻ', 'description' => 'Thích không gian hiện đại, đầy đủ tiện nghi.' ),
+			array( 'icon' => 'users', 'title' => 'Doanh nhân', 'description' => 'Yêu thích sự sang trọng và đẳng cấp.' ),
+			array( 'icon' => 'quote', 'title' => 'Người thích sang trọng', 'description' => 'Tận hưởng cuộc sống tinh tế.' ),
+			array( 'icon' => 'shield', 'title' => 'Người yêu sự tinh tế', 'description' => 'Đề cao chất lượng và tính thẩm mỹ.' ),
+		),
+		'budget_heading' => 'Ngân sách tham khảo',
+		'budgets' => array(
+			array( 'label' => 'Căn hộ', 'area' => '70 - 90m²', 'price' => '500 - 800 triệu' ),
+			array( 'label' => 'Nhà phố', 'area' => '120 - 200m²', 'price' => '2 - 3 tỷ' ),
+			array( 'label' => 'Biệt thự', 'area' => '200m² trở lên', 'price' => '5 tỷ +' ),
+		),
+		'projects_heading' => 'Dự án thực tế',
+		'projects_link_label' => 'Xem tất cả dự án',
+		'projects_link' => array( 'url' => get_post_type_archive_link( 'luxnova_project' ) ?: home_url( '/du-an/' ), 'title' => 'Xem tất cả dự án', 'target' => '' ),
+		'selected_projects' => array(),
+		'related_heading' => 'Bài viết liên quan',
+		'related_posts' => array(),
+		'closing_cta' => array(
+			'title' => 'Bạn muốn thiết kế theo phong cách này?',
+			'description' => 'Đội ngũ LuxNova sẵn sàng tư vấn và hiện thực hóa không gian sống mơ ước của bạn.',
+			'primary_label' => 'Nhận tư vấn miễn phí',
+			'secondary_label' => 'Xem bảng giá',
+			'primary_link' => array( 'url' => '#consultation-modal', 'title' => 'Nhận tư vấn miễn phí', 'target' => '' ),
+			'secondary_link' => array( 'url' => home_url( '/bang-gia/' ), 'title' => 'Xem bảng giá', 'target' => '' ),
+		),
+	);
+
+	return luxnova_merge_filled_content( $default, luxnova_get_page_array_setting( 'design_style_detail_content', array(), $post_id ) );
+}
+
+function luxnova_default_design_style_gallery( array $style ): array {
+	$images = array(
+		$style['image'] ?? '',
+		luxnova_asset( 'assets/images/placeholder-project-1.svg' ),
+		luxnova_asset( 'assets/images/placeholder-project-2.svg' ),
+		luxnova_asset( 'assets/images/placeholder-project-3.svg' ),
+		luxnova_asset( 'assets/images/placeholder-project-4.svg' ),
+		luxnova_asset( 'assets/images/placeholder-service-1.svg' ),
+		luxnova_asset( 'assets/images/placeholder-service-2.svg' ),
+		luxnova_asset( 'assets/images/placeholder-service-3.svg' ),
+	);
+
+	return array_map(
+		static fn( string $image ): array => array( 'image' => $image, 'label' => $style['title'] ?? 'Phong cách thiết kế' ),
+		array_filter( $images )
+	);
+}
+
+function luxnova_relationship_ids( mixed $items ): array {
+	$ids = array();
+
+	foreach ( (array) $items as $item ) {
+		if ( $item instanceof WP_Post ) {
+			$ids[] = (int) $item->ID;
+		} elseif ( is_numeric( $item ) ) {
+			$ids[] = (int) $item;
+		}
+	}
+
+	return array_values( array_filter( array_unique( $ids ) ) );
+}
+
+function luxnova_design_style_project_ids( array $page_data, int $limit = 3 ): array {
+	$ids = luxnova_relationship_ids( $page_data['selected_projects'] ?? array() );
+	if ( ! empty( $ids ) ) {
+		return array_slice( $ids, 0, $limit );
+	}
+
+	return array_map(
+		'intval',
+		get_posts(
+			array(
+				'post_type' => 'luxnova_project',
+				'post_status' => 'publish',
+				'posts_per_page' => $limit,
+				'orderby' => 'date',
+				'order' => 'DESC',
+				'fields' => 'ids',
+			)
+		)
+	);
+}
+
+function luxnova_design_style_project_cards( array $page_data, int $limit = 3 ): array {
+	$cards = array();
+
+	foreach ( luxnova_design_style_project_ids( $page_data, $limit ) as $project_id ) {
+		if ( 'publish' !== get_post_status( $project_id ) ) {
+			continue;
+		}
+
+		$area = function_exists( 'get_field' ) ? (string) get_field( 'area', $project_id ) : '';
+		$loc  = function_exists( 'get_field' ) ? (string) get_field( 'location', $project_id ) : '';
+
+		$cards[] = array(
+			'title' => get_the_title( $project_id ),
+			'url' => get_permalink( $project_id ),
+			'image' => get_post_thumbnail_id( $project_id ),
+			'meta' => trim( implode( ' - ', array_filter( array( $area, $loc ) ) ) ),
+		);
+	}
+
+	if ( ! empty( $cards ) ) {
+		return array_slice( $cards, 0, $limit );
+	}
+
+	return array_slice(
+		array_map(
+			static fn( array $card ): array => array(
+				'title' => $card['title'] ?? 'Dự án LuxNova',
+				'url' => $card['url'] ?? '#',
+				'image' => $card['image'] ?? '',
+				'meta' => trim( implode( ' - ', array_filter( array( $card['area'] ?? '', 'Hà Nội' ) ) ) ),
+			),
+			luxnova_default_project_cards()
+		),
+		0,
+		$limit
+	);
+}
+
+function luxnova_design_style_related_post_ids( array $page_data, int $limit = 4 ): array {
+	$ids = luxnova_relationship_ids( $page_data['related_posts'] ?? array() );
+	if ( ! empty( $ids ) ) {
+		return array_slice( $ids, 0, $limit );
+	}
+
+	return array_map(
+		'intval',
+		get_posts(
+			array(
+				'post_type' => 'post',
+				'post_status' => 'publish',
+				'posts_per_page' => $limit,
+				'orderby' => 'date',
+				'order' => 'DESC',
+				'fields' => 'ids',
+			)
+		)
+	);
+}
+
+function luxnova_design_style_related_cards( array $page_data, int $limit = 4 ): array {
+	$cards = array();
+
+	foreach ( luxnova_design_style_related_post_ids( $page_data, $limit ) as $post_id ) {
+		if ( 'publish' !== get_post_status( $post_id ) ) {
+			continue;
+		}
+
+		$cards[] = array(
+			'title' => get_the_title( $post_id ),
+			'url' => get_permalink( $post_id ),
+			'image' => get_post_thumbnail_id( $post_id ),
+			'excerpt' => has_excerpt( $post_id ) ? get_the_excerpt( $post_id ) : wp_trim_words( wp_strip_all_tags( get_post_field( 'post_content', $post_id ) ), 12 ),
+		);
+	}
+
+	if ( ! empty( $cards ) ) {
+		return array_slice( $cards, 0, $limit );
+	}
+
+	$fallbacks = array(
+		array( 'title' => 'Modern Luxury là gì?', 'excerpt' => 'Đặc trưng và cách ứng dụng trong nội thất cao cấp.', 'image' => luxnova_asset( 'assets/images/placeholder-project-1.svg' ) ),
+		array( 'title' => 'Sai lầm khi thiết kế Modern Luxury', 'excerpt' => 'Những điểm cần tránh để không gian sang mà vẫn tinh tế.', 'image' => luxnova_asset( 'assets/images/placeholder-project-2.svg' ) ),
+		array( 'title' => 'Chi phí thiết kế và thi công', 'excerpt' => 'Các yếu tố ảnh hưởng đến ngân sách hoàn thiện.', 'image' => luxnova_asset( 'assets/images/placeholder-project-3.svg' ) ),
+		array( 'title' => 'Luxury và Modern Luxury khác nhau thế nào?', 'excerpt' => 'Gợi ý chọn phong cách phù hợp với nhu cầu sống.', 'image' => luxnova_asset( 'assets/images/placeholder-project-4.svg' ) ),
+	);
+
+	return array_slice(
+		array_map(
+			static fn( array $card ): array => array(
+				'title' => $card['title'],
+				'url' => '#',
+				'image' => $card['image'],
+				'excerpt' => $card['excerpt'],
+			),
+			$fallbacks
+		),
+		0,
+		$limit
+	);
 }
 
 function luxnova_default_service_cards(): array {

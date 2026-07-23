@@ -15,6 +15,8 @@ function luxnova_enqueue_assets(): void {
 	$cursor_css_path = LUXNOVA_DIR . 'assets/css/cursor.css';
 	$js_path         = LUXNOVA_DIR . 'assets/js/main.js';
 	$cursor_js_path  = LUXNOVA_DIR . 'assets/js/cursor.js';
+	$style_scoring_js_path = LUXNOVA_DIR . 'assets/js/design-style-scoring.js';
+	$style_quiz_js_path    = LUXNOVA_DIR . 'assets/js/design-style-quiz.js';
 
 	wp_enqueue_style(
 		'luxnova-main',
@@ -37,6 +39,24 @@ function luxnova_enqueue_assets(): void {
 		file_exists( $js_path ) ? (string) filemtime( $js_path ) : LUXNOVA_VERSION,
 		true
 	);
+
+	if ( is_page_template( array( 'page-phong-cach-thiet-ke.php', 'page-chi-tiet-phong-cach-thiet-ke.php' ) ) ) {
+		wp_enqueue_script(
+			'luxnova-design-style-scoring',
+			LUXNOVA_URI . 'assets/js/design-style-scoring.js',
+			array(),
+			file_exists( $style_scoring_js_path ) ? (string) filemtime( $style_scoring_js_path ) : LUXNOVA_VERSION,
+			true
+		);
+
+		wp_enqueue_script(
+			'luxnova-design-style-quiz',
+			LUXNOVA_URI . 'assets/js/design-style-quiz.js',
+			array( 'luxnova-design-style-scoring' ),
+			file_exists( $style_quiz_js_path ) ? (string) filemtime( $style_quiz_js_path ) : LUXNOVA_VERSION,
+			true
+		);
+	}
 
 	wp_enqueue_script(
 		'luxnova-gsap',
@@ -66,7 +86,7 @@ function luxnova_enqueue_assets(): void {
 
 add_filter( 'script_loader_tag', 'luxnova_defer_scripts', 10, 3 );
 function luxnova_defer_scripts( string $tag, string $handle, string $src ): string {
-	if ( ! in_array( $handle, array( 'luxnova-main', 'luxnova-cursor' ), true ) ) {
+	if ( ! in_array( $handle, array( 'luxnova-main', 'luxnova-cursor', 'luxnova-design-style-scoring', 'luxnova-design-style-quiz' ), true ) ) {
 		return $tag;
 	}
 
